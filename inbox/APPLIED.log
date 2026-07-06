@@ -1,2 +1,3 @@
 # APPLIED.log — one line per applied packet
 serial 1 applied by composer-agent · files: docs/00_STATE.md, docs/02_PROGRAM/COMPONENT_REGISTER.md, docs/03_TRACKS/C-000_scoping/COMPONENT_THESIS.md, docs/03_TRACKS/C-000_scoping/BRIEF.md, docs/03_TRACKS/C-000_scoping/JOURNAL.md
+serial 2 applied by composer-agent · files: docs/03_TRACKS/C-000_scoping/JOURNAL.md, docs/02_PROGRAM/LESSONS.md, docs/00_STATE.md

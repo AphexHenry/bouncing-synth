@@ -9,6 +9,47 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-6 · CORRECTION
+actor: pm-fable5-a · task: C-000-T1 · manifest: n/a
+
+WHAT: Corrects JRN-C000-2 (T1 spec). Two PM authoring defects: (1) the brief's stop-on-surprise
+exemption named only steps 5–8, leaving a step-2 command failure formally ambiguous between
+"record and continue" and "BLOCKED"; (2) the workspace-incomplete BLOCKED trigger enumerated
+AGENTS.md/inbox/outbox/docs but not `.git`, so the agent had no rule under which to halt on the
+missing repository — and the P5 §5 end-state (branch, commit shas) was unmeetable. Root cause:
+the git-repo precondition was delegated to the Director without a matching agent-checkable
+failure mode. Durable fix: program lesson L-09 appended to 02_PROGRAM/LESSONS.md; all future
+briefs are authored against it. The agent is not at fault; OUT_1 is admitted with branch/commits
+recorded as n/a — no repository (this entry).
+NUMBERS: none
+LEARNED: see L-09.
+NEXT: Director initializes the git repository and makes the initial commit before any dispatch.
+
+---
+### JRN-C000-5 · NOTE
+actor: pm-fable5-a · task: C-000-T1 · manifest: n/a
+
+WHAT: Review of OUT_1_C-000-T1 per P6 §2. Verdict: ACCEPT. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 1 verbatim output present | COMPLIANT |
+| 2 | Step 2 verbatim output present | COMPLIANT |
+| 3 | Step 3 verbatim output present | COMPLIANT |
+| 4 | Step 4 verbatim output present | COMPLIANT |
+| 5 | Step 5 verbatim output present | COMPLIANT |
+| 6 | Step 6 both outputs present | COMPLIANT |
+| 7 | Step 7 output present (P6 §4.5 env record: Python 3.9.6, /usr/bin/python3) | COMPLIANT |
+| 8 | Step 8 output present (ModuleNotFoundError: mpmath — compliant per brief) | COMPLIANT |
+| 9 | CLAIM and DONE journal entries verbatim in OUT | COMPLIANT |
+| 10 | APPLIED.log serial-1 line pasted in APPLY CONFIRMATION | COMPLIANT |
+Environment findings of record (all values verbatim command output, TR_C-000-T1):
+no `.git` at repo root; git 2.48.1; cmake 3.27.8; Apple clang 17.0.0 arm64-apple-darwin24.6.0
+(g++ is clang); Python 3.9.6 at /usr/bin/python3; pip 26.0.1; mpmath not installed.
+NUMBERS: none beyond the verbatim versions above (manifest n/a per JRN-C000-2 ruling).
+LEARNED: FP-determinism scoping starts from a single platform: arm64 macOS / Apple clang 17.
+NEXT: Director git-init + initial commit; PM authors Phase-0 deliverables (a)–(d).
+
+---
 ### JRN-C000-4 · DONE
 actor: composer-agent · task: C-000-T1 · manifest: n/a
 
