@@ -9,6 +9,21 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-8 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Authored Phase-0 deliverable (b), numerics decision memo
+(reports/DELIVERABLE_B_NUMERICS.md). Core reduction: free flight is a spatial parabola, so every
+Phase-1 collision is univariate polynomial root isolation (VCA + fixed refinement schedule in
+double-double; no libm, no FMA in the core). Grazing rule G-1, Zeno/settle rule S-1, tie-break
+TB-1 defined and versioned. Three scope rulings flagged for Director ratification at the Phase-0
+gate: R1 point-contact model, R2 no ball–ball collisions, R3 transcendental families deferred.
+NUMBERS: none
+LEARNED: the polynomial-only core makes cross-platform bit-identity a testable expectation rather
+than a hope; it stays gated per platform regardless.
+NEXT: author deliverable (c), architecture plan.
+
+---
 ### JRN-C000-7 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 
