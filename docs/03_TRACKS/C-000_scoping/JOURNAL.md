@@ -9,6 +9,21 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-7 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Authored Phase-0 deliverable (a), prior-art landscape (reports/DELIVERABLE_A_LANDSCAPE.md),
+from PM desk research of public web sources dated 2026-07-06 (URLs cited in the document). Key
+findings: interaction concept is established (2003–2026) but no surveyed system uses analytic
+collision solving on exact curves, none guarantees bit-identical replay / zero drift /
+sample-accurate MIDI, and no FOSS curve-based deterministic VST3 exists. C-000 kill sketch not
+triggered: the core bet is unclaimed territory in the surveyed field.
+NUMBERS: none
+LEARNED: raw physics timing being "unmusical" is independently corrected by two products
+(quantize/scale constraints) — supports mapping configurability as first-class in C-003.
+NEXT: author deliverable (b), numerics decision memo.
+
+---
 ### JRN-C000-6 · CORRECTION
 actor: pm-fable5-a · task: C-000-T1 · manifest: n/a
 
