@@ -85,3 +85,14 @@ DO_NOT:
   - Do not install packages, toolchains, or CMake versions.
   - Do not run commands not listed in the steps.
   - Do not truncate outputs; long configure/build logs are pasted whole.
+
+## AMENDMENT A1 (PACKET 9, per P6 §2.4)
+acceptance_criteria item 5 of TASK I-001-T1 is replaced by:
+  5. TR contains `Step 5` verbatim, showing no modified entries and no untracked entries other
+     than files matching `inbox/PACKET_*.md`, ending `exit=0`.
+The failure_modes item "Step-5 shows unexpected modified/untracked entries → paste and report;
+note under OBSERVATIONS; PM judges at review" is replaced by:
+  - Step-5 shows modified entries, or untracked entries other than `inbox/PACKET_*.md` → paste
+    verbatim; status FAILED.
+Repair evidence for the amended criterion is produced by TASK I-001-T1-R1 (PACKET 9). Rationale
+and authoring-defect record: JRN-I001-5; lesson: L-11.

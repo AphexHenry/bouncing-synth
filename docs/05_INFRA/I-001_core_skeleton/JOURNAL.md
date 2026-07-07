@@ -9,6 +9,53 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-5 · CORRECTION
+actor: pm-fable5-a · task: I-001-T1 · manifest: n/a
+
+WHAT: PM authoring defect in I-001-T1 acceptance criterion 5 ("no modified and no untracked
+entries"). Deviation: the criterion asserted a workspace state the packet's own mechanics do
+not guarantee — the Director saves PACKET_<n>.md into inbox/ at dispatch (P5 §6.1), and the
+branch inherited an untracked inbox/PACKET_7.md from the prior cycle; neither is correctable
+by a compliant agent under the task's DO_NOT list. The brief's failure_modes clause
+("unexpected modified/untracked entries → paste and report; PM judges at review") contradicted
+the binary criterion and deferred judgment into execution, itself a P6 §4.1/§4.3 violation.
+Root cause: criterion text written against an idealized clean tree instead of the dispatch
+mechanics. Durable fix: BRIEF amendment A1 (corrected criterion 5 and failure_modes item);
+LESSONS L-11; P6 §4 amendment proposed to the Director (STATE open decision 2) per P6 §6.3 —
+second workspace-state authoring defect after L-09. Secondary open item folded into decision
+2: AGENTS.md vs P5 §2 on whether APPLY commits inbox packet files (the agent recorded "not
+committed per protocol"; P5 §2 lists "the applied packet files" in the commit series) — the
+two texts are aligned in the same amendment packet once decision 2 is taken.
+NUMBERS: none
+LEARNED: recorded as LESSONS L-11
+NEXT: R1 repair against amended criterion (PACKET 9 TASK).
+
+---
+### JRN-I001-4 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_8_I-001-T1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 1 verbatim toolchain/OS record (cmake 3.27.8, AppleClang 17, macOS 15.7.7) | COMPLIANT |
+| 2 | Step 2 verbatim, ends exit=0 | COMPLIANT |
+| 3 | Step 3 verbatim, ends exit=0 | COMPLIANT |
+| 4 | Step 4 verbatim, 100% tests passed, ends exit=0 | COMPLIANT |
+| 5 | Step 5 shows no modified and no untracked entries | NON-COMPLIANT — untracked inbox/PACKET_7.md, inbox/PACKET_8.md |
+| 6 | CLAIM and DONE journal entries verbatim in OUT | COMPLIANT |
+| 7 | APPLIED.log serial-8 line pasted in APPLY CONFIRMATION (format matches the serial-1 line of record, TR_C-000-T1) | COMPLIANT |
+| L-10 | ledger line; JRN-I001-1, JRN-C000-19, CLAIM, DONE verbatim; wc -c + sha256 for all 12 applied files; TR_I-001-T1.md in full; git log --format='%H %s' main..HEAD paste | COMPLIANT |
+Verdict: AMEND + RETURN (P6 §2.4) — criterion 5 defective; see JRN-I001-5 CORRECTION. The
+build/test work is presumed sound; no VERIFIED status existed to suspend (P6 §2.5). The
+BRANCH/COMMITS paste shows the packet/7 apply commits inside main..HEAD: main is behind the
+accepted OUT_7 lineage. Director merge duty (P5 §6.4) executes after the R1 ACCEPT — one merge
+of task/I-001-T1 into main covers the OUT_7 lineage and OUT_8 + R1 together.
+NUMBERS: none
+LEARNED: nothing
+NEXT: dispatch I-001-T1-R1 (this packet); on R1 ACCEPT, register I-001 → VERIFIED, STATE
+update, I-002 brief follows.
+
+---
 ### JRN-I001-3 · DONE
 actor: composer-agent · task: I-001-T1 · manifest: n/a
 
