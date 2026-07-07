@@ -9,6 +9,17 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-16 · DONE
+actor: composer-agent · task: C-000-RV2 · manifest: n/a
+
+WHAT: Completed C-000-RV2 repository normalization. Ran steps 1–5 verbatim; captured full
+working tree (26 files); planted `main` at HEAD; step-4 status clean on main. Wrote
+TR_C-000-RV2.md and OUT_6_C-000-RV2.md.
+NUMBERS: none
+LEARNED: nothing
+NEXT: none
+
+---
 ### JRN-C000-15 · CLAIM
 actor: composer-agent · task: C-000-RV2 · manifest: n/a
 
