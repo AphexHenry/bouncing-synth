@@ -6,3 +6,4 @@ serial 4 applied by composer-agent · files: docs/03_TRACKS/C-000_scoping/report
 serial 5 applied by composer-agent · files: docs/03_TRACKS/C-000_scoping/reports/DELIVERABLE_C_ARCHITECTURE.md, docs/03_TRACKS/C-000_scoping/JOURNAL.md, docs/02_PROGRAM/LESSONS.md
 serial 6 applied by composer-agent · files: docs/03_TRACKS/C-000_scoping/reports/DELIVERABLE_D_SLATE.md, docs/00_STATE.md, .gitignore, docs/03_TRACKS/C-000_scoping/JOURNAL.md
 serial 7 applied by composer-agent · files: docs/00_PROJECT.md, docs/02_PROGRAM/COMPONENT_REGISTER.md, docs/00_STATE.md, docs/03_TRACKS/C-000_scoping/JOURNAL.md
+serial 8 applied by composer-agent · files: docs/05_INFRA/I-001_core_skeleton/BRIEF.md, docs/05_INFRA/I-001_core_skeleton/JOURNAL.md, docs/03_TRACKS/C-000_scoping/JOURNAL.md, .gitignore, CMakeLists.txt, CMakePresets.json, config/fp-determinism.cmake, src/core/bounce/version.hpp, src/core/bounce/version.cpp, tests/test_main.cpp, tests/test_smoke.cpp, tests/test_fp_environment.cpp

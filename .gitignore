@@ -1,3 +1,4 @@
 .DS_Store
 bounce-docs.zip
 tools/refsim/.venv/
+build/

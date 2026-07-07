@@ -9,6 +9,25 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-19 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_7 per P6 §2 (closing entry; C-000 is CLOSED, this reviews the packet that
+closed it). Verdict: ACCEPT. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | PRE-APPLY GUARD pasted, matched 889b3fae… | COMPLIANT |
+| 2 | Serial-7 ledger line in APPLY CONFIRMATION | COMPLIANT |
+| 3 | JRN-C000-18 / JRN-C000-17 verbatim | COMPLIANT |
+| 4 | Post-apply digests pasted; 00_PROJECT.md == pinned db5cd59d… | COMPLIANT |
+| 5 | BRANCH/COMMITS via git log --format='%H %s' | COMPLIANT |
+Module v0.2 is the constitution of record; Phase 1 open. Further program review entries live in
+the journals of the workstreams that produce them (first: I-001).
+NUMBERS: none
+LEARNED: nothing
+NEXT: none — track closed.
+
+---
 ### JRN-C000-18 · GATE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 
