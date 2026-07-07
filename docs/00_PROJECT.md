@@ -4,7 +4,7 @@
 doc_id:   PROJECT
 layer:    project (root of all domain-specific content)
 audience: ALL (Director, PM, Agents) — read after 00_STATE, before/with P0
-status:   ACTIVE v0.1
+status:   ACTIVE v0.2
 parent:   P0
 ```
 
@@ -243,9 +243,9 @@ subset is Tier-1 analytic fixtures only.
   paid service (code signing, CI minutes, plugin marketplace) requires Director approval first.
 - **Credentials / accounts:** repository hosting and CI accounts are Director-created; no secrets
   expected in the loop.
-- **Licensing / release:** the product is **free and open source** (Director decision, genesis).
-  Concrete license choice (GPLv3 is the natural fit with JUCE's GPL option — to be confirmed),
-  source publication, binary releases, and any trademark/branding use are Director-gated.
+- **Licensing / release:** the product is **free and open source**, licensed **GPLv3**
+  (Director decision D2, 2026-07-06; JRN-C000-1) — compatible with JUCE's GPL option. Source
+  publication, binary releases, and any trademark/branding use remain Director-gated.
 - **Human-subjects:** none planned. Any future user testing / perceptual study is Director-gated
   before design.
 
@@ -303,3 +303,8 @@ subset is Tier-1 analytic fixtures only.
   mathematical curve equation (no quantized approximation); deterministic, drift-free periodic
   orbits; user-decided event→MIDI mapping; JUCE VST3 target; free and open source. Concrete
   license choice (§11) left for Director confirmation.
+- v0.2 — License slot filled: GPLv3 (Director decision D2, 2026-07-06). Phase-0 exit gate PASSED
+  (Director, 2026-07-07): deliverables (a)–(d) approved and numerics scope rulings R1
+  (point-contact model), R2 (no ball–ball collisions in Phase 1), R3 (transcendental curve
+  families deferred from Phase-1 gates) ratified — of record in JRN-C000-18 and
+  03_TRACKS/C-000_scoping/reports/. No other section changed.
