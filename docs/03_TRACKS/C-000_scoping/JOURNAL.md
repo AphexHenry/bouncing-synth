@@ -9,6 +9,57 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-15 · CLAIM
+actor: composer-agent · task: C-000-RV2 · manifest: n/a
+
+WHAT: Claimed C-000-RV2 per PACKET 6 dispatch.
+NUMBERS: none
+LEARNED: nothing
+NEXT: execute steps 1–5; write TR_C-000-RV2.md and OUT file.
+
+---
+### JRN-C000-14 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Authored Phase-0 deliverable (d), prioritized component slate
+(reports/DELIVERABLE_D_SLATE.md): Phase 1 = C-002 curve library + C-001 exact engine (the
+falsifiable bet, Law 8), with acceptance sketches bound to the PROJECT §8 gates and kill
+conditions named; Phase 2 = C-003 mapping, C-004 shell/visuals, C-005 presets, each with its
+own thesis and gate sketch; infra order I-001→I-002→I-003→I-004→I-005→I-007 at Phase-1 entry.
+All four Phase-0 deliverables now filed.
+NUMBERS: none
+LEARNED: nothing
+NEXT: RV2 repo normalization; then the Phase-0 exit presentation to the Director.
+
+---
+### JRN-C000-13 · NOTE
+actor: pm-fable5-a · task: C-000-RV1 · manifest: n/a
+
+WHAT: Review of OUT_5_C-000-RV1 per P6 §2. Verdict: ACCEPT. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | TR sections Step 1–6, verbatim outputs | COMPLIANT |
+| 2 | CLAIM + DONE verbatim in OUT | COMPLIANT |
+| 3 | Serial-5 ledger line in APPLY CONFIRMATION | COMPLIANT |
+| OR | OUT-REQUIREMENTS (journal copies incl. L-10 line, full report, branch/commits) | COMPLIANT |
+Findings of record: (1) Transcription fidelity packets 1–5 VERIFIED — STATE, COMPONENT_REGISTER,
+LESSONS, JOURNAL pasted verbatim and matching PM-authored content; five track documents
+digest-pinned (sha256 + byte counts in TR_C-000-RV1 step 6). (2) Repository defect: step-1
+status shows HEAD on packet/4, packet branches 2–4 never merged, and the initial commit was
+partial — untracked: AGENTS.md, docs/00_PROJECT.md, docs/01_PROTOCOLS/, 00_GENESIS.md,
+INFRASTRUCTURE_REGISTER.md, DIRECTORS_MANUAL.md, LESSONS_CORE.md, README.md, 03_TRACKS/README,
+04_ARCHIVE/, 05_INFRA/, inbox packets, outbox/README — a clean clone would lack the program's
+constitution (L-02 class). Repair: task C-000-RV2 (this packet). (3) Minor observation, no
+action: the RV1 agent ran task steps before committing the apply (step-1 status shows the
+uncommitted apply); content integrity unaffected, verified by the pasted docs themselves.
+PM ruling: RV2 is sanctioned, once, to end on `main` rather than a task branch — normalizing
+the branch structure is the task's purpose.
+NUMBERS: file digests of record in TR_C-000-RV1 step 6 (sha256, byte counts).
+LEARNED: "git init + initial commit" delegated to the Director without evidence required was
+the same class of gap as L-09/L-10 — setup steps need agent-pasted evidence too; RV2 closes it.
+NEXT: RV2 execution; Phase-0 exit presentation.
+
+---
 ### JRN-C000-12 · DONE
 actor: composer-agent · task: C-000-RV1 · manifest: n/a
 
