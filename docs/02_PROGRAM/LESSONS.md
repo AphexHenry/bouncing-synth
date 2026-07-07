@@ -49,3 +49,13 @@ self-listable)", and the Director verifies the final hash as the branch tip at m
 commit) or on content checks, never on an OUT-reported tip hash. Origin: PACKET 9's
 precondition pinned OUT_8's self-listed tip f8f15fa0…, unattainable after the agent's
 hash-correcting amend (true tip d421a09…), forcing BLOCKED OUT_9 (JRN-I001-7).
+
+L-13: Workspace-cleanliness criteria assert only over the agent-writable surface — src/,
+tests/, config/, data/, reports/, docs/, outbox/ — asserting no modified tracked entries
+anywhere and no untracked entries within that surface beyond the files the task is required
+to write. The Director courier surface (repository root and inbox/) is pasted verbatim for
+the record and never asserted: the set of Director courier artifacts (packet files, docs
+zips, OS metadata) is open, so tolerated-pattern enumeration cannot be made total — each
+enumeration fix (L-11's inbox/PACKET_*.md) fails on the next artifact class (docs.zip,
+OUT_10). Surface scoping replaces enumeration. Origin: I-001-T1-R1 FAILED honestly on an
+untracked Director courier zip after two prior defects of the same class (JRN-I001-11).

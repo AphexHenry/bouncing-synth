@@ -9,6 +9,61 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-12 · CLAIM
+actor: composer-agent · task: I-001-T1-R2 · manifest: n/a
+
+WHAT: Claimed I-001-T1-R2 (re-emit workspace evidence against BRIEF amendment A2) on branch
+task/I-001-T1 after PACKET 11 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 2–3 per packet; write TR and OUT.
+
+---
+### JRN-I001-11 · CORRECTION
+actor: pm-fable5-a · task: I-001-T1-R1 · manifest: n/a
+
+WHAT: Third PM workspace-state authoring defect, recurring the L-11 class despite L-11. The
+A1-amended criterion tolerated inbox/PACKET_*.md but the workspace also carried docs.zip — a
+Director courier artifact (the P5 §7 docs zip made for the PM) at repo root — forcing an
+honest FAILED (OUT_10) on faultless agent work. Root cause: L-11's fix was implemented by
+enumerating tolerated Director artifacts; the set of Director courier artifacts is open and
+enumeration cannot be made total. Durable fix (structural, not another pattern): workspace
+cleanliness criteria assert only over the agent-writable surface — src/, tests/, config/,
+data/, reports/, docs/, outbox/ — while the Director courier surface (repository root and
+inbox/) is pasted verbatim for the record and never asserted (LESSONS L-13; BRIEF amendment
+A2). Secondary hardening: /docs.zip appended to .gitignore so courier zips cannot appear in
+status output or be staged accidentally. P6 §6.3 was already discharged at the second
+occurrence (L-11 + open decision 2); this entry records the recurrence and replaces the
+enumeration approach with surface scoping. Adopted as norm from OUT_9/OUT_10 evidence: hash
+corrections land as fix-up commits on top (e.g. 800513e…), never as amends (L-12).
+NUMBERS: none
+LEARNED: recorded as LESSONS L-13
+NEXT: I-001-T1-R2 dispatched (PACKET 11, serial 11) against amendment A2.
+
+---
+### JRN-I001-10 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_10_I-001-T1-R1 per P6 §2. Criterion table (criteria as amended by A1,
+including the FAILED branch):
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 2 verbatim environment record (git 2.48.1, macOS 15.7.7), ends exit=0 | COMPLIANT |
+| 2 | Step 3: no modified, no untracked other than inbox/PACKET_*.md — main branch NOT MET (untracked docs.zip); FAILED branch "full output pasted verbatim including the violating entries" | COMPLIANT (FAILED branch) |
+| 3 | CLAIM and FAILED journal entries verbatim in OUT | COMPLIANT |
+| 4 | APPLIED.log serial-10 line pasted in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 §5 header (commits line omits final OUT commit per L-12); ledger line; JRN-I001-6/-7 + CLAIM/FAILED verbatim; wc -c + sha256 for all 3 applied files; TR in full; BRANCH/COMMITS ending with the literal terminator "+ final OUT commit (hash not self-listable)" | COMPLIANT |
+Verdict: AMEND + RETURN (P6 §2.4) — the criterion is defective again (see JRN-I001-11
+CORRECTION); the FAILED report itself is accepted as valid evidence of the workspace
+condition and involves no agent error (P3 §7). No VERIFIED status existed to suspend
+(P6 §2.5). BRANCH/COMMITS additionally shows the OUT_9 hash fix-up commit 800513e… —
+commit-on-top, not amend — consistent with L-12.
+NUMBERS: none
+LEARNED: nothing
+NEXT: dispatch I-001-T1-R2; on R2 ACCEPT, register I-001 → VERIFIED, Director merges
+task/I-001-T1 → main, STATE update, I-002 brief follows.
+
+---
 ### JRN-I001-9 · FAILED
 actor: composer-agent · task: I-001-T1-R1 · manifest: n/a
 

@@ -96,3 +96,17 @@ note under OBSERVATIONS; PM judges at review" is replaced by:
     verbatim; status FAILED.
 Repair evidence for the amended criterion is produced by TASK I-001-T1-R1 (PACKET 9). Rationale
 and authoring-defect record: JRN-I001-5; lesson: L-11.
+
+## AMENDMENT A2 (PACKET 11, per P6 §2.4; supersedes A1's criterion text)
+The workspace-cleanliness criterion (A1 item 5, and criterion 2 of the R-series repair tasks)
+is replaced by:
+  TR contains the git-status step verbatim, ending `exit=0`, showing (i) no modified entries,
+  and (ii) no untracked entries under src/, tests/, config/, data/, reports/, docs/, or
+  outbox/ beyond the files the task is required to write. Entries at the repository root and
+  under inbox/ are pasted for the record and are not asserted (Director courier surface,
+  L-13).
+The corresponding failure_modes item is replaced by:
+  - git status shows modified entries, or untracked entries under the asserted surface beyond
+    the task's own outputs → paste verbatim; status FAILED.
+Rationale and defect record: JRN-I001-11; lesson: L-13. Repair evidence: TASK I-001-T1-R2
+(PACKET 11).
