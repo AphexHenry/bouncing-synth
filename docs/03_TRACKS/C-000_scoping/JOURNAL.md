@@ -9,6 +9,64 @@ parent:   C-000-BRIEF
 ```
 
 ---
+### JRN-C000-12 · DONE
+actor: composer-agent · task: C-000-RV1 · manifest: n/a
+
+WHAT: Completed C-000-RV1 evidence re-emission. Ran steps 1–6 verbatim; wrote TR_C-000-RV1.md
+and OUT_5_C-000-RV1.md. Step 1: branch is packet/4 (precondition merge state not met).
+NUMBERS: none
+LEARNED: nothing
+NEXT: none
+
+---
+### JRN-C000-11 · CLAIM
+actor: composer-agent · task: C-000-RV1 · manifest: n/a
+
+WHAT: Claimed C-000-RV1 per PACKET 5 dispatch.
+NUMBERS: none
+LEARNED: nothing
+NEXT: execute steps 1–8; write TR_C-000-RV1.md and OUT file.
+
+---
+### JRN-C000-10 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Authored Phase-0 deliverable (c), architecture plan (reports/DELIVERABLE_C_ARCHITECTURE.md):
+bounce-core headless deterministic library (zero deps, no JUCE types) + thin JUCE VST3 shell;
+repo layout instantiating P3 §1; single-fragment FP-flag pinning with a runtime assertion test;
+doctest (MIT); project venv for the mpmath reference; I-001…I-007 mapped to concrete paths and
+phases.
+NUMBERS: none
+LEARNED: nothing
+NEXT: deliverable (d), prioritized component slate; then the Phase-0 exit presentation.
+
+---
+### JRN-C000-9 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Corrects the PM reviews of OUT_2, OUT_3, OUT_4 and the authoring of PACKETs 2–4, and
+reconciles a parallel-PM conflict. Incident 1: those OUT files lacked the P5 §5 JOURNAL ENTRIES
+section (verbatim copies of entries applied this dispatch) and the PM accepted them, implicitly
+treating applied content as checkable in the repo — inadmissible rationale per P6 §2.2. Root
+cause: apply-only packets stated no explicit OUT requirements, so agent and PM both defaulted to
+a thin format. The gap was raised by the Director — Director-side quality control is itself a
+P6 §6.4 incident. Durable fix: L-10 appended to 02_PROGRAM/LESSONS.md; from this packet onward
+every packet's TASK section carries an explicit OUT-REQUIREMENTS block, and an OUT missing any
+required section is RETURN_FOR_REPAIR, never accepted. A one-paragraph P5 §5 amendment (v1.1)
+codifying apply-only OUT content is warranted and deliberately deferred to the next full
+re-issue of P5, because re-transcribing a framework file to insert one paragraph carries its own
+byte-drift risk — L-10 plus the per-packet block is the binding rule in the interim. Incident 2:
+two PM conversations ran in parallel; the second authored a conflicting, unshipped PACKET 5
+(CORRECTION + repair task). Reconciled per DIRECTORS_MANUAL §5: repo wins (APPLIED.log verified
+ending at serial 4, Director-pasted 2026-07-07); the conflicting draft is void; its stricter OUT
+standard is adopted here; exactly one PM conversation runs the program from now on. Repair:
+task C-000-RV1 re-emits transcription evidence for the files applied by packets 1–5 so Phase-0
+gate review rests on OUT-file evidence.
+NUMBERS: none
+LEARNED: see L-10.
+NEXT: C-000-RV1 execution; deliverable (d) follows.
+
+---
 ### JRN-C000-8 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 
