@@ -9,6 +9,59 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-8 · CLAIM
+actor: composer-agent · task: I-001-T1-R1 · manifest: n/a
+
+WHAT: Claimed I-001-T1-R1 (re-emit Step-5 evidence against BRIEF amendment A1) on branch
+task/I-001-T1 after PACKET 10 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 2–3 per packet; write TR and OUT.
+
+---
+### JRN-I001-7 · CORRECTION
+actor: pm-fable5-a · task: I-001-T1-R1 · manifest: n/a
+
+WHAT: PM authoring defect in the PACKET 9 TASK precondition: it pinned the task/I-001-T1 tip
+to f8f15fa0802010c9221e5ae05d49d9c3acd5dc33, a hash taken from OUT_8's own BRANCH/COMMITS
+paste. An OUT-carrying commit cannot list its own final hash; the OUT_8 agent amended to
+correct the hash line, producing sibling d421a098abf174f6fad03b331fee06fcd185fbd1 as the true
+tip, so the pinned hash was unattainable by construction. BLOCKED OUT_9 was correct agent
+behavior. The same artifact is visible in OUT_9, which lists its own top commit — any
+OUT-reported tip hash is stale-by-one by construction. Root cause: precondition anchored on
+evidence that cannot be current. Durable fix (standing rule, STATE pointers, effective
+PACKET 10): (i) the OUT-carrying commit is never amended to embed its own hash; BRANCH/COMMITS
+pastes are taken immediately before the final OUT commit and end with the literal terminator
+line "+ final OUT commit (hash not self-listable)"; the Director verifies the final hash as
+the branch tip at merge; (ii) packet preconditions and reviews anchor on ancestor commits
+(e.g. the packet's apply commit) or content checks, never on an OUT-reported tip hash.
+LESSONS L-12. Resolution ruling: d421a09… ratified as the I-001-T1 completion commit of
+record (content-equivalent; sole diff the OUT_8 BRANCH/COMMITS hash line, per OUT_9);
+f8f15fa0… superseded by that amend. No reset: rewriting task/I-001-T1 would discard the
+applied PACKET-9 FILES (JRN-I001-4/-5, L-11, BRIEF A1, STATE) and the BLOCKED record.
+NUMBERS: none
+LEARNED: recorded as LESSONS L-12
+NEXT: I-001-T1-R1 re-dispatched (PACKET 10, serial 10, ancestor-anchored precondition).
+
+---
+### JRN-I001-6 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: OUT_9 (BLOCKED, I-001-T1-R1) processed per P5 §2 — BLOCKED is a working outcome,
+answered in PACKET 10. OUT_9 compliance assessed on its own terms: P5 §5 header with
+agent/branch/commits line — present; serial-9 APPLIED.log ledger line pasted — present;
+verbatim copies of both journal entries this packet applied (JRN-I001-4, JRN-I001-5) —
+present, with CLAIM/DONE correctly absent (never appended; the agent halted at the
+precondition, before step 1); FILE DIGESTS (wc -c + sha256) for all four applied files —
+present; REPORT in P4 BLOCKED form (WHAT I WAS DOING / WHAT HAPPENED / WHAT I NEED /
+WHAT I DID NOT DO, options offered) — present; BRANCH/COMMITS paste — present, carrying the
+self-reference caveat analyzed in JRN-I001-7. PACKET 9 FILES confirmed applied (I-001
+JOURNAL, LESSONS L-11, BRIEF amendment A1, STATE); PACKET 10 does not re-apply them.
+NUMBERS: none
+LEARNED: nothing
+NEXT: JRN-I001-7 CORRECTION; re-dispatch I-001-T1-R1 with the ancestor-anchored precondition.
+
+---
 ### JRN-I001-5 · CORRECTION
 actor: pm-fable5-a · task: I-001-T1 · manifest: n/a
 

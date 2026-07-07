@@ -38,3 +38,14 @@ clean tree while dispatch mechanics leave packet files untracked and the branch 
 from the prior cycle, forcing AMEND + RETURN on otherwise sound work (JRN-I001-5). Second
 occurrence of the workspace-state authoring class after L-09 → P6 §4 amendment proposed
 (STATE open decision 2).
+
+L-12: An OUT file cannot attest the hash of the commit that carries it: any BRANCH/COMMITS
+line naming the OUT-carrying commit is stale-by-one by construction, and amending the commit
+to "fix" the line only mints a new sibling hash. Therefore (i) OUT-carrying commits are never
+amended to embed their own hash — the BRANCH/COMMITS paste is taken immediately before the
+final OUT commit and ends with the literal terminator line "+ final OUT commit (hash not
+self-listable)", and the Director verifies the final hash as the branch tip at merge; and
+(ii) packet preconditions and review pins anchor on ancestor commits (e.g. the packet's apply
+commit) or on content checks, never on an OUT-reported tip hash. Origin: PACKET 9's
+precondition pinned OUT_8's self-listed tip f8f15fa0…, unattainable after the agent's
+hash-correcting amend (true tip d421a09…), forcing BLOCKED OUT_9 (JRN-I001-7).
