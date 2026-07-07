@@ -9,6 +9,17 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-13 · DONE
+actor: composer-agent · task: I-001-T1-R2 · manifest: n/a
+
+WHAT: I-001-T1-R2 repair complete DONE: Step 2 environment record and Step 3 git status pasted
+verbatim in TR_I-001-T1-R2.md; no modified entries; untracked entries only under inbox/
+(Director courier surface, L-13); asserted surface clean per amendment A2.
+NUMBERS: none
+LEARNED: nothing
+NEXT: PM review OUT_11; on ACCEPT, I-001 → VERIFIED.
+
+---
 ### JRN-I001-12 · CLAIM
 actor: composer-agent · task: I-001-T1-R2 · manifest: n/a
 
