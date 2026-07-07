@@ -9,6 +9,17 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-9 · FAILED
+actor: composer-agent · task: I-001-T1-R1 · manifest: n/a
+
+WHAT: I-001-T1-R1 repair halted FAILED at acceptance criterion 2: Step 3 git status shows
+untracked docs.zip (not matching inbox/PACKET_*.md); no modified tracked entries. Step 2
+environment record pasted verbatim in TR_I-001-T1-R1.md.
+NUMBERS: none
+LEARNED: nothing
+NEXT: PM/Director resolves docs.zip (remove or add to tolerated pattern); re-dispatch repair.
+
+---
 ### JRN-I001-8 · CLAIM
 actor: composer-agent · task: I-001-T1-R1 · manifest: n/a
 
