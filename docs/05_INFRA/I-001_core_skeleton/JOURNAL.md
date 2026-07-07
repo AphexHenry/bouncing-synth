@@ -9,6 +9,17 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-3 · DONE
+actor: composer-agent · task: I-001-T1 · manifest: n/a
+
+WHAT: I-001-T1 complete on task/I-001-T1: cmake --preset default (exit=0), build (exit=0),
+ctest 100% passed (exit=0). TR_I-001-T1.md written with verbatim step outputs. Step 5 shows
+untracked inbox packet files only; no modified tracked entries.
+NUMBERS: none
+LEARNED: nothing
+NEXT: PM review of OUT_8_I-001-T1; on ACCEPT, register I-001 → VERIFIED.
+
+---
 ### JRN-I001-2 · CLAIM
 actor: composer-agent · task: I-001-T1 · manifest: n/a
 
