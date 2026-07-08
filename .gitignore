@@ -2,3 +2,7 @@
 bounce-docs.zip
 build/
 tools/refsim/.venv/
+build/
+
+# Director courier artifacts (P5 §7; L-13)
+/docs.zip

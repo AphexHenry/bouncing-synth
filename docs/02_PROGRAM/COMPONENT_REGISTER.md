@@ -15,4 +15,4 @@ parent:   PROJECT §2
 | C-003 | Event→MIDI mapping engine | User-configurable collision→(pitch, velocity, channel) mapping emitted sample-accurately | mapping | IDEA | tbd at THESIS | — |
 | C-004 | Plugin shell & visuals | JUCE VST3 shell with real-time visualization and host parameter/automation plumbing | ui | IDEA | tbd at THESIS | — |
 | C-005 | Preset & state system | Full serialization of curve+balls+physics+mapping with replay-identity guarantee | io | IDEA | tbd at THESIS | — |
-| C-000 | Phase-0 scoping | Phase 0 delivers a Director-approvable plan: prior-art landscape, numerics decision memo, architecture plan, prioritized component slate (PROJECT §3 a–d) | infra-facing | SPECCED | n/a — scoping gate is Director approval, not numeric (P2 §8) | — |
+| C-000 | Phase-0 scoping | Phase 0 delivers a Director-approvable plan: prior-art landscape, numerics decision memo, architecture plan, prioritized component slate (PROJECT §3 a–d) | infra-facing | CLOSED | n/a — scoping gate is Director approval, not numeric (P2 §8) | Phase-0 gate PASSED (Director, 2026-07-07); deliverables (a)–(d) + rulings R1–R3 approved — 03_TRACKS/C-000_scoping/reports/, JRN-C000-18 |
