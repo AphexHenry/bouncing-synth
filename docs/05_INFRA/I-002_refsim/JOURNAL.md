@@ -1,6 +1,16 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-2 · CLAIM
+actor: composer-agent · task: I-002-T1 · manifest: n/a
+
+WHAT: Claimed I-002-T1 (venv + pinned mpmath + smoke evidence) on branch task/I-002-T1
+after PACKET 13 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per BRIEF; write TR and OUT.
+
+---
 ### JRN-I002-1 · NOTE
 actor: pm-fable5-a · task: I-002-T1 · manifest: n/a
 
