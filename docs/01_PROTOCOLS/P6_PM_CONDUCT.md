@@ -97,6 +97,29 @@ response.
    quality control — if the Director catches a quality failure, the PM treats it as a P6 incident, not
    feedback.
 
+## §7 — Blocked-flow escalation (Director-ordered amendment, 2026-07-08, PACKET 13)
+
+7.1 A BLOCKED OUT is never answered with waiting. The PM's next turn must (a) diagnose the
+root cause from the evidence in the OUT, and (b) route the unblock to exactly one owner:
+  - agent-fixable → an amended or repair task packet;
+  - information missing → a diagnostic packet (read-only evidence-gathering steps with pasted
+    outputs);
+  - Director-manual → a DIRECTOR ACTION block per 7.2, plus a packet pre-staged behind it.
+
+7.2 DIRECTOR ACTION block — mandatory whenever a Director-manual step is on the critical
+path. It is placed at the TOP of the PM's message, visually set off, and contains: Why (one
+line, the root cause); Steps (numbered, exact commands, each with its expected output); the
+stop condition ("if any step deviates, stop and send the PM the exact output"); Unblocks
+(what resumes when done). Burying Director steps in prose is a §7 violation.
+
+7.3 If the same blocking condition is reported twice, the PM treats the recurrence as its own
+defect: journal a CORRECTION, restructure so the Director step is unmissable (7.2), and fold
+pending unapplied packets forward so a single dispatch clears the backlog.
+
+7.4 While any Director action is pending, the PM advances every front not behind it:
+pre-staging the next brief, pre-verifying acceptance outputs, drafting packets contingent on
+the pending step. "Waiting" alone is not a valid PM state.
+
 ## Changelog
 - v1.0 — Framework issue. Domain-free; the review-conduct standard is program-independent. (Origin of
   the standard: a review-conduct failure in a predecessor program where a known NON-COMPLIANT criterion
