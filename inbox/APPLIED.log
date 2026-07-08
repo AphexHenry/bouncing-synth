@@ -10,3 +10,4 @@ serial 8 applied by composer-agent · files: docs/05_INFRA/I-001_core_skeleton/B
 serial 9 applied by composer-agent · files: docs/05_INFRA/I-001_core_skeleton/JOURNAL.md, docs/02_PROGRAM/LESSONS.md, docs/05_INFRA/I-001_core_skeleton/BRIEF.md, docs/00_STATE.md
 serial 10 applied by composer-agent · files: docs/05_INFRA/I-001_core_skeleton/JOURNAL.md, docs/02_PROGRAM/LESSONS.md, docs/00_STATE.md
 serial 11 applied by composer-agent · files: docs/05_INFRA/I-001_core_skeleton/JOURNAL.md, docs/02_PROGRAM/LESSONS.md, .gitignore, docs/05_INFRA/I-001_core_skeleton/BRIEF.md, docs/00_STATE.md
+serial 13 applied by composer-agent · files: docs/01_PROTOCOLS/P6_PM_CONDUCT.md, docs/05_INFRA/I-001_core_skeleton/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, docs/05_INFRA/I-002_refsim/BRIEF.md, docs/05_INFRA/I-002_refsim/JOURNAL.md, tools/refsim/requirements.txt, .gitignore, docs/00_STATE.md

@@ -9,6 +9,49 @@ parent:   I-001-BRIEF
 ```
 
 ---
+### JRN-I001-15 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: PM conduct defect around OUT_12. PACKET 12's precondition (Director merge of
+task/I-001-T1 → main) was not yet satisfied at dispatch; the agent correctly refused to apply
+(BLOCKED, no serial-12 ledger line — exemplary belt-and-braces: it ran the Director
+precondition itself before touching the tree). Deviation: the PM answered the block, twice,
+by restating instructions in prose — no mandated, visually distinct action block; no folding
+of the unapplied packet forward; the program idled on a one-command dependency. Root cause:
+P6 had no rule for blocked-flow handling, so the PM defaulted to waiting. Durable fix: P6 §7
+(blocked-flow escalation), amended by explicit Director order of 2026-07-08. Resolution:
+Director merged manually and verified ancestor-ok (8adeea0… ancestor of main); PACKET 12
+declared VOID (never applied; repo-wins) and its FILES folded into PACKET 13 so one dispatch
+clears the backlog.
+NUMBERS: none
+LEARNED: codified directly as P6 §7 (Director-ordered; no separate LESSONS entry needed —
+the protocol text is the durable artifact)
+NEXT: none — I-001 closes with JRN-I001-14; the pattern carries program-wide via P6 §7.
+
+---
+### JRN-I001-14 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_11_I-001-T1-R2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 2 verbatim environment record (git 2.48.1, macOS 15.7.7), ends exit=0 | COMPLIANT |
+| 2 | Step 3 verbatim, ends exit=0; no modified entries; no untracked entries under the asserted surface (src/, tests/, config/, data/, reports/, docs/, outbox/); untracked limited to inbox/PACKET_*.md, pasted-not-asserted per A2/L-13 | COMPLIANT |
+| 3 | CLAIM and DONE journal entries verbatim in OUT | COMPLIANT |
+| 4 | APPLIED.log serial-11 line pasted in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 §5 header (commits line omits final OUT commit per L-12); ledger line; JRN-I001-10/-11 + CLAIM/DONE verbatim; wc -c + sha256 for all 5 applied files; TR in full; BRANCH/COMMITS ending with the literal terminator "+ final OUT commit (hash not self-listable)" | COMPLIANT |
+Verdict: ACCEPT. I-001 → VERIFIED. Evidence of record: OUT_8 build/test steps 1–4 (completion
+commit d421a098abf174f6fad03b331fee06fcd185fbd1, ratified JRN-I001-7) + OUT_11 workspace
+evidence under amendment A2. Secondary observations: docs.zip absent from status output
+(Director housekeeping + .gitignore effective); OUT_10 hash fix-up b80b9c6… is commit-on-top,
+consistent with the L-12 norm. Director merge of the lineage into main completed and verified
+2026-07-08 (ancestor-ok; main fast-forwarded cd8b004… → fac6bf4…). Workstream I-001 complete;
+standing rules L-10/L-12/L-13 carry into all subsequent briefs.
+NUMBERS: none
+LEARNED: nothing
+NEXT: I-002 brief and I-002-T1 (this packet).
+
+---
 ### JRN-I001-13 · DONE
 actor: composer-agent · task: I-001-T1-R2 · manifest: n/a
 
