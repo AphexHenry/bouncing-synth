@@ -1,6 +1,17 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-3 · DONE
+actor: composer-agent · task: I-002-T1 · manifest: n/a
+
+WHAT: I-002-T1 complete DONE: venv at tools/refsim/.venv with mpmath 1.3.0 pinned via
+requirements.txt; smoke outputs match PM-pre-verified lines (refsim-smoke-ok 1.3.0; sqrt(2)
+to 50 significant digits); workspace clean per L-13 (untracked inbox/PACKET_13.md only).
+NUMBERS: none
+LEARNED: nothing
+NEXT: PM review OUT_13; on ACCEPT, I-002-T2 brief follows.
+
+---
 ### JRN-I002-2 · CLAIM
 actor: composer-agent · task: I-002-T1 · manifest: n/a
 
