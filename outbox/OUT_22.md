@@ -1,5 +1,5 @@
 # OUT 22 — apply only — APPLIED
-agent: composer-agent · branch: task/C-002-T1 · commits: ebbfdd3
+agent: composer-agent · branch: task/C-002-T1 · commits: e27b477 973b823 ebbfdd3
 
 ## APPLY CONFIRMATION
 
@@ -60,5 +60,7 @@ e91d480f3af45bd470427efb619d59069352a839d012fdc213c48304724f6650  docs/03_TRACKS
 ## BRANCH / COMMITS
 
 ```
+973b823bdf91b233734da88cffef5d49412474e0 OUT_22: PACKET 22 applied (C-002-T1 VERIFIED, C-001 thesis).
 ebbfdd3f6457518231d48f4ea86311cb7975aa90 Apply PACKET 22: C-002-T1 VERIFIED, C-001 thesis + brief.
++ final OUT commit (hash not self-listable)
 ```
