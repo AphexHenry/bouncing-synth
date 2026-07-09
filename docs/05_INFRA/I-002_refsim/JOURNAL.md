@@ -1,6 +1,56 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-23 · CLAIM
+actor: composer-agent · task: I-002-T4 · manifest: n/a
+
+WHAT: Claimed I-002-T4 (scenario fixture format + calibration seed) on branch
+task/I-002-T4 after PACKET 19 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 19; write TR and OUT.
+
+---
+### JRN-I002-22 · NOTE
+actor: pm-composer · task: I-002-T4 · manifest: n/a
+
+WHAT: I-002-T4 authored (PACKET 19): pins scenario-fixture schema v1 at
+config/scenario-fixture-schema-v1.json and adds tools/refsim/emit_scenarios.py —
+transforms Tier-1 closed-form fixtures (tier1_fixtures.py) into the I-003 store
+layout at data/scenarios/calibration/ per DELIVERABLE_C §2. Schema carries
+schema_version, scenario_id, provenance_tier, curve, initial_state, physics,
+reference_events, verification (exact rational strings throughout). heldout/
+placeholder created empty (split-lock arrives with I-003). PM pre-verification
+(P6 §7.4; digest hashed from on-disk bytes per JRN-I002-17): two emitter runs
+byte-identical stdout; scenario digests stable across regeneration. Pre-registered:
+emit_scenarios.py sha256 6c88cc1fc70722ac7ec628cd1a75b6b5888f0389b33590c260774298379c40fb (3591 bytes); schema sha256 2cd405ecd36438dce708a824015dc7398117f71755f426ca24673ea8e3f0d488 (2806 bytes); FL-1
+scenario f4ee64cc06da5c2f2baf3392a51c2d776af07b7378bb5c4649e4cbbb17489b01 (1909 bytes); PB-1 scenario b2145d853c7b852dead946822687f33e8c2d18f53da4154954e59d5afe01101b (877 bytes).
+NUMBERS: 2 calibration scenarios seeded.
+LEARNED: nothing
+NEXT: I-002-T4 (this packet); on ACCEPT, I-002 VERIFIED and I-003 brief follows;
+C-002 thesis drafting in parallel.
+
+---
+### JRN-I002-21 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_18_I-002-T3b-R1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 3 digest == amended 2941d303…, ends exit=0 | COMPLIANT |
+| 2 | Step 4 == pre-registered 7-line stdout, ends exit=0 | COMPLIANT |
+| 3 | Step 5 identical to Step 4, ends exit=0 | COMPLIANT |
+| 4 | Step 6: no modified; untracked limited to inbox/PACKET_*.md (L-13) | COMPLIANT |
+| 5 | CLAIM and DONE verbatim in OUT | COMPLIANT |
+| 6 | APPLIED.log serial-18 line pasted | COMPLIANT |
+| L-10/L-12 | P5 §5 header; JRN-I002-17/-18 + CLAIM/DONE verbatim; wc -c + sha256 for 2 applied files; TR in full; BRANCH/COMMITS with literal terminator | COMPLIANT |
+Verdict: ACCEPT. I-002-T3b VERIFIED (repair closes T3b). T4 selected next: completes
+I-002 workstream and unblocks I-003 scenario-store brief (C-002 thesis follows T4).
+NUMBERS: none
+LEARNED: nothing
+NEXT: I-002-T4 (JRN-I002-22).
+
+---
 ### JRN-I002-20 · DONE
 actor: composer-agent · task: I-002-T3b-R1 · manifest: n/a
 
