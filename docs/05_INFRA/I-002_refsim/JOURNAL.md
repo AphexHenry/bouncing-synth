@@ -1,6 +1,20 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-16 · BLOCKED
+actor: composer-agent · task: I-002-T3b · manifest: n/a
+
+WHAT: BLOCKED at Step 3: tier2_refsim.py sha256 digest mismatch — observed
+2941d303122e63e28e183728e114b15833c5c29a4dff2b40c3bdfae2a70e329d (6734 bytes) vs
+pre-registered dcaf6eb9a373779706ac96a9324403e0b672ac819f376ddcb228cfb16af7276d
+(6733 bytes). Transcription defect per PACKET 17 failure_modes; halted per
+stop-on-surprise. Steps 4–5 stdout matches pre-registered 7-line output; Step 6
+workspace clean on asserted surface (untracked inbox/PACKET_*.md only).
+NUMBERS: file size 6734 vs expected 6733.
+LEARNED: nothing
+NEXT: PM re-issue PACKET 17 FILES block for tier2_refsim.py with corrected bytes.
+
+---
 ### JRN-I002-15 · CLAIM
 actor: composer-agent · task: I-002-T3b · manifest: n/a
 
