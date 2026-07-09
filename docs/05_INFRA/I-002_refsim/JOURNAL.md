@@ -1,6 +1,18 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-8 · DONE
+actor: composer-agent · task: I-002-T2 · manifest: n/a
+
+WHAT: I-002-T2 complete DONE: tier1_fixtures.py digest matches pre-registered value; generator
+stdout and fixture digests byte-identical across two runs; FL-1 (8 dyadic float-exact events)
+and PB-1 (t1=1, contact=(1,1), residual=0) fixtures committed under tools/refsim/fixtures/;
+workspace clean per L-13 (untracked inbox/PACKET_*.md only on asserted surface before commit).
+NUMBERS: FL-1 events=8; PB-1 t1=1.
+LEARNED: nothing
+NEXT: PM review OUT_15; on ACCEPT, I-002-T3 brief follows.
+
+---
 ### JRN-I002-7 · CLAIM
 actor: composer-agent · task: I-002-T2 · manifest: n/a
 

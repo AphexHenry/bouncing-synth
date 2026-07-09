@@ -1,0 +1,36 @@
+{
+  "claims": {
+    "dyadic": true,
+    "float_exact": true
+  },
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1"
+    ],
+    "kind": "polynomial"
+  },
+  "events": [
+    {
+      "contact": [
+        "1",
+        "1"
+      ],
+      "t": "1",
+      "t_float": "0x1.0000000000000p+0"
+    }
+  ],
+  "family": "PB-1",
+  "id": "PB-1-h9-g16-c1",
+  "params": {
+    "c": "1",
+    "g": "16",
+    "h": "9",
+    "vx": "1"
+  },
+  "verification": {
+    "method": "exact-rational",
+    "residual_max": "0"
+  }
+}
