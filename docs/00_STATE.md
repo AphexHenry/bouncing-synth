@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-a | trigger: OUT_15 ACCEPT — I-002-T2 VERIFIED (JRN-I002-9); T3a (Tier-2 reference simulator) dispatched with PM-pre-verified cross-tier validation (PACKET 16)
+last_updated_by: pm-composer | trigger: OUT_16 ACCEPT — I-002-T3a VERIFIED (JRN-I002-13); T3b (algorithm-identity refsim) dispatched with PM-pre-verified VCA outputs (PACKET 17)
 
 ```
 doc_id:   STATE
@@ -17,8 +17,8 @@ Phase-0 deliverables (a)–(d) APPROVED with rulings R1–R3. P6 §7 and the sta
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | IDEA | THESIS | PM drafts thesis in parallel with T3b (next PM turn) |
-| C-002 Curve library | IDEA | THESIS | PM drafts thesis in parallel with T3b (next PM turn) |
+| C-001 Exact collision engine | IDEA | THESIS | PM drafts thesis in parallel with T4 (next PM turn) |
+| C-002 Curve library | IDEA | THESIS | PM drafts thesis in parallel with T4 (next PM turn) |
 
 C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
 
@@ -26,7 +26,7 @@ C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
 | id | state | next transition | waiting on |
 |---|---|---|---|
 | I-001 engine lib skeleton | VERIFIED (JRN-I001-14; OUT_8 + OUT_11) | — complete | — |
-| I-002 high-precision reference sim | T1, T2 VERIFIED; T3a dispatched (PACKET 16) | T3a review → T3b | OUT_16 |
+| I-002 high-precision reference sim | T1, T2, T3a VERIFIED; T3b dispatched (PACKET 17) | T3b review → T4 | OUT_17 |
 | I-003 scenario store + split-lock | SPECCED | brief | I-002 T4 (fixture format) |
 | I-004 gate runner + manifests | SPECCED | brief | I-003 |
 | I-005 event/pattern analysis harness | SPECCED | brief | I-004 |
@@ -45,16 +45,17 @@ C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
    (JRN-I001-1). Not blocking.
 
 ## Director housekeeping (batched, non-blocking — do whenever convenient)
-- Batch merge to the main checkpoint line (verified stack T1+T2): verify tip per L-12
-  (`git log --format='%H %s' -2 task/I-002-T2` — top names OUT_15, second is b5310372…), then
-  `git checkout main && git merge task/I-002-T2`. A merge commit is expected and fine (main
-  is a checkpoint line). After OUT_16 ACCEPT the same batch can instead take task/I-002-T3,
-  which will contain T1+T2+T3a.
+- Batch merge to the main checkpoint line (verified stack T1+T2+T3a): verify tip per L-12
+  (`git log --format='%H %s' -2 task/I-002-T3` — top names OUT_16, second is b72df3ff…), then
+  `git checkout main && git merge task/I-002-T3`. A merge commit is expected and fine (main
+  is a checkpoint line). After OUT_17 ACCEPT the same batch can instead take task/I-002-T3
+  at the T3b tip, which will contain T1+T2+T3a+T3b.
 
 ## Recent gate calls
 Phase-0 exit gate: PASSED (Director, 2026-07-07) — record JRN-C000-18.
 
 ## Recent review verdicts
+OUT_16/I-002-T3a: ACCEPT (2026-07-09) — all criteria COMPLIANT (JRN-I002-13); I-002-T3a VERIFIED.
 OUT_15/I-002-T2: ACCEPT (2026-07-08) — all criteria COMPLIANT (JRN-I002-9); I-002-T2 VERIFIED.
 OUT_14/I-002-T2: BLOCKED acknowledged — merge-pending class ×2 → stacked-branch rule
 (P6 §7.3, JRN-I002-6); PACKET 14 VOID.
@@ -71,6 +72,6 @@ BRANCH/COMMITS pasted immediately before the final OUT commit against the named 
 ending with the literal terminator line "+ final OUT commit (hash not self-listable)"; no
 amends — corrections are fix-up commits on top (L-12). Workspace-cleanliness criteria scoped
 to the agent-writable surface (L-13). Blocked flows escalate per P6 §7; the PM pre-verifies
-expected outputs before authoring criteria (§7.4; JRN-I002-1/-5/-10). Environment of record:
+expected outputs before authoring criteria (§7.4; JRN-I002-1/-5/-10/-14). Environment of record:
 arm64 macOS, Apple clang 17, cmake 3.27.8, Python 3.9.6 + venv-pinned mpmath 1.3.0 under
 tools/refsim.

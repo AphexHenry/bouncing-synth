@@ -1,6 +1,57 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-15 · CLAIM
+actor: composer-agent · task: I-002-T3b · manifest: n/a
+
+WHAT: Claimed I-002-T3b (algorithm-identity Tier-2 reference simulator) on branch
+task/I-002-T3 after PACKET 17 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–9 per PACKET 17; write TR and OUT.
+
+---
+### JRN-I002-14 · NOTE
+actor: pm-composer · task: I-002-T3b · manifest: n/a
+
+WHAT: I-002-T3b authored (PACKET 17): tools/refsim/tier2_refsim.py — algorithm-identity
+upgrade per DELIVERABLE_B §3/§5 and the I-002 brief T3 line. Replaces T3a oracle root-finding
+(mp.polyroots) with VCA sign-variation isolation over sign-change brackets, fixed refinement
+(bisection to width ≤ scale·2⁻⁴⁰, then exactly 3 Newton steps), G-1 grazing (|v_n| < 1e-9 →
+continue past), S-1 settle (post-bounce |v_n| < 1e-9 → stop), contact points projected onto
+the curve y=p(x). TB-1 is declared in stdout (single-ball smoke cases do not exercise
+multi-ball ordering). reference_converged unchanged: event sequence at dps must agree with
+2·dps to 40 digits. PM pre-verification (P6 §7.4): two runs byte-identical; FL-1 reproduces
+Tier-1 exact dyadic times to < 1e-45; PB-1 first contact (1,1) to < 1e-45 plus three
+Tier-2-only bounces; reference_converged=True on both fixtures. Pre-registered: full 7-line
+stdout and generator sha256
+dcaf6eb9a373779706ac96a9324403e0b672ac819f376ddcb228cfb16af7276d (6733 bytes).
+NUMBERS: FL-1 events=8, reference_converged=True; PB-1 events=4, reference_converged=True.
+LEARNED: nothing
+NEXT: I-002-T3b (this packet); on ACCEPT, I-002-T4 (fixture format) and C-001/C-002 thesis
+drafting proceed in parallel.
+
+---
+### JRN-I002-13 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_16_I-002-T3a per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 3 digest == pre-registered 7d7e9ce5…, ends exit=0 | COMPLIANT |
+| 2 | Step 4 == pre-registered 6-line stdout, ends exit=0 | COMPLIANT |
+| 3 | Step 5 identical to Step 4, ends exit=0 | COMPLIANT |
+| 4 | Step 6: no modified; untracked limited to inbox/PACKET_*.md (L-13) | COMPLIANT |
+| 5 | CLAIM and DONE verbatim in OUT | COMPLIANT |
+| 6 | APPLIED.log serial-16 line pasted | COMPLIANT |
+| L-10/L-12 | P5 §5 header; JRN-I002-9/-10 + CLAIM/DONE verbatim; wc -c + sha256 for all 4 applied files; TR in full; BRANCH/COMMITS baseline task/I-002-T2..HEAD with literal terminator | COMPLIANT |
+Verdict: ACCEPT. I-002-T3a VERIFIED. Verified stack is now T1+T2+T3a deep on task/I-002-T3;
+batched merge to main checkpoint line is listed in Director housekeeping (non-blocking).
+NUMBERS: none
+LEARNED: nothing
+NEXT: I-002-T3b (JRN-I002-14).
+
+---
 ### JRN-I002-12 · DONE
 actor: composer-agent · task: I-002-T3a · manifest: n/a
 
