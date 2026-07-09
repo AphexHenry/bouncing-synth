@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-composer | trigger: OUT_16 ACCEPT — I-002-T3a VERIFIED (JRN-I002-13); T3b (algorithm-identity refsim) dispatched with PM-pre-verified VCA outputs (PACKET 17)
+last_updated_by: pm-composer | trigger: OUT_17 AMEND+RETURN (digest defect JRN-I002-17); repair I-002-T3b-R1 dispatched (PACKET 18)
 
 ```
 doc_id:   STATE
@@ -26,7 +26,7 @@ C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
 | id | state | next transition | waiting on |
 |---|---|---|---|
 | I-001 engine lib skeleton | VERIFIED (JRN-I001-14; OUT_8 + OUT_11) | — complete | — |
-| I-002 high-precision reference sim | T1, T2, T3a VERIFIED; T3b dispatched (PACKET 17) | T3b review → T4 | OUT_17 |
+| I-002 high-precision reference sim | T1, T2, T3a VERIFIED; T3b BLOCKED → R1 dispatched (PACKET 18) | R1 review → T4 | OUT_18 |
 | I-003 scenario store + split-lock | SPECCED | brief | I-002 T4 (fixture format) |
 | I-004 gate runner + manifests | SPECCED | brief | I-003 |
 | I-005 event/pattern analysis harness | SPECCED | brief | I-004 |
@@ -45,33 +45,31 @@ C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
    (JRN-I001-1). Not blocking.
 
 ## Director housekeeping (batched, non-blocking — do whenever convenient)
-- Batch merge to the main checkpoint line (verified stack T1+T2+T3a): verify tip per L-12
-  (`git log --format='%H %s' -2 task/I-002-T3` — top names OUT_16, second is b72df3ff…), then
-  `git checkout main && git merge task/I-002-T3`. A merge commit is expected and fine (main
-  is a checkpoint line). After OUT_17 ACCEPT the same batch can instead take task/I-002-T3
-  at the T3b tip, which will contain T1+T2+T3a+T3b.
+- Batch merge to the main checkpoint line: after OUT_18 ACCEPT, verify tip per L-12
+  (`git log --format='%H %s' -2 task/I-002-T3` — top names OUT_18 or OUT_17-R1, second is
+  the prior verified commit), then `git checkout main && git merge task/I-002-T3`.
 
 ## Recent gate calls
 Phase-0 exit gate: PASSED (Director, 2026-07-07) — record JRN-C000-18.
 
 ## Recent review verdicts
+OUT_17/I-002-T3b: AMEND + RETURN (2026-07-09) — BLOCKED report fully compliant and honest
+(no agent fault); criterion 1 digest defective (JRN-I002-17); repair I-002-T3b-R1 in PACKET 18.
 OUT_16/I-002-T3a: ACCEPT (2026-07-09) — all criteria COMPLIANT (JRN-I002-13); I-002-T3a VERIFIED.
 OUT_15/I-002-T2: ACCEPT (2026-07-08) — all criteria COMPLIANT (JRN-I002-9); I-002-T2 VERIFIED.
 OUT_14/I-002-T2: BLOCKED acknowledged — merge-pending class ×2 → stacked-branch rule
 (P6 §7.3, JRN-I002-6); PACKET 14 VOID.
 OUT_13/I-002-T1: ACCEPT — I-002-T1 VERIFIED (JRN-I002-4).
-OUT_12 (apply-only, ×2 BLOCKED): PACKET 12 VOID; fix = P6 §7 (JRN-I001-15).
 
 ## Pointers
 Repository — stacked-branch rule (JRN-I002-6): task branches extend the previous verified
 task branch; preconditions anchor on ancestor checks against the branch being extended;
 Director merges to main are batched housekeeping with L-12 tip verification; main is a
-checkpoint line (out-of-loop commits recorded at JRN-I002-6, content-benign). Serials 12 and
-14 retired VOID. Standing OUT rules: L-10 evidence blocks; OUT header per P5 §5;
+checkpoint line. Standing OUT rules: L-10 evidence blocks; OUT header per P5 §5;
 BRANCH/COMMITS pasted immediately before the final OUT commit against the named base branch,
 ending with the literal terminator line "+ final OUT commit (hash not self-listable)"; no
 amends — corrections are fix-up commits on top (L-12). Workspace-cleanliness criteria scoped
 to the agent-writable surface (L-13). Blocked flows escalate per P6 §7; the PM pre-verifies
-expected outputs before authoring criteria (§7.4; JRN-I002-1/-5/-10/-14). Environment of record:
-arm64 macOS, Apple clang 17, cmake 3.27.8, Python 3.9.6 + venv-pinned mpmath 1.3.0 under
-tools/refsim.
+expected outputs before authoring criteria (§7.4). PM digest pre-registration must hash the
+exact bytes APPLY will commit (JRN-I002-17). Environment of record: arm64 macOS, Apple clang
+17, cmake 3.27.8, Python 3.9.6 + venv-pinned mpmath 1.3.0 under tools/refsim.

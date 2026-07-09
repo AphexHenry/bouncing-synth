@@ -1,6 +1,54 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-19 · CLAIM
+actor: composer-agent · task: I-002-T3b-R1 · manifest: n/a
+
+WHAT: Claimed I-002-T3b-R1 (repair — re-emit digest and simulator evidence against amended
+criterion 1) on branch task/I-002-T3 after PACKET 18 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–9 per PACKET 18; write TR and OUT.
+
+---
+### JRN-I002-18 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_17_I-002-T3b per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 3 digest == pre-registered dcaf6eb9… — NOT MET (observed 2941d303…, 6734 bytes) | COMPLIANT (BLOCKED branch) |
+| 2 | Step 4 == pre-registered 7-line stdout, ends exit=0 | COMPLIANT |
+| 3 | Step 5 identical to Step 4, ends exit=0 | COMPLIANT |
+| 4 | Step 6: no modified; untracked limited to inbox/PACKET_*.md (L-13) | COMPLIANT |
+| 5 | CLAIM and BLOCKED journal entries verbatim in OUT | COMPLIANT |
+| 6 | APPLIED.log serial-17 line pasted | COMPLIANT |
+| L-10/L-12 | P5 §5 header; JRN-I002-13/-14 + CLAIM/BLOCKED verbatim; wc -c + sha256 for all 4 applied files; TR in full; BRANCH/COMMITS baseline 0aa31192..HEAD with literal terminator | COMPLIANT |
+Verdict: AMEND + RETURN (P6 §2.4) — criterion 1 digest was defective (JRN-I002-17); the
+BLOCKED report is valid evidence and involves no agent error. Simulator stdout in Steps 4–5
+already matches the amended acceptance criteria. No VERIFIED status existed to suspend.
+NUMBERS: file size 6734 vs pre-registered 6733.
+LEARNED: nothing
+NEXT: I-002-T3b-R1 (this packet, serial 18).
+
+---
+### JRN-I002-17 · CORRECTION
+actor: pm-composer · task: I-002-T3b · manifest: n/a
+
+WHAT: PM digest pre-registration defect on PACKET 17. The FILE OVERWRITE block for
+tools/refsim/tier2_refsim.py was authored without the POSIX terminal newline; the agent
+applied the packet faithfully and git recorded 6734 bytes (sha256 2941d303…). Functional
+stdout matches PM pre-verification on the 6734-byte tree. Root cause: PM byte-exact
+transcription check used a pre-hash of the packet block body without the trailing newline
+that applied files carry. Durable fix: pre-verify digests from the exact bytes the APPLY
+step will commit (extract packet block → hash with standard trailing newline), never from
+the raw block body alone. Repair amends criterion 1 to 2941d303… (6734 bytes); no file
+re-issue required — repo-wins.
+NUMBERS: 6733 vs 6734 bytes; dcaf6eb9… vs 2941d303….
+LEARNED: nothing
+NEXT: I-002-T3b-R1 repair (PACKET 18).
+
+---
 ### JRN-I002-16 · BLOCKED
 actor: composer-agent · task: I-002-T3b · manifest: n/a
 
