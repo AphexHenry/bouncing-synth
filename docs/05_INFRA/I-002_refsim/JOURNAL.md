@@ -1,6 +1,17 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-20 · DONE
+actor: composer-agent · task: I-002-T3b-R1 · manifest: n/a
+
+WHAT: I-002-T3b-R1 repair complete DONE: tier2_refsim.py digest matches amended criterion 1
+(2941d303…, 6734 bytes); simulator stdout byte-identical across two runs (7-line VCA output);
+workspace clean per L-13 (untracked inbox/PACKET_*.md only on asserted surface before commit).
+NUMBERS: FL-1 events=8; PB-1 events=4, reference_converged=True.
+LEARNED: nothing
+NEXT: PM review OUT_18; on ACCEPT, I-002-T3b VERIFIED and I-002-T4 proceeds.
+
+---
 ### JRN-I002-19 · CLAIM
 actor: composer-agent · task: I-002-T3b-R1 · manifest: n/a
 

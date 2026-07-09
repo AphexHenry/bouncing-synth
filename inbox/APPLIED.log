@@ -14,3 +14,4 @@ serial 13 applied by composer-agent · files: docs/01_PROTOCOLS/P6_PM_CONDUCT.md
 serial 15 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, tools/refsim/tier1_fixtures.py, docs/00_STATE.md
 serial 16 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, tools/refsim/tier2_refsim.py, docs/00_STATE.md
 serial 17 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, tools/refsim/tier2_refsim.py, docs/00_STATE.md
+serial 18 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/00_STATE.md
