@@ -1,6 +1,17 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-25 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_19_I-002-T4 per P6 §2. Criterion table: all 8 criteria + L-10/L-12 COMPLIANT.
+Verdict: ACCEPT. I-002-T4 VERIFIED; I-002 workstream complete (T1–T4). INFRASTRUCTURE_REGISTER
+updated to VERIFIED.
+NUMBERS: 2 calibration scenarios seeded.
+LEARNED: nothing
+NEXT: C-002 thesis + I-003 brief (PACKET 20); C-002-T1 (PACKET 21).
+
+---
 ### JRN-I002-24 · DONE
 actor: composer-agent · task: I-002-T4 · manifest: n/a
 
