@@ -1,5 +1,5 @@
 # OUT 20 — apply only — APPLIED
-agent: composer-agent · branch: task/I-002-T4 · commits: d7f05bc
+agent: composer-agent · branch: task/I-002-T4 · commits: d7f05bc 8127282
 
 ## APPLY CONFIRMATION
 
@@ -63,5 +63,6 @@ f92fdcd4b2b31cbb629e5e56705c0f4ac1ff0671055cd44b2738a7dc5e42a20c  docs/02_PROGRA
 ## BRANCH / COMMITS
 
 ```
+8127282 OUT_20: PACKET 20 applied (I-002 VERIFIED, C-002 thesis, I-003 brief).
 d7f05bc Apply PACKET 20: I-002 VERIFIED, C-002 thesis + I-003 brief.
 ```
