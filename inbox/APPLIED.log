@@ -15,3 +15,4 @@ serial 15 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL
 serial 16 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, tools/refsim/tier2_refsim.py, docs/00_STATE.md
 serial 17 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, tools/refsim/tier2_refsim.py, docs/00_STATE.md
 serial 18 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/00_STATE.md
+serial 19 applied by composer-agent · files: docs/05_INFRA/I-002_refsim/JOURNAL.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, config/scenario-fixture-schema-v1.json, tools/refsim/emit_scenarios.py, data/scenarios/heldout/.gitkeep, docs/00_STATE.md

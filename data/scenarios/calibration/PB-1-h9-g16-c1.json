@@ -1,0 +1,57 @@
+{
+  "claims": {
+    "dyadic": true,
+    "float_exact": true
+  },
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1"
+    ],
+    "curve_id": "PB-1-h9-g16-c1-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "PB-1",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "9"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "1",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "16"
+  },
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "1",
+        "y": "1"
+      },
+      "seq": 0,
+      "t": "1",
+      "tier": 1
+    }
+  ],
+  "scenario_id": "PB-1-h9-g16-c1",
+  "schema_version": "1",
+  "verification": {
+    "method": "exact-rational",
+    "residual_max": "0"
+  }
+}

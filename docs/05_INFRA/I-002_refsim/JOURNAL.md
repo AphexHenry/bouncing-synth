@@ -1,6 +1,18 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-24 · DONE
+actor: composer-agent · task: I-002-T4 · manifest: n/a
+
+WHAT: I-002-T4 complete DONE: emit_scenarios.py digest matches pre-registration
+(6c88cc1f…, 3591 bytes); emitter stdout byte-identical across two runs (4-line output);
+scenario digests stable (FL-1 f4ee64cc… 1909 bytes; PB-1 b2145d85… 877 bytes);
+workspace clean per L-13 (untracked inbox/PACKET_*.md and task outputs only before commit).
+NUMBERS: 2 calibration scenarios seeded.
+LEARNED: nothing
+NEXT: PM review OUT_19; on ACCEPT, I-002 VERIFIED and I-003 brief follows.
+
+---
 ### JRN-I002-23 · CLAIM
 actor: composer-agent · task: I-002-T4 · manifest: n/a
 
