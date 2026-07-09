@@ -1,6 +1,19 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-12 · DONE
+actor: composer-agent · task: I-002-T3a · manifest: n/a
+
+WHAT: I-002-T3a complete DONE: tier2_refsim.py digest matches pre-registered value
+(7d7e9ce5…); simulator stdout byte-identical across two runs; FL-1 reproduces Tier-1
+exact dyadic event times to < 1e-45 with reference_converged=True; PB-1 first contact
+(1,1) to < 1e-45 plus three Tier-2-only bounces converged to 40 digits;
+workspace clean per L-13 (untracked inbox/PACKET_*.md only on asserted surface before commit).
+NUMBERS: FL-1 events=8; PB-1 events=4, reference_converged=True.
+LEARNED: nothing
+NEXT: PM review OUT_16; on ACCEPT, I-002-T3b (algorithm-identity) follows.
+
+---
 ### JRN-I002-11 · CLAIM
 actor: composer-agent · task: I-002-T3a · manifest: n/a
 
