@@ -11,7 +11,7 @@ parent:   PROJECT §13
 | ID | capability | state | blocking | link |
 |---|---|---|---|---|
 | I-001 | Headless engine library skeleton (C++, CMake, unit-test harness) | VERIFIED (JRN-I001-14; evidence OUT_8 + OUT_11) | C-001, C-002, everything | docs/05_INFRA/I-001_core_skeleton/ |
-| I-002 | High-precision reference simulator (Python/mpmath) + fixture generator | T1 VERIFIED (JRN-I002-4); T2 dispatched (PACKET 15) | all Design-A/C gates | docs/05_INFRA/I-002_refsim/ |
+| I-002 | High-precision reference simulator (Python/mpmath) + fixture generator | T1, T2 VERIFIED (JRN-I002-4/-9); T3a dispatched (PACKET 16) | all Design-A/C gates | docs/05_INFRA/I-002_refsim/ |
 | I-003 | Scenario/fixture store with split-lock machinery | SPECCED | Law 1 enforcement, all gates | — |
 | I-004 | Gate runner + manifest writer (PROJECT §7, §8) | SPECCED | every gate call | — |
 | I-005 | Event/pattern analysis harness (drift measurement, event-sequence diff) | SPECCED | Designs B/C | — |

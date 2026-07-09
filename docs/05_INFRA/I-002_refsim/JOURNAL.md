@@ -1,6 +1,63 @@
 # JOURNAL — I-002 refsim
 
 ---
+### JRN-I002-11 · CLAIM
+actor: composer-agent · task: I-002-T3a · manifest: n/a
+
+WHAT: Claimed I-002-T3a (Tier-2 high-precision reference simulator) on branch
+task/I-002-T3 after PACKET 16 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–9 per PACKET 16; write TR and OUT.
+
+---
+### JRN-I002-10 · NOTE
+actor: pm-fable5-a · task: I-002-T3a · manifest: n/a
+
+WHAT: I-002-T3a authored (PACKET 16): tools/refsim/tier2_refsim.py — Tier-2 high-precision
+reference simulator per DELIVERABLE_B §6. Scope T3a: point-contact ball (R1) on polynomial
+curves y=p(x); ballistic flight; collision as the smallest admissible root of
+q(t) = y(t) − p(x(t)) built by exact polynomial substitution; reflection about the curve
+normal with restitution along the normal component; all arithmetic mpmath at the requested
+dps; reference_converged = event sequence at dps agrees with 2·dps to 40 digits. Deferred to
+T3b for algorithm-identity with bounce-core: VCA root isolation with the fixed refinement
+schedule and the TB-1/G-1/S-1 versioned rules (tie-break, grazing, settle) — T3a fixtures are
+constructed to avoid those regimes, and T3a root-finding is oracle-grade mp.polyroots. PM
+pre-verification (P6 §7.4): two runs byte-identical; FL-1 reproduces the Tier-1 exact dyadic
+event times to < 1e-45 with reference_converged=True; PB-1 first contact (1,1) to < 1e-45,
+plus three further Tier-2-only bounces (irrational normals) converged to 40 digits.
+Pre-registered: full 6-line stdout and the generator sha256
+7d7e9ce5a05bd57c652a2907cbbd48dd877e18fc5849b73b64aba4a27dc941a3 (4731 bytes). Cross-tier
+validation is the point: Tier-1 exactness anchors Tier-2, Tier-2 extends past closed form.
+NUMBERS: FL-1 max|t−exact| < 1e-45, 8 events; PB-1 4 events, reference_converged=True at
+dps 50/100.
+LEARNED: nothing
+NEXT: I-002-T3a (this packet); on ACCEPT, T3b (algorithm-identity) and C-001/C-002 thesis
+drafting proceed in parallel.
+
+---
+### JRN-I002-9 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_15_I-002-T2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 3 digest == pre-registered 4fa8d891…, ends exit=0 | COMPLIANT |
+| 2 | Step 4 == pre-registered 3-line stdout, ends exit=0 | COMPLIANT |
+| 3 | Step 5 digests == pre-registered 63de96f4… / dc013c10…, ends exit=0 | COMPLIANT |
+| 4 | Step 6 identical to Step 4, ends exit=0 | COMPLIANT |
+| 5 | Step 7 identical to Step 5, ends exit=0 (byte-stable regeneration) | COMPLIANT |
+| 6 | Step 8: no modified; untracked = inbox/PACKET_*.md (courier surface, unasserted) + tools/refsim/fixtures/ (this task's own outputs, committed at step 10 which follows the status step) | COMPLIANT |
+| 7 | CLAIM and DONE verbatim in OUT | COMPLIANT |
+| 8 | APPLIED.log serial-15 line pasted | COMPLIANT |
+| L-10/L-12 | P5 §5 header; JRN-I002-4/-5/-6 + CLAIM/DONE verbatim; wc -c + sha256 for all 4 applied files (generator digest matches pre-registration in the applied tree too); TR in full; BRANCH/COMMITS baseline task/I-002-T1..HEAD with the literal terminator | COMPLIANT |
+Verdict: ACCEPT. I-002-T2 VERIFIED. The stacked-branch rule performed as designed: zero
+Director git actions on the dispatch path; verified stack is now T1+T2 deep, so the batched
+merge to the main checkpoint line is listed in Director housekeeping (non-blocking).
+NUMBERS: none
+LEARNED: nothing
+NEXT: I-002-T3a (JRN-I002-10).
+---
 ### JRN-I002-8 · DONE
 actor: composer-agent · task: I-002-T2 · manifest: n/a
 
