@@ -1,4 +1,15 @@
 ---
+### JRN-C002-4 · DONE
+actor: composer-agent · task: C-002-T1 · manifest: n/a
+
+WHAT: C-002-T1 complete DONE: polynomial compile + eval/deriv/normal in src/core/bounce/curve/;
+doctest on FL-1 flat line and PB-1 parabola; ctest 100% tests passed with 7 test cases / 18
+assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 2 new polynomial test cases.
+LEARNED: nothing
+NEXT: PM review OUT_21; on ACCEPT, C-001 thesis + I-003-T1 proceed.
+
+---
 ### JRN-C002-3 · CLAIM
 actor: composer-agent · task: C-002-T1 · manifest: n/a
 
