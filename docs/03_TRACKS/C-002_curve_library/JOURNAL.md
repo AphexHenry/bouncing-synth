@@ -1,4 +1,23 @@
 ---
+### JRN-C002-5 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_21_C-002-T1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 contains `100% tests passed` and doctest 7/7 cases, 18/18 assertions, SUCCESS!, ends exit=0 | COMPLIANT |
+| 4 | Step 7: no modified; untracked limited to inbox/PACKET_*.md (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim in OUT; serial-21 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 §5 header; JRN-C002-2/-3/-4 verbatim; FILE DIGESTS for packet files; TR steps 3–7 in REPORT; BRANCH/COMMITS with literal terminator | COMPLIANT |
+Verdict: ACCEPT. C-002-T1 VERIFIED. C-001 thesis + brief applied (PACKET 22). I-003-T1 next
+(PACKET 23).
+NUMBERS: 2 polynomial test cases (T1).
+LEARNED: nothing
+NEXT: I-003-T1 (PACKET 23); C-002-T2 briefed after I-003-T1 dispatch.
+
+---
 ### JRN-C002-4 · DONE
 actor: composer-agent · task: C-002-T1 · manifest: n/a
 

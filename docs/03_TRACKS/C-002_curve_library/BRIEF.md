@@ -30,7 +30,7 @@ has real curves. Failures are reported verbatim (FAILED/BLOCKED), never patched 
 depends_on: I-002-T4 (VERIFIED, JRN-I002-25); I-001 (VERIFIED)
 objective: First curve family slice — explicit polynomial through degree 8 — with doctest
            coverage on FL-1 (y=0) and PB-1 (y=x²) Tier-1 points.
-(Dispatched in PACKET 21.)
+VERIFIED (JRN-C002-5; OUT_21; TR_C-002-T1.md).
 
-## TASK C-002-T2 (sketch): Piecewise Bézier segments + C1 validator — briefed after T1 ACCEPT.
+## TASK C-002-T2 (sketch): Piecewise Bézier segments + C1 validator — briefed after I-003-T1 dispatch.
 ## TASK C-002-T3 (sketch): Validator corpus + compile-time allocation gate — at prereg.
