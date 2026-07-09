@@ -16,7 +16,7 @@ PACKET 21. I-003 brief authored; T1 follows C-002-T1 dispatch.
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-002 Curve library | THESIS | BRIEFED / T1 | PACKET 21 (C-002-T1) |
+| C-002 Curve library | BRIEFED | T1 review | OUT_21 |
 | C-001 Exact collision engine | IDEA | THESIS | after C-002-T1 brief stabilizes |
 
 C-000 Phase-0 scoping: CLOSED.
