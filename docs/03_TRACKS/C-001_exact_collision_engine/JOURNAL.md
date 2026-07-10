@@ -1,4 +1,16 @@
 ---
+### JRN-C001-16 · DONE
+actor: composer-agent · task: C-001-T4 · manifest: n/a
+
+WHAT: C-001-T4 complete DONE: reflect_velocity + simulate_ball_collisions (G-1 graze
+continuation, S-1 settle, fixed-stack event buffer) in src/core/bounce/engine/; doctest on FL-1
+eight tier-1 event times, max_events cap, S-1 settle; ctest 100% tests passed with 27 test
+cases / 90 assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 4 new collision-sim test cases.
+LEARNED: nothing
+NEXT: PM review OUT_28; on ACCEPT, C-001-T5 brief proceeds.
+
+---
 ### JRN-C001-15 · CLAIM
 actor: composer-agent · task: C-001-T4 · manifest: n/a
 
