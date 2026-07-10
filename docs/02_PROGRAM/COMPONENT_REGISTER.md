@@ -10,7 +10,7 @@ parent:   PROJECT §2
 
 | C-id | name | one-line claim | layer | state | named baseline | outcome + report link |
 |---|---|---|---|---|---|---|
-| C-001 | Exact collision engine | Closed-form ballistic flight + analytic collision-time root-solve on the true curve yields bit-deterministic, drift-free event sequences in real time | engine | BRIEFED | naive fixed-timestep + polyline engine (PROJECT §5 Law 7) | — |
+| C-001 | Exact collision engine | Closed-form ballistic flight + analytic collision-time root-solve on the true curve yields bit-deterministic, drift-free event sequences in real time | engine | BRIEFED | naive fixed-timestep + polyline engine (PROJECT §5 Law 7) | T1 VERIFIED (JRN-C001-5) — docs/03_TRACKS/C-001_exact_collision_engine/reports/TR_C-001-T1.md |
 | C-002 | Curve library | A family of exactly-defined user-shapeable curves (with derivatives/normals) the engine solves against | curve | BRIEFED | direct per-query eval without compilation at matched compile+query cost (DELIVERABLE_D) | T1 VERIFIED (JRN-C002-5); T2 VERIFIED (JRN-C002-9) — docs/03_TRACKS/C-002_curve_library/reports/ |
 | C-003 | Event→MIDI mapping engine | User-configurable collision→(pitch, velocity, channel) mapping emitted sample-accurately | mapping | IDEA | tbd at THESIS | — |
 | C-004 | Plugin shell & visuals | JUCE VST3 shell with real-time visualization and host parameter/automation plumbing | ui | IDEA | tbd at THESIS | — |

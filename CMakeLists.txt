@@ -17,6 +17,7 @@ add_library(bounce-core STATIC
   src/core/bounce/curve/bezier.cpp
   src/core/bounce/numerics/double_double.cpp
   src/core/bounce/engine/ballistic.cpp
+  src/core/bounce/engine/vca.cpp
 )
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
@@ -39,6 +40,7 @@ add_executable(bounce-tests
   tests/test_bezier_curve.cpp
   tests/test_double_double.cpp
   tests/test_ballistic.cpp
+  tests/test_vca.cpp
 )
 target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
 bounce_apply_fp_determinism(bounce-tests)

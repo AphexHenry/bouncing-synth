@@ -32,7 +32,12 @@ slice the task needs. Failures are reported verbatim (FAILED/BLOCKED), never pat
 depends_on: C-002-T2 VERIFIED (JRN-C002-9); I-001 (VERIFIED)
 objective: DD add/mul/div without FMA; compile ballistic flight path y=P(x) from BallisticInit
            using DD coefficient arithmetic; doctest on FL-1 ground hit and vx=0 rejection.
-(Dispatched in PACKET 25.)
+VERIFIED (JRN-C001-5; OUT_25; TR_C-001-T1.md).
 
-## TASK C-001-T2 (sketch): VCA root isolation on explicit-polynomial curve — after T1 ACCEPT.
+## TASK C-001-T2: VCA root isolation on explicit-polynomial curve + unit tests
+depends_on: C-001-T1 VERIFIED (JRN-C001-5)
+objective: Build f(x)−P(x) collision polynomial and isolate the smallest root bracket on
+           [x_min, x_max] via VCA bracket scan (DELIVERABLE_B §3 isolation step).
+(Dispatched in PACKET 26.)
+
 ## TASK C-001-T3 (sketch): Fixed refinement + admissibility filter + single-ball event step — at prereg.
