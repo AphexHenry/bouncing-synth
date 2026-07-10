@@ -51,6 +51,12 @@ VERIFIED (JRN-C001-13; OUT_27; TR_C-001-T3.md).
 depends_on: C-001-T3 VERIFIED (JRN-C001-13)
 objective: reflect_velocity about curve normal with restitution; simulate_ball_collisions loop
            with G-1 graze continuation and S-1 settle; doctest on FL-1 eight tier-1 event times.
-(Dispatched in PACKET 28.)
+VERIFIED (JRN-C001-17; OUT_28; TR_C-001-T4.md).
 
-## TASK C-001-T5 (sketch): PB-1 first-contact agreement + PROJECT CollisionEvent schema — at prereg.
+## TASK C-001-T5: CollisionEvent schema + PB-1 first-contact agreement + unit tests
+depends_on: C-001-T4 VERIFIED (JRN-C001-17)
+objective: Introduce PROJECT §6 CollisionEvent struct; simulator emits full schema events;
+           doctest on PB-1 tier-1 first contact (t=1, s=1 on y=x²).
+(Dispatched in PACKET 29.)
+
+## TASK C-001-T6 (sketch): TB-1 multi-ball global event queue — at prereg.

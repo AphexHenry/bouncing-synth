@@ -3,6 +3,7 @@
 
 #include "bounce/curve/polynomial.hpp"
 #include "bounce/engine/ballistic.hpp"
+#include "bounce/events/collision_event.hpp"
 
 #include <array>
 #include <cstddef>
@@ -18,15 +19,8 @@ struct ReflectedVelocity {
   double normal_speed_out = 0.0;
 };
 
-struct CollisionEventRecord {
-  double t = 0.0;
-  double x = 0.0;
-  double y = 0.0;
-  double impact_speed = 0.0;
-};
-
 struct BallSimResult {
-  std::array<CollisionEventRecord, kMaxSimEvents> events{};
+  std::array<events::CollisionEvent, kMaxSimEvents> events{};
   int count = 0;
   bool settled = false;
 };
@@ -36,6 +30,6 @@ ReflectedVelocity reflect_velocity(const curve::CompiledPolynomial& curve_y, dou
 
 BallSimResult simulate_ball_collisions(const curve::CompiledPolynomial& curve_y,
                                        BallisticInit init, double restitution, double x_max,
-                                       int max_events);
+                                       int max_events, int ball_id = 0);
 
 } // namespace bounce::core::engine
