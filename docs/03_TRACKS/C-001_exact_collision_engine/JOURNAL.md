@@ -1,4 +1,16 @@
 ---
+### JRN-C001-20 · DONE
+actor: composer-agent · task: C-001-T5 · manifest: n/a
+
+WHAT: C-001-T5 complete DONE: events::CollisionEvent schema (PROJECT §6 fields), simulator
+emits full schema events with seq assignment; doctest on PB-1 tier-1 first contact (t=1, s=1 on
+y=x²) and unit-normal check; ctest 100% tests passed with 29 test cases / 108 assertions /
+SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 2 new collision-sim test cases.
+LEARNED: nothing
+NEXT: PM review OUT_29; on ACCEPT, C-001-T6 brief proceeds.
+
+---
 ### JRN-C001-19 · CLAIM
 actor: composer-agent · task: C-001-T5 · manifest: n/a
 
