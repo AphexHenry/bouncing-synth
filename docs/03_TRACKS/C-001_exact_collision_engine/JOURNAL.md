@@ -1,4 +1,17 @@
 ---
+### JRN-C001-12 · DONE
+actor: composer-agent · task: C-001-T3 · manifest: n/a
+
+WHAT: C-001-T3 complete DONE: vca_refine_root_x (bisection 2⁻⁴⁰ + 3 DD Newton) +
+normal_impact_speed + kVGraze admissibility + step_ball_next_collision in
+src/core/bounce/engine/; doctest on FL-1 refinement, impact speed, accepted ground hit, no-hit
+case; ctest 100% tests passed with 23 test cases / 56 assertions / SUCCESS; workspace clean per
+L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 4 new VCA test cases.
+LEARNED: nothing
+NEXT: PM review OUT_27; on ACCEPT, C-001-T4 brief proceeds.
+
+---
 ### JRN-C001-11 · CLAIM
 actor: composer-agent · task: C-001-T3 · manifest: n/a
 
