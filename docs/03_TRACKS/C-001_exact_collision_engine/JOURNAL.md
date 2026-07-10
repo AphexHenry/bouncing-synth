@@ -17,6 +17,18 @@ LEARNED: nothing
 NEXT: C-001-T2 (PACKET 26).
 
 ---
+### JRN-C001-8 · DONE
+actor: composer-agent · task: C-001-T2 · manifest: n/a
+
+WHAT: C-001-T2 complete DONE: collision_difference_x (curve y − ballistic P(x)) +
+vca_isolate_smallest_root bracket scan in src/core/bounce/engine/; doctest on FL-1 ground
+crossing bracket, no-root case; ctest 100% tests passed with 19 test cases / 44 assertions /
+SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 3 new VCA test cases.
+LEARNED: nothing
+NEXT: PM review OUT_26; on ACCEPT, C-001-T3 brief proceeds.
+
+---
 ### JRN-C001-7 · CLAIM
 actor: composer-agent · task: C-001-T2 · manifest: n/a
 
