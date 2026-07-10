@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-composer | trigger: OUT_25 ACCEPT — C-001-T1 VERIFIED (JRN-C001-5); C-001-T2 (PACKET 26)
+last_updated_by: pm-composer | trigger: OUT_26 ACCEPT — C-001-T2 VERIFIED (JRN-C001-9); C-001-T3 (PACKET 27)
 
 ```
 doc_id:   STATE
@@ -10,13 +10,13 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core. C-001-T1 VERIFIED (DD + ballistic P(x)). C-001-T2 in PACKET 26
-(VCA root isolation). C-002-T1/T2 VERIFIED. I-003-T1 VERIFIED.
+Phase 1 — Falsifiable core. C-001-T1/T2 VERIFIED. C-001-T3 in PACKET 27 (refinement +
+admissibility + single-ball step). C-002-T1/T2 VERIFIED. I-003-T1 VERIFIED.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | BRIEFED | T2 review | OUT_26 |
+| C-001 Exact collision engine | BRIEFED | T3 review | OUT_27 |
 | C-002 Curve library | BRIEFED | T3 prereg | — |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -38,8 +38,9 @@ C-000 Phase-0 scoping: CLOSED.
 3. GPLv3 -only vs -or-later — Phase 3.
 
 ## Recent review verdicts
+OUT_26/C-001-T2: ACCEPT — C-001-T2 VERIFIED (JRN-C001-9).
 OUT_25/C-001-T1: ACCEPT — C-001-T1 VERIFIED (JRN-C001-5).
 OUT_24/C-002-T2: ACCEPT — C-002-T2 VERIFIED (JRN-C002-9).
 
 ## Pointers
-Component branch rule: C-001-T2 branches from task/C-001-T1. Infra I-00x stacked from task/I-002-T4.
+Component branch rule: C-001-T3 branches from task/C-001-T2. Infra I-00x stacked from task/I-002-T4.

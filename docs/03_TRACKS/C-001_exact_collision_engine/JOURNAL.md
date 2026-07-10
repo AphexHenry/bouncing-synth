@@ -1,4 +1,35 @@
 ---
+### JRN-C001-9 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_26_C-001-T2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 19/19 cases, 44/44 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-26 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-6/-7/-8 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T2 VERIFIED. C-001-T3 dispatched (PACKET 27).
+NUMBERS: 3 VCA test cases (T2).
+LEARNED: nothing
+NEXT: C-001-T3 (PACKET 27).
+
+---
+### JRN-C001-10 · NOTE
+actor: pm-composer · task: C-001-T3 · manifest: n/a
+
+WHAT: C-001-T3 authored (PACKET 27): vca_refine_root_x (bisection to 2⁻⁴⁰ interval scale +
+3 Newton steps in double-double, DELIVERABLE_B §3), normal_impact_speed + kVGraze admissibility
+filter, step_ball_next_collision single-ball pipeline (isolate → refine → admissibility). PM
+pre-verification (P6 §7.4): ctest 100% tests passed; doctest 23 test cases / 56 assertions /
+SUCCESS. Digests pre-registered.
+NUMBERS: 4 new VCA test cases.
+LEARNED: nothing
+NEXT: C-001-T3 (this packet); on ACCEPT, C-001-T4 brief proceeds.
+
+---
 ### JRN-C001-5 · NOTE
 actor: pm-composer · task: n/a · manifest: n/a
 

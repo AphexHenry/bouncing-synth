@@ -38,6 +38,13 @@ VERIFIED (JRN-C001-5; OUT_25; TR_C-001-T1.md).
 depends_on: C-001-T1 VERIFIED (JRN-C001-5)
 objective: Build f(x)−P(x) collision polynomial and isolate the smallest root bracket on
            [x_min, x_max] via VCA bracket scan (DELIVERABLE_B §3 isolation step).
-(Dispatched in PACKET 26.)
+VERIFIED (JRN-C001-9; OUT_26; TR_C-001-T2.md).
 
-## TASK C-001-T3 (sketch): Fixed refinement + admissibility filter + single-ball event step — at prereg.
+## TASK C-001-T3: Fixed refinement + admissibility filter + single-ball event step + unit tests
+depends_on: C-001-T2 VERIFIED (JRN-C001-9)
+objective: Refine isolated root (bisection 2⁻⁴⁰ + 3 DD Newton), apply G-1 admissibility
+           (|normal impact speed| ≥ v_graze), expose step_ball_next_collision for one collision
+           query on explicit-polynomial curves; doctest on FL-1 ground hit.
+(Dispatched in PACKET 27.)
+
+## TASK C-001-T4 (sketch): Elastic reflection + graze continuation + multi-event FL-1 sequence — at prereg.
