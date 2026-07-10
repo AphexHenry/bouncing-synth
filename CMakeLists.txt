@@ -14,6 +14,7 @@ include(config/fp-determinism.cmake)
 add_library(bounce-core STATIC
   src/core/bounce/version.cpp
   src/core/bounce/curve/polynomial.cpp
+  src/core/bounce/curve/bezier.cpp
 )
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
@@ -33,6 +34,7 @@ add_executable(bounce-tests
   tests/test_smoke.cpp
   tests/test_fp_environment.cpp
   tests/test_polynomial_curve.cpp
+  tests/test_bezier_curve.cpp
 )
 target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
 bounce_apply_fp_determinism(bounce-tests)

@@ -1,4 +1,15 @@
 ---
+### JRN-C002-6 · NOTE
+actor: pm-composer · task: C-002-T2 · manifest: n/a
+
+WHAT: C-002-T2 authored (PACKET 24): quadratic/cubic Bézier compile + parametric eval/deriv/normal;
+piecewise assembly + C1 joint validator (position + tangent cross). PM pre-verification (P6 §7.4):
+ctest 100% tests passed; doctest 11 test cases / 31 assertions / SUCCESS. Digests pre-registered.
+NUMBERS: 4 new bezier test cases.
+LEARNED: nothing
+NEXT: C-002-T2 (this packet); on ACCEPT, C-001-T1 brief proceeds.
+
+---
 ### JRN-C002-5 · NOTE
 actor: pm-composer · task: n/a · manifest: n/a
 

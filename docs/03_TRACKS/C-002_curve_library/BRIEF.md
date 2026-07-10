@@ -32,5 +32,10 @@ objective: First curve family slice — explicit polynomial through degree 8 —
            coverage on FL-1 (y=0) and PB-1 (y=x²) Tier-1 points.
 VERIFIED (JRN-C002-5; OUT_21; TR_C-002-T1.md).
 
-## TASK C-002-T2 (sketch): Piecewise Bézier segments + C1 validator — briefed after I-003-T1 dispatch.
+## TASK C-002-T2: Piecewise Bézier segments + C1 validator + unit tests
+depends_on: C-002-T1 VERIFIED (JRN-C002-5); I-003-T1 VERIFIED (JRN-I003-5)
+objective: Quadratic/cubic Bézier compile + parametric eval/deriv/normal; piecewise assembly
+           with C1 validator rejecting undeclared kinks (DELIVERABLE_B §2).
+(Dispatched in PACKET 24.)
+
 ## TASK C-002-T3 (sketch): Validator corpus + compile-time allocation gate — at prereg.
