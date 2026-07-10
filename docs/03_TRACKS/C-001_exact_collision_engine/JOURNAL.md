@@ -1,4 +1,16 @@
 ---
+### JRN-C001-24 · DONE
+actor: composer-agent · task: C-001-T6 · manifest: n/a
+
+WHAT: C-001-T6 complete DONE: simulate_multi_ball_collisions with TB-1 ordering (min global t,
+then ball_id), fixed-stack ActiveBall state for kMaxBalls=4, global seq assignment; doctests on
+simultaneous tie-break, earliest-time pick, monotone seq; ctest 100% tests passed with 32 test
+cases / 130 assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 3 new collision-sim test cases.
+LEARNED: nothing
+NEXT: PM review OUT_30; on ACCEPT, C-001-T7 brief proceeds.
+
+---
 ### JRN-C001-23 · CLAIM
 actor: composer-agent · task: C-001-T6 · manifest: n/a
 
