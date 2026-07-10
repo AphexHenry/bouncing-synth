@@ -1,4 +1,45 @@
 ---
+### JRN-C001-23 · CLAIM
+actor: composer-agent · task: C-001-T6 · manifest: n/a
+
+WHAT: Claimed C-001-T6 (TB-1 multi-ball global event queue + unit tests)
+on branch task/C-001-T6 after PACKET 30 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 30; write TR and OUT.
+
+---
+### JRN-C001-22 · NOTE
+actor: pm-composer · task: C-001-T6 · manifest: n/a
+
+WHAT: C-001-T6 authored (PACKET 30): simulate_multi_ball_collisions with TB-1 ordering
+(min global t, then ball_id), fixed-stack ActiveBall state for kMaxBalls=4, global seq
+assignment; doctests on simultaneous tie-break, earliest-time pick, monotone seq. PM
+pre-verification (P6 §7.4): ctest 100% tests passed; doctest 32 test cases / 130 assertions /
+SUCCESS. Digests pre-registered.
+NUMBERS: 3 new collision-sim test cases.
+LEARNED: nothing
+NEXT: C-001-T6 (this packet); on ACCEPT, C-001-T7 brief proceeds.
+
+---
+### JRN-C001-21 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_29_C-001-T5 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 29/29 cases, 108/108 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-29 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-17/-18/-19/-20 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T5 VERIFIED. C-001-T6 dispatched (PACKET 30).
+NUMBERS: 2 collision-sim test cases (T5).
+LEARNED: nothing
+NEXT: C-001-T6 (PACKET 30).
+
+---
 ### JRN-C001-20 · DONE
 actor: composer-agent · task: C-001-T5 · manifest: n/a
 

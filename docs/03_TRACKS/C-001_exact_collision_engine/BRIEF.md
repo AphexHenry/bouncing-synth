@@ -57,6 +57,12 @@ VERIFIED (JRN-C001-17; OUT_28; TR_C-001-T4.md).
 depends_on: C-001-T4 VERIFIED (JRN-C001-17)
 objective: Introduce PROJECT §6 CollisionEvent struct; simulator emits full schema events;
            doctest on PB-1 tier-1 first contact (t=1, s=1 on y=x²).
-(Dispatched in PACKET 29.)
+VERIFIED (JRN-C001-21; OUT_29; TR_C-001-T5.md).
 
-## TASK C-001-T6 (sketch): TB-1 multi-ball global event queue — at prereg.
+## TASK C-001-T6: TB-1 multi-ball global event queue + unit tests
+depends_on: C-001-T5 VERIFIED (JRN-C001-21)
+objective: simulate_multi_ball_collisions with TB-1 ordering (min t, then ball_id); doctests
+           on simultaneous tie-break, earliest-time selection, monotone seq.
+(Dispatched in PACKET 30.)
+
+## TASK C-001-T7 (sketch): Calibration scenario JSON runner (FL-1/PB-1 end-to-end) — at prereg.

@@ -10,8 +10,10 @@
 
 using bounce::core::curve::compile_polynomial;
 using bounce::core::engine::BallisticInit;
+using bounce::core::engine::BallSpec;
 using bounce::core::engine::reflect_velocity;
 using bounce::core::engine::simulate_ball_collisions;
+using bounce::core::engine::simulate_multi_ball_collisions;
 
 TEST_CASE("reflect_velocity inverts normal component with restitution 0.5") {
   const auto curve = compile_polynomial({0.0});
@@ -79,4 +81,58 @@ TEST_CASE("CollisionEvent normal is unit length") {
   const double norm_len =
       std::sqrt(event.normal_x * event.normal_x + event.normal_y * event.normal_y);
   CHECK(norm_len == doctest::Approx(1.0).epsilon(1e-12));
+}
+
+TEST_CASE("TB-1 tie-break prefers lower ball_id at equal event time") {
+  const auto curve = compile_polynomial({0.0});
+  const BallSpec balls[2] = {
+      {0, {0.0, 5.0, 1.0, 0.0, 10.0}, 0.5},
+      {1, {2.0, 5.0, 1.0, 0.0, 10.0}, 0.5},
+  };
+  const auto result = simulate_multi_ball_collisions(curve, balls, 2, 100.0, 2);
+  CHECK(result.count == 2);
+  CHECK(result.events[0].t == doctest::Approx(1.0).epsilon(1e-12));
+  CHECK(result.events[0].ball_id == 0);
+  CHECK(result.events[0].s == doctest::Approx(1.0).epsilon(1e-12));
+  CHECK(result.events[0].seq == 0);
+  CHECK(result.events[1].t == doctest::Approx(1.0).epsilon(1e-12));
+  CHECK(result.events[1].ball_id == 1);
+  CHECK(result.events[1].s == doctest::Approx(3.0).epsilon(1e-12));
+  CHECK(result.events[1].seq == 1);
+}
+
+TEST_CASE("TB-1 global queue picks earliest collision time") {
+  const auto curve = compile_polynomial({0.0});
+  const BallSpec balls[2] = {
+      {1, {0.0, 12.5, 0.5, 0.0, 10.0}, 0.5},
+      {0, {0.0, 5.0, 1.0, 0.0, 10.0}, 0.5},
+  };
+  const auto result = simulate_multi_ball_collisions(curve, balls, 2, 100.0, 2);
+  CHECK(result.count == 2);
+  CHECK(result.events[0].t == doctest::Approx(1.0).epsilon(1e-12));
+  CHECK(result.events[0].ball_id == 0);
+  CHECK(result.events[1].t == doctest::Approx(std::sqrt(2.5)).epsilon(1e-12));
+  CHECK(result.events[1].ball_id == 1);
+}
+
+TEST_CASE("multi-ball monotone seq assignment") {
+  const auto curve = compile_polynomial({0.0});
+  const BallSpec balls[2] = {
+      {0, {0.0, 5.0, 1.0, 0.0, 10.0}, 0.5},
+      {1, {2.0, 5.0, 1.0, 0.0, 10.0}, 0.5},
+  };
+  const auto result = simulate_multi_ball_collisions(curve, balls, 2, 100.0, 4);
+  CHECK(result.count == 4);
+  for (int i = 0; i < result.count; ++i) {
+    CHECK(result.events[static_cast<std::size_t>(i)].seq == i);
+    if (i > 0) {
+      const auto& prev = result.events[static_cast<std::size_t>(i - 1)];
+      const auto& cur = result.events[static_cast<std::size_t>(i)];
+      if (cur.t == prev.t) {
+        CHECK(cur.ball_id > prev.ball_id);
+      } else {
+        CHECK(cur.t > prev.t);
+      }
+    }
+  }
 }
