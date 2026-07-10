@@ -45,6 +45,12 @@ depends_on: C-001-T2 VERIFIED (JRN-C001-9)
 objective: Refine isolated root (bisection 2⁻⁴⁰ + 3 DD Newton), apply G-1 admissibility
            (|normal impact speed| ≥ v_graze), expose step_ball_next_collision for one collision
            query on explicit-polynomial curves; doctest on FL-1 ground hit.
-(Dispatched in PACKET 27.)
+VERIFIED (JRN-C001-13; OUT_27; TR_C-001-T3.md).
 
-## TASK C-001-T4 (sketch): Elastic reflection + graze continuation + multi-event FL-1 sequence — at prereg.
+## TASK C-001-T4: Elastic reflection + graze continuation + multi-event FL-1 sequence + unit tests
+depends_on: C-001-T3 VERIFIED (JRN-C001-13)
+objective: reflect_velocity about curve normal with restitution; simulate_ball_collisions loop
+           with G-1 graze continuation and S-1 settle; doctest on FL-1 eight tier-1 event times.
+(Dispatched in PACKET 28.)
+
+## TASK C-001-T5 (sketch): PB-1 first-contact agreement + PROJECT CollisionEvent schema — at prereg.

@@ -1,4 +1,44 @@
 ---
+### JRN-C001-15 · CLAIM
+actor: composer-agent · task: C-001-T4 · manifest: n/a
+
+WHAT: Claimed C-001-T4 (elastic reflection + graze continuation + multi-event FL-1 sequence +
+unit tests) on branch task/C-001-T4 after PACKET 28 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 28; write TR and OUT.
+
+---
+### JRN-C001-14 · NOTE
+actor: pm-composer · task: C-001-T4 · manifest: n/a
+
+WHAT: C-001-T4 authored (PACKET 28): reflect_velocity (algorithm-identity with tier2_refsim
+reflect), simulate_ball_collisions loop (G-1 graze continuation, S-1 settle, fixed-stack event
+buffer), FL-1 eight-event tier-1 time sequence doctest. PM pre-verification (P6 §7.4): ctest 100%
+tests passed; doctest 27 test cases / 90 assertions / SUCCESS. Digests pre-registered.
+NUMBERS: 4 new collision-sim test cases.
+LEARNED: nothing
+NEXT: C-001-T4 (this packet); on ACCEPT, C-001-T5 brief proceeds.
+
+---
+### JRN-C001-13 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_27_C-001-T3 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 23/23 cases, 56/56 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-27 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-10/-11/-12 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T3 VERIFIED. C-001-T4 dispatched (PACKET 28).
+NUMBERS: 4 new VCA test cases (T3).
+LEARNED: nothing
+NEXT: C-001-T4 (PACKET 28).
+
+---
 ### JRN-C001-12 · DONE
 actor: composer-agent · task: C-001-T3 · manifest: n/a
 

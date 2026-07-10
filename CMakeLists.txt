@@ -18,6 +18,7 @@ add_library(bounce-core STATIC
   src/core/bounce/numerics/double_double.cpp
   src/core/bounce/engine/ballistic.cpp
   src/core/bounce/engine/vca.cpp
+  src/core/bounce/engine/collision_sim.cpp
 )
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
@@ -41,6 +42,7 @@ add_executable(bounce-tests
   tests/test_double_double.cpp
   tests/test_ballistic.cpp
   tests/test_vca.cpp
+  tests/test_collision_sim.cpp
 )
 target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
 bounce_apply_fp_determinism(bounce-tests)
