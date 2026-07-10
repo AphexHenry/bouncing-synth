@@ -1,4 +1,14 @@
 ---
+### JRN-C002-7 · CLAIM
+actor: composer-agent · task: C-002-T2 · manifest: n/a
+
+WHAT: Claimed C-002-T2 (piecewise Bézier compile + eval/deriv/normal + C1 validator + unit tests)
+on branch task/C-002-T2 after PACKET 24 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 24; write TR and OUT.
+
+---
 ### JRN-C002-6 · NOTE
 actor: pm-composer · task: C-002-T2 · manifest: n/a
 
