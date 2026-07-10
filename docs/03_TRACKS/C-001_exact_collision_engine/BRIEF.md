@@ -28,6 +28,11 @@ slice the task needs. Failures are reported verbatim (FAILED/BLOCKED), never pat
 - `docs/03_TRACKS/C-001_exact_collision_engine/reports/` task reports
 - `outbox/OUT_<serial>_C-001-T<n>.md`
 
-## TASK C-001-T1 (sketch): Double-double arithmetic + ballistic parabola P(x) — dispatch after C-002-T2.
-## TASK C-001-T2 (sketch): VCA root isolation on explicit-polynomial curve — after T1.
+## TASK C-001-T1: Double-double arithmetic + ballistic parabola P(x) + unit tests
+depends_on: C-002-T2 VERIFIED (JRN-C002-9); I-001 (VERIFIED)
+objective: DD add/mul/div without FMA; compile ballistic flight path y=P(x) from BallisticInit
+           using DD coefficient arithmetic; doctest on FL-1 ground hit and vx=0 rejection.
+(Dispatched in PACKET 25.)
+
+## TASK C-001-T2 (sketch): VCA root isolation on explicit-polynomial curve — after T1 ACCEPT.
 ## TASK C-001-T3 (sketch): Fixed refinement + admissibility filter + single-ball event step — at prereg.

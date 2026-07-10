@@ -1,4 +1,22 @@
 ---
+### JRN-C002-9 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_24_C-002-T2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 11/11 cases, 31/31 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-24 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C002-6/-7/-8 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-002-T2 VERIFIED. C-001-T1 dispatched (PACKET 25).
+NUMBERS: 4 bezier test cases (T2).
+LEARNED: nothing
+NEXT: C-001-T1 (PACKET 25).
+
+---
 ### JRN-C002-8 · DONE
 actor: composer-agent · task: C-002-T2 · manifest: n/a
 

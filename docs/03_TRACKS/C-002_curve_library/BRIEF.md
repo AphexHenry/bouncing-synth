@@ -36,6 +36,6 @@ VERIFIED (JRN-C002-5; OUT_21; TR_C-002-T1.md).
 depends_on: C-002-T1 VERIFIED (JRN-C002-5); I-003-T1 VERIFIED (JRN-I003-5)
 objective: Quadratic/cubic Bézier compile + parametric eval/deriv/normal; piecewise assembly
            with C1 validator rejecting undeclared kinks (DELIVERABLE_B §2).
-(Dispatched in PACKET 24.)
+VERIFIED (JRN-C002-9; OUT_24; TR_C-002-T2.md).
 
 ## TASK C-002-T3 (sketch): Validator corpus + compile-time allocation gate — at prereg.

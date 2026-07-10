@@ -1,4 +1,26 @@
 ---
+### JRN-C001-3 · CLAIM
+actor: composer-agent · task: C-001-T1 · manifest: n/a
+
+WHAT: Claimed C-001-T1 (double-double arithmetic + ballistic parabola P(x) + unit tests)
+on branch task/C-001-T1 after PACKET 25 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 25; write TR and OUT.
+
+---
+### JRN-C001-2 · NOTE
+actor: pm-composer · task: C-001-T1 · manifest: n/a
+
+WHAT: C-001-T1 authored (PACKET 25): double-double add/mul/div (no FMA, DELIVERABLE_B §4);
+ballistic parabola P(x) coefficient compile via DD + position_at_time; FL-1 ground-hit doctest.
+PM pre-verification (P6 §7.4): ctest 100% tests passed; doctest 16 test cases / 39 assertions /
+SUCCESS. Digests pre-registered.
+NUMBERS: 5 new engine test cases (3 DD + 2 ballistic).
+LEARNED: nothing
+NEXT: C-001-T1 (this packet); on ACCEPT, C-001-T2 brief proceeds.
+
+---
 ### JRN-C001-1 · NOTE
 actor: pm-composer · task: n/a · manifest: n/a
 
