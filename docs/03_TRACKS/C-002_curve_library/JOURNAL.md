@@ -1,4 +1,16 @@
 ---
+### JRN-C002-8 · DONE
+actor: composer-agent · task: C-002-T2 · manifest: n/a
+
+WHAT: C-002-T2 complete DONE: piecewise Bézier compile + eval/deriv/normal + C1 validator in
+src/core/bounce/curve/; doctest on quadratic/cubic eval, piecewise C1 pass/fail; ctest 100% tests
+passed with 11 test cases / 31 assertions / SUCCESS; workspace clean per L-13 (untracked
+inbox/PACKET_*.md only).
+NUMBERS: 4 new bezier test cases.
+LEARNED: nothing
+NEXT: PM review OUT_24; on ACCEPT, C-001-T1 brief proceeds.
+
+---
 ### JRN-C002-7 · CLAIM
 actor: composer-agent · task: C-002-T2 · manifest: n/a
 
