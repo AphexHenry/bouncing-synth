@@ -1,4 +1,16 @@
 ---
+### JRN-C001-4 · DONE
+actor: composer-agent · task: C-001-T1 · manifest: n/a
+
+WHAT: C-001-T1 complete DONE: double-double add/mul/div + ballistic parabola P(x) in
+src/core/bounce/numerics/ and src/core/bounce/engine/; doctest on DD ops, FL-1 ground hit,
+vx=0 rejection; ctest 100% tests passed with 16 test cases / 39 assertions / SUCCESS; workspace
+clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 5 new engine test cases (3 DD + 2 ballistic).
+LEARNED: nothing
+NEXT: PM review OUT_25; on ACCEPT, C-001-T2 brief proceeds.
+
+---
 ### JRN-C001-3 · CLAIM
 actor: composer-agent · task: C-001-T1 · manifest: n/a
 
