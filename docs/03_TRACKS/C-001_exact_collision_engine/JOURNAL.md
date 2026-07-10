@@ -1,4 +1,14 @@
 ---
+### JRN-C001-11 · CLAIM
+actor: composer-agent · task: C-001-T3 · manifest: n/a
+
+WHAT: Claimed C-001-T3 (fixed refinement + admissibility filter + single-ball event step +
+unit tests) on branch task/C-001-T3 after PACKET 27 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 27; write TR and OUT.
+
+---
 ### JRN-C001-9 · NOTE
 actor: pm-composer · task: n/a · manifest: n/a
 
