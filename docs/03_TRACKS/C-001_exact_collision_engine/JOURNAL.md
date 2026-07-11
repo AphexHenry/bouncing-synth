@@ -1,4 +1,16 @@
 ---
+### JRN-C001-32 · DONE
+actor: composer-agent · task: C-001-T8 · manifest: n/a
+
+WHAT: C-001-T8 complete DONE: events_equal (exact == on all CollisionEvent fields) +
+doctest FL-1 determinism_repro (100 repeated run_calibration_scenario calls, bit-identical
+to baseline); ctest 100% tests passed with 37 test cases / 286 assertions / SUCCESS;
+workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 1 new determinism_repro test case.
+LEARNED: nothing
+NEXT: PM review OUT_32; on ACCEPT, C-001-T9 brief proceeds.
+
+---
 ### JRN-C001-31 · CLAIM
 actor: composer-agent · task: C-001-T8 · manifest: n/a
 
