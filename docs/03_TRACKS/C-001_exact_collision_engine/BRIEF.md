@@ -63,6 +63,12 @@ VERIFIED (JRN-C001-21; OUT_29; TR_C-001-T5.md).
 depends_on: C-001-T5 VERIFIED (JRN-C001-21)
 objective: simulate_multi_ball_collisions with TB-1 ordering (min t, then ball_id); doctests
            on simultaneous tie-break, earliest-time selection, monotone seq.
-(Dispatched in PACKET 30.)
+VERIFIED (JRN-C001-25; OUT_30; TR_C-001-T6.md).
 
-## TASK C-001-T7 (sketch): Calibration scenario JSON runner (FL-1/PB-1 end-to-end) — at prereg.
+## TASK C-001-T7: Calibration scenario JSON runner (FL-1/PB-1 end-to-end) + unit tests
+depends_on: C-001-T6 VERIFIED (JRN-C001-25)
+objective: load_calibration_scenario + run_calibration_scenario for schema-v1 calibration
+           JSON; doctest FL-1 eight tier-1 reference events and PB-1 first contact.
+(Dispatched in PACKET 31.)
+
+## TASK C-001-T8 (sketch): determinism_repro repeated-run identity on FL-1 — at prereg.

@@ -1,4 +1,45 @@
 ---
+### JRN-C001-27 · CLAIM
+actor: composer-agent · task: C-001-T7 · manifest: n/a
+
+WHAT: Claimed C-001-T7 (calibration scenario JSON runner + unit tests)
+on branch task/C-001-T7 after PACKET 31 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 31; write TR and OUT.
+
+---
+### JRN-C001-26 · NOTE
+actor: pm-composer · task: C-001-T7 · manifest: n/a
+
+WHAT: C-001-T7 authored (PACKET 31): parse_rational + load_calibration_scenario (schema-v1
+subset, stdlib-only JSON scan) + run_calibration_scenario; doctests load/run FL-1 eight tier-1
+reference events and PB-1 first contact from data/scenarios/calibration/. PM pre-verification
+(P6 §7.4): ctest 100% tests passed; doctest 36 test cases / 185 assertions / SUCCESS. Digests
+pre-registered.
+NUMBERS: 4 new calibration-scenario test cases.
+LEARNED: nothing
+NEXT: C-001-T7 (this packet); on ACCEPT, C-001-T8 brief proceeds.
+
+---
+### JRN-C001-25 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_30_C-001-T6 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 32/32 cases, 130/130 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-30 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-21/-22/-23/-24 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T6 VERIFIED. C-001-T7 dispatched (PACKET 31).
+NUMBERS: 3 collision-sim test cases (T6).
+LEARNED: nothing
+NEXT: C-001-T7 (PACKET 31).
+
+---
 ### JRN-C001-24 · DONE
 actor: composer-agent · task: C-001-T6 · manifest: n/a
 

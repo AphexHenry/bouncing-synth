@@ -19,6 +19,8 @@ add_library(bounce-core STATIC
   src/core/bounce/engine/ballistic.cpp
   src/core/bounce/engine/vca.cpp
   src/core/bounce/engine/collision_sim.cpp
+  src/core/bounce/scenario/rational.cpp
+  src/core/bounce/scenario/calibration_loader.cpp
 )
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
@@ -43,8 +45,10 @@ add_executable(bounce-tests
   tests/test_ballistic.cpp
   tests/test_vca.cpp
   tests/test_collision_sim.cpp
+  tests/test_calibration_scenario.cpp
 )
 target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
+target_compile_definitions(bounce-tests PRIVATE BOUNCE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 bounce_apply_fp_determinism(bounce-tests)
 
 add_test(NAME bounce-tests COMMAND bounce-tests)
