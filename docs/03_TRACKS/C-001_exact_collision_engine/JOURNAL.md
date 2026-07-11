@@ -1,4 +1,16 @@
 ---
+### JRN-C001-28 · DONE
+actor: composer-agent · task: C-001-T7 · manifest: n/a
+
+WHAT: C-001-T7 complete DONE: parse_rational + load_calibration_scenario (schema-v1 subset,
+stdlib-only JSON scan) + run_calibration_scenario; doctests load/run FL-1 eight tier-1 reference
+events and PB-1 first contact from data/scenarios/calibration/; ctest 100% tests passed with 36
+test cases / 185 assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 4 new calibration-scenario test cases.
+LEARNED: nothing
+NEXT: PM review OUT_31; on ACCEPT, C-001-T8 brief proceeds.
+
+---
 ### JRN-C001-27 · CLAIM
 actor: composer-agent · task: C-001-T7 · manifest: n/a
 
