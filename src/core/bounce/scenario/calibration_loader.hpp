@@ -38,4 +38,12 @@ engine::MultiBallSimResult run_calibration_scenario(const CalibrationScenario& s
 
 bool events_equal(const engine::MultiBallSimResult& a, const engine::MultiBallSimResult& b);
 
+constexpr int kMaxCollisionIntervals = engine::kMaxSimEvents - 1;
+
+int extract_collision_intervals(const engine::MultiBallSimResult& result,
+                                std::array<double, kMaxCollisionIntervals>& intervals);
+
+bool intervals_equal(const std::array<double, kMaxCollisionIntervals>& a,
+                     const std::array<double, kMaxCollisionIntervals>& b, int count);
+
 } // namespace bounce::core::scenario

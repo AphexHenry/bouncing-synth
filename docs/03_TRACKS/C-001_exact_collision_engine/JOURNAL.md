@@ -1,4 +1,45 @@
 ---
+### JRN-C001-35 · CLAIM
+actor: composer-agent · task: C-001-T9 · manifest: n/a
+
+WHAT: Claimed C-001-T9 (loop_stability zero interval-sequence drift on FL-1 + unit tests)
+on branch task/C-001-T9 after PACKET 33 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 33; write TR and OUT.
+
+---
+### JRN-C001-34 · NOTE
+actor: pm-composer · task: C-001-T9 · manifest: n/a
+
+WHAT: C-001-T9 authored (PACKET 33): extract_collision_intervals + intervals_equal (exact ==) +
+doctest FL-1 loop_stability — 11 dyadic-halving intervals verified bit-exact, then 100 repeated
+full-horizon runs with zero interval-sequence drift (12 intervals through settle). PM
+pre-verification (P6 §7.4): ctest 100% tests passed; doctest 38 test cases / 499 assertions /
+SUCCESS. Digests pre-registered.
+NUMBERS: 1 new loop_stability test case.
+LEARNED: nothing
+NEXT: C-001-T9 (this packet); on ACCEPT, C-001-T10 brief proceeds.
+
+---
+### JRN-C001-33 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_32_C-001-T8 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 37/37 cases, 286/286 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-32 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-29/-30/-31/-32 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T8 VERIFIED. C-001-T9 dispatched (PACKET 33).
+NUMBERS: 1 determinism_repro test case (T8).
+LEARNED: nothing
+NEXT: C-001-T9 (PACKET 33).
+
+---
 ### JRN-C001-32 · DONE
 actor: composer-agent · task: C-001-T8 · manifest: n/a
 

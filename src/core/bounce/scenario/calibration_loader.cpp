@@ -485,4 +485,28 @@ bool events_equal(const engine::MultiBallSimResult& a, const engine::MultiBallSi
   return true;
 }
 
+int extract_collision_intervals(const engine::MultiBallSimResult& result,
+                                std::array<double, kMaxCollisionIntervals>& intervals) {
+  if (result.count < 2) {
+    return 0;
+  }
+  const int interval_count = result.count - 1;
+  for (int i = 0; i < interval_count; ++i) {
+    intervals[static_cast<std::size_t>(i)] =
+        result.events[static_cast<std::size_t>(i + 1)].t -
+        result.events[static_cast<std::size_t>(i)].t;
+  }
+  return interval_count;
+}
+
+bool intervals_equal(const std::array<double, kMaxCollisionIntervals>& a,
+                     const std::array<double, kMaxCollisionIntervals>& b, int count) {
+  for (int i = 0; i < count; ++i) {
+    if (a[static_cast<std::size_t>(i)] != b[static_cast<std::size_t>(i)]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 } // namespace bounce::core::scenario

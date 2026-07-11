@@ -76,6 +76,13 @@ depends_on: C-001-T7 VERIFIED (JRN-C001-29)
 objective: events_equal helper (exact == on all CollisionEvent fields) + doctest FL-1
            determinism_repro — 100 repeated run_calibration_scenario calls, each bit-identical
            to baseline (PROJECT §8 determinism_repro gate).
-(Dispatched in PACKET 32.)
+VERIFIED (JRN-C001-33; OUT_32; TR_C-001-T8.md).
 
-## TASK C-001-T9 (sketch): loop_stability zero phase drift on FL-1 periodic orbit — at prereg.
+## TASK C-001-T9: loop_stability zero interval-sequence drift on FL-1 + unit tests
+depends_on: C-001-T8 VERIFIED (JRN-C001-33)
+objective: extract_collision_intervals + intervals_equal helpers; doctest FL-1 loop_stability —
+           11 dyadic-halving intervals bit-exact, 100 repeated full-horizon runs with zero
+           interval-sequence drift through settle (PROJECT §8 loop_stability gate).
+(Dispatched in PACKET 33.)
+
+## TASK C-001-T10 (sketch): reference_agreement tier-1 calibration corpus — at prereg.
