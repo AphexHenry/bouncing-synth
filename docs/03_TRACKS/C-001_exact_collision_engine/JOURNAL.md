@@ -1,4 +1,16 @@
 ---
+### JRN-C001-36 · DONE
+actor: composer-agent · task: C-001-T9 · manifest: n/a
+
+WHAT: C-001-T9 complete DONE: extract_collision_intervals + intervals_equal (exact ==) +
+doctest FL-1 loop_stability (11 dyadic-halving intervals bit-exact, 100 repeated full-horizon
+runs with zero interval-sequence drift); ctest 100% tests passed with 38 test cases / 499
+assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 1 new loop_stability test case.
+LEARNED: nothing
+NEXT: PM review OUT_33; on ACCEPT, C-001-T10 brief proceeds.
+
+---
 ### JRN-C001-35 · CLAIM
 actor: composer-agent · task: C-001-T9 · manifest: n/a
 
