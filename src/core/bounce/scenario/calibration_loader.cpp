@@ -468,4 +468,21 @@ engine::MultiBallSimResult run_calibration_scenario(const CalibrationScenario& s
                                                 max_events);
 }
 
+bool events_equal(const engine::MultiBallSimResult& a, const engine::MultiBallSimResult& b) {
+  if (a.count != b.count) {
+    return false;
+  }
+  for (int i = 0; i < a.count; ++i) {
+    const auto& ea = a.events[static_cast<std::size_t>(i)];
+    const auto& eb = b.events[static_cast<std::size_t>(i)];
+    if (ea.t != eb.t || ea.ball_id != eb.ball_id || ea.s != eb.s ||
+        ea.impact_speed != eb.impact_speed || ea.normal_x != eb.normal_x ||
+        ea.normal_y != eb.normal_y || ea.seq != eb.seq ||
+        ea.schema_version != eb.schema_version) {
+      return false;
+    }
+  }
+  return true;
+}
+
 } // namespace bounce::core::scenario

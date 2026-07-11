@@ -68,3 +68,15 @@ TEST_CASE("run PB-1 calibration scenario matches tier-1 first contact") {
   CHECK(event.ball_id == ref.ball_id);
   CHECK(event.seq == ref.seq);
 }
+
+TEST_CASE("FL-1 determinism_repro is bit-identical across 100 repeated runs") {
+  bounce::core::scenario::CalibrationScenario scenario{};
+  REQUIRE(bounce::core::scenario::load_calibration_scenario(kFl1Path, scenario));
+  const auto baseline =
+      bounce::core::scenario::run_calibration_scenario(scenario, scenario.ref_event_count);
+  for (int run = 0; run < 100; ++run) {
+    const auto result =
+        bounce::core::scenario::run_calibration_scenario(scenario, scenario.ref_event_count);
+    CHECK(bounce::core::scenario::events_equal(baseline, result));
+  }
+}

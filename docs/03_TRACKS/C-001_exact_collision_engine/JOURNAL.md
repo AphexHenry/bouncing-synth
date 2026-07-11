@@ -1,4 +1,43 @@
 ---
+### JRN-C001-31 · CLAIM
+actor: composer-agent · task: C-001-T8 · manifest: n/a
+
+WHAT: Claimed C-001-T8 (determinism_repro repeated-run identity on FL-1 + unit tests)
+on branch task/C-001-T8 after PACKET 32 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 32; write TR and OUT.
+
+---
+### JRN-C001-29 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_31_C-001-T7 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 36/36 cases, 185/185 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-31 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-25/-26/-27/-28 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T7 VERIFIED. C-001-T8 dispatched (PACKET 32).
+NUMBERS: 4 calibration-scenario test cases (T7).
+LEARNED: nothing
+NEXT: C-001-T8 (PACKET 32).
+
+---
+### JRN-C001-30 · NOTE
+actor: pm-composer · task: C-001-T8 · manifest: n/a
+
+WHAT: C-001-T8 authored (PACKET 32): events_equal (all CollisionEvent fields, exact ==) +
+doctest FL-1 determinism_repro — 100 repeated run_calibration_scenario calls, each bit-identical
+to baseline. PM pre-verification (P6 §7.4): ctest 100% tests passed; doctest 37 test cases /
+286 assertions / SUCCESS. Digests pre-registered.
+NUMBERS: 1 new determinism_repro test case.
+LEARNED: nothing
+NEXT: C-001-T8 (this packet); on ACCEPT, C-001-T9 brief proceeds.
+---
 ### JRN-C001-28 · DONE
 actor: composer-agent · task: C-001-T7 · manifest: n/a
 

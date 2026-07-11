@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-composer | trigger: OUT_30 ACCEPT — C-001-T6 VERIFIED (JRN-C001-25); C-001-T7 (PACKET 31)
+last_updated_by: pm-composer | trigger: OUT_31 ACCEPT — C-001-T7 VERIFIED (JRN-C001-29); C-001-T8 (PACKET 32)
 
 ```
 doc_id:   STATE
@@ -10,13 +10,13 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core. C-001-T1/T2/T3/T4/T5/T6 VERIFIED. C-001-T7 in PACKET 31
-(calibration JSON runner). C-002-T1/T2 VERIFIED. I-003-T1 VERIFIED.
+Phase 1 — Falsifiable core. C-001-T1/T2/T3/T4/T5/T6/T7 VERIFIED. C-001-T8 in PACKET 32
+(determinism_repro FL-1). C-002-T1/T2 VERIFIED. I-003-T1 VERIFIED.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | BRIEFED | T7 dispatch | PACKET 31 apply |
+| C-001 Exact collision engine | BRIEFED | T8 dispatch | PACKET 32 apply |
 | C-002 Curve library | BRIEFED | T3 prereg | — |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -38,10 +38,10 @@ C-000 Phase-0 scoping: CLOSED.
 3. GPLv3 -only vs -or-later — Phase 3.
 
 ## Recent review verdicts
+OUT_31/C-001-T7: ACCEPT — C-001-T7 VERIFIED (JRN-C001-29).
 OUT_30/C-001-T6: ACCEPT — C-001-T6 VERIFIED (JRN-C001-25).
 OUT_29/C-001-T5: ACCEPT — C-001-T5 VERIFIED (JRN-C001-21).
 OUT_28/C-001-T4: ACCEPT — C-001-T4 VERIFIED (JRN-C001-17).
-OUT_27/C-001-T3: ACCEPT — C-001-T3 VERIFIED (JRN-C001-13).
 
 ## Pointers
-Component branch rule: C-001-T7 branches from task/C-001-T6. Infra I-00x stacked from task/I-002-T4.
+Component branch rule: C-001-T8 branches from task/C-001-T7. Infra I-00x stacked from task/I-002-T4.

@@ -36,4 +36,6 @@ bool load_calibration_scenario(const char* path, CalibrationScenario& out);
 engine::MultiBallSimResult run_calibration_scenario(const CalibrationScenario& scenario,
                                                   int max_events);
 
+bool events_equal(const engine::MultiBallSimResult& a, const engine::MultiBallSimResult& b);
+
 } // namespace bounce::core::scenario

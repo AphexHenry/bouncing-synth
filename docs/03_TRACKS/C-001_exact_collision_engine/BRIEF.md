@@ -69,6 +69,13 @@ VERIFIED (JRN-C001-25; OUT_30; TR_C-001-T6.md).
 depends_on: C-001-T6 VERIFIED (JRN-C001-25)
 objective: load_calibration_scenario + run_calibration_scenario for schema-v1 calibration
            JSON; doctest FL-1 eight tier-1 reference events and PB-1 first contact.
-(Dispatched in PACKET 31.)
+VERIFIED (JRN-C001-29; OUT_31; TR_C-001-T7.md).
 
-## TASK C-001-T8 (sketch): determinism_repro repeated-run identity on FL-1 — at prereg.
+## TASK C-001-T8: determinism_repro repeated-run identity on FL-1 + unit tests
+depends_on: C-001-T7 VERIFIED (JRN-C001-29)
+objective: events_equal helper (exact == on all CollisionEvent fields) + doctest FL-1
+           determinism_repro — 100 repeated run_calibration_scenario calls, each bit-identical
+           to baseline (PROJECT §8 determinism_repro gate).
+(Dispatched in PACKET 32.)
+
+## TASK C-001-T9 (sketch): loop_stability zero phase drift on FL-1 periodic orbit — at prereg.
