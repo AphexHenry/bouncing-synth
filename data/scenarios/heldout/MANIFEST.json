@@ -1,0 +1,6 @@
+{
+  "description": "Held-out corpus empty at I-003-T1 lock. Populated only via Director/PM gate packet.",
+  "locked": true,
+  "schema_version": "1",
+  "scenarios": []
+}
