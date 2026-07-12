@@ -1,4 +1,15 @@
 ---
+### JRN-I003-20 · CLAIM
+actor: composer-agent · task: I-003-T3-R1 · manifest: n/a
+
+WHAT: Claimed I-003-T3-R1 (full Tier-2 held-out mint under prereg v1.1 — 16 fixtures,
+corpus 32, amplification-based quasi-chaotic admission) on branch task/I-003-T3 after
+PACKET 41 apply; step 0 closed per brief (OUT_39 remediation not repeated).
+NUMBERS: 16 new Tier-2 fixtures; corpus target 32; A ≥ 1e6 at ε=1e-30.
+LEARNED: nothing
+NEXT: Update mint tooling per D1–D3; run steps 3–10; write TR and OUT.
+
+---
 ### JRN-I003-19 · NOTE
 actor: pm-fable5-b · task: I-003-T3-R1 · manifest: n/a
 
