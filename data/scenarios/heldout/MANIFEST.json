@@ -1,6 +1,71 @@
 {
-  "description": "Held-out corpus empty at I-003-T1 lock. Populated only via Director/PM gate packet.",
+  "description": "Tier-1 held-out corpus minted by I-003-T2 (16 scenarios).",
   "locked": true,
-  "schema_version": "1",
-  "scenarios": []
+  "scenarios": [
+    {
+      "scenario_id": "HO-flat-settle-1",
+      "sha256": "315ef6ff5f4a2436e176bd127417092f1cbd54b8033785fa021fdf721661a106"
+    },
+    {
+      "scenario_id": "HO-flat-settle-2",
+      "sha256": "b2a19b9b759d5f7906fecc6b8e93c49f804eaf8d52c1d4bfa30509bd6760522d"
+    },
+    {
+      "scenario_id": "HO-flat-settle-3",
+      "sha256": "290cfeac69487b0c229ade6543ac052684db00471ea7c59ec88dfcd866a8b67b"
+    },
+    {
+      "scenario_id": "HO-flat-settle-4",
+      "sha256": "9ec12a0d15dc918ac15aa0d41f30714b9ceedc99bace75151c53464fbe6ec903"
+    },
+    {
+      "scenario_id": "HO-flat-periodic-1",
+      "sha256": "1f9d4be7b0b0fe66afc346f74fa10ab155e0c824c0241ef6065279814e095e6e"
+    },
+    {
+      "scenario_id": "HO-flat-periodic-2",
+      "sha256": "47b74e264b472b0fd09060db83ce318b9a02ee7d3c27dbecb5892f8e9f2db20f"
+    },
+    {
+      "scenario_id": "HO-flat-periodic-3",
+      "sha256": "4fb999694a6beda88bf14cdde783d8e2c8eb4fac374b2f46552541f8cb3b3284"
+    },
+    {
+      "scenario_id": "HO-parabola-settle-1",
+      "sha256": "01fc039e8aaec3fbc60184986080030348e7bb41a8072fcd5e14a34080f7e854"
+    },
+    {
+      "scenario_id": "HO-parabola-settle-2",
+      "sha256": "0e02728995881b7a42cdc6b9e68b9fd20eda6ccac56a9d2ae458668c7b6d7d29"
+    },
+    {
+      "scenario_id": "HO-parabola-settle-3",
+      "sha256": "f45bf87b7ba3e471abf9cfc84bf093456163c8b104b14574996a1d32f049889f"
+    },
+    {
+      "scenario_id": "HO-parabola-settle-4",
+      "sha256": "331bdd81f55dd60c892d7a21166d591bdf8e23144379cf4c98ba34376ac29984"
+    },
+    {
+      "scenario_id": "HO-parabola-periodic-1",
+      "sha256": "91bf15ee4b421d417172108e06f87799f96fe24c3b3d48c0b71df8ef230a5fe6"
+    },
+    {
+      "scenario_id": "HO-parabola-periodic-2",
+      "sha256": "516e8e3b6ac9f74d65efaa228dbe7886bde18b844ec9bb47702b6de86cab17da"
+    },
+    {
+      "scenario_id": "HO-graze-parabola-1",
+      "sha256": "d69ddb124329fad980242c451e3a1d40f7e8b10fa00c612c1b7a14a64feb1382"
+    },
+    {
+      "scenario_id": "HO-graze-parabola-2",
+      "sha256": "7cf648a1cd85c08066e7703cd6a3d324f8c797c61706096d18e76d91525e9503"
+    },
+    {
+      "scenario_id": "HO-graze-parabola-3",
+      "sha256": "489446604ce9907fb01d5c31f4ad909261a65e2db2889fa2bcdc9175e7399342"
+    }
+  ],
+  "schema_version": "1"
 }

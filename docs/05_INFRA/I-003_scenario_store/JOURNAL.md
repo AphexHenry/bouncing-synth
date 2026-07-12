@@ -1,4 +1,18 @@
 ---
+### JRN-I003-8 · DONE
+actor: composer-agent · task: I-003-T2 · manifest: n/a
+
+WHAT: I-003-T2 complete DONE: minted 16 Tier-1 held-out scenarios via
+tools/scenarios/mint_tier1_heldout.py (refsim/CAS only; Law-1: no engine binary
+built/linked/invoked); manifest + split-lock updated; validate_store.py exit=0
+(calibration=2, heldout=16); concentration flat=7/16 parabola=9/16 (Tier-1-partial,
+no waiver).
+NUMBERS: 16 held-out fixtures; v_graze from src/core/bounce/engine/vca.hpp (G-1/S-1);
+grazing ratios {0.5,1.0,2.0}× verified to ≥20 sig digits.
+LEARNED: nothing
+NEXT: PM review OUT_38; on ACCEPT, I-003-T3 Tier-2 mint brief.
+
+---
 ### JRN-I003-7 · CLAIM
 actor: composer-agent · task: I-003-T2 · manifest: n/a
 

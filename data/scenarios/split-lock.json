@@ -1,8 +1,9 @@
 {
   "calibration_count": 2,
-  "heldout_manifest_sha256": "0c1b7eb91494bdf244aefed926f477d8dfdae5c442975c4cbfd94d32ee3b0ee9",
+  "heldout_count": 16,
+  "heldout_manifest_sha256": "ff1a1c1e9f939ef09ca7e13190b0cc85da968333e4727d39ce9a17a90280c143",
   "lock_version": "1",
-  "locked_at": "2026-07-09",
+  "locked_at": "2026-07-12",
   "note": "Held-out scenarios readable only when BOUNCE_HELDOUT_LOCK=1 (gate runner sets this).",
   "schema_version": "1",
   "split_locked": true

@@ -1,0 +1,57 @@
+{
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1"
+    ],
+    "curve_id": "HO-graze-parabola-1-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "PB-HO",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "1.0416666666666655586339287419597964523020404474605e-20"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "1.0",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance": {
+    "g1_oracle_classification": "graze",
+    "generator_git_commit": "23d7bfc1b0a5a9f2acb6af9e958e93bb8de333b9",
+    "grazing_construction": {
+      "achieved_ratio": "5.0e-1",
+      "g1_classification": "graze",
+      "target_ratio": "0.5"
+    },
+    "mpmath_version": "1.3.0",
+    "tier": 1,
+    "v_graze": {
+      "value": "1.0000000000000000623e-9",
+      "version": "G-1/S-1"
+    }
+  },
+  "provenance_tier": 1,
+  "reference_events": [],
+  "scenario_id": "HO-graze-parabola-1",
+  "schema_version": "1",
+  "verification": {
+    "method": "refsim-cas-tier1",
+    "residual_max": "0"
+  }
+}

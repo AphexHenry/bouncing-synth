@@ -112,7 +112,7 @@ def validate_calibration() -> int:
     return len(names)
 
 
-def validate_split_lock(calibration_count: int) -> None:
+def validate_split_lock(calibration_count: int) -> int:
     if not os.path.isfile(SPLIT_LOCK_PATH):
         raise FileNotFoundError(f"missing split-lock marker: {SPLIT_LOCK_PATH}")
     if not os.path.isfile(HELDOUT_MANIFEST_PATH):
@@ -130,13 +130,30 @@ def validate_split_lock(calibration_count: int) -> None:
     if lock.get("calibration_count") != calibration_count:
         raise ValueError("calibration_count mismatch")
     manifest = load_json(HELDOUT_MANIFEST_PATH)
-    if manifest.get("scenarios") != []:
-        raise ValueError("heldout manifest must list zero scenarios at lock time")
     if manifest.get("locked") is not True:
         raise ValueError("heldout manifest locked must be true")
+    scenarios = manifest.get("scenarios")
+    if not isinstance(scenarios, list):
+        raise ValueError("heldout manifest scenarios must be a list")
     heldout_names = list_heldout_scenarios()
-    if heldout_names:
-        raise ValueError(f"heldout contains scenario files before lock packet: {heldout_names}")
+    if lock.get("heldout_count") != len(scenarios):
+        raise ValueError("heldout_count mismatch")
+    if len(heldout_names) != len(scenarios):
+        raise ValueError(
+            f"heldout file count {len(heldout_names)} != manifest {len(scenarios)}"
+        )
+    manifest_ids = {entry["scenario_id"] for entry in scenarios}
+    file_ids = {name[:-5] for name in heldout_names}
+    if manifest_ids != file_ids:
+        raise ValueError("manifest scenario ids mismatch heldout files")
+    for entry in scenarios:
+        sid = entry["scenario_id"]
+        expected = entry["sha256"]
+        path = os.path.join(HELDOUT_DIR, sid + ".json")
+        actual = sha256_file(path)
+        if actual != expected:
+            raise ValueError(f"sha256 mismatch for {sid}")
+    return len(scenarios)
 
 
 def check_heldout_access() -> int:
@@ -149,8 +166,7 @@ def check_heldout_access() -> int:
 
 def run_validate() -> int:
     calibration_count = validate_calibration()
-    validate_split_lock(calibration_count)
-    heldout_count = len(list_heldout_scenarios())
+    heldout_count = validate_split_lock(calibration_count)
     print("validate-store-ok")
     print(f"calibration_scenarios={calibration_count}")
     print(f"heldout_scenarios={heldout_count}")
