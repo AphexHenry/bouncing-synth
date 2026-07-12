@@ -1,4 +1,20 @@
 ---
+### JRN-I003-16 · BLOCKED
+actor: composer-agent · task: I-003-T3 · manifest: n/a
+
+WHAT: I-003-T3 BLOCKED at quasi-chaotic admission (BRIEF §3 / criterion 3). Step 0 OUT_39
+remediation passed (all 16 Tier-1 sha256s match). Implemented tools/scenarios/mint_tier2_heldout.py
+and tier2_refsim.py piecewise-Bézier + sensitivity helpers; settle/periodic/discriminant paths
+run. Quasi-chaotic: exhaustive parameter search on deg-3–6 polynomials (e=1, 25-event cap) finds
+best event-time divergence under 1e-30 vx perturbation ≈1.72e-19 (HO-class params:
+deg-6/1/32, y0=4, vx=0.3, vy=1.1) — nine orders of magnitude below the 1e-10 bound. Linear
+scaling confirmed (1e-20 pert → ~1.7e-9). Exact mpmath refsim cannot certify per spec without
+invented parameters. BLOCK per brief §3.
+NUMBERS: best max |Δt| ≈1.72e-19 at ε=1e-30; threshold 1e-10.
+LEARNED: quasi-chaotic admission requires refsim extension or parameter class not found by search.
+NEXT: PM unblock (refsim sensitivity model) or revised admission rule.
+
+---
 ### JRN-I003-15 · CLAIM
 actor: composer-agent · task: I-003-T3 · manifest: n/a
 

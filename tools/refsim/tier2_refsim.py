@@ -216,5 +216,460 @@ def main():
     print("tier2-refsim-ok" if ok else "tier2-refsim-FAILED")
 
 
+# --- Piecewise Bézier extension (I-003-T3; mirrors C-002-T2 bezier.hpp semantics) ---
+
+def _pt(x, y):
+    return (mp.mpf(x), mp.mpf(y))
+
+
+def bezier_eval_quad(p0, p1, p2, s):
+    u = mp.mpf(1) - s
+    w0, w1, w2 = u * u, 2 * u * s, s * s
+    return (
+        w0 * p0[0] + w1 * p1[0] + w2 * p2[0],
+        w0 * p0[1] + w1 * p1[1] + w2 * p2[1],
+    )
+
+
+def bezier_eval_cubic(p0, p1, p2, p3, s):
+    u = mp.mpf(1) - s
+    w0, w1, w2, w3 = u * u * u, 3 * u * u * s, 3 * u * s * s, s * s * s
+    return (
+        w0 * p0[0] + w1 * p1[0] + w2 * p2[0] + w3 * p3[0],
+        w0 * p0[1] + w1 * p1[1] + w2 * p2[1] + w3 * p3[1],
+    )
+
+
+def bezier_deriv_quad(p0, p1, p2, s):
+    u = mp.mpf(1) - s
+    return (
+        2 * u * (p1[0] - p0[0]) + 2 * s * (p2[0] - p1[0]),
+        2 * u * (p1[1] - p0[1]) + 2 * s * (p2[1] - p1[1]),
+    )
+
+
+def bezier_deriv_cubic(p0, p1, p2, p3, s):
+    u = mp.mpf(1) - s
+    return (
+        3 * u * u * (p1[0] - p0[0]) + 6 * u * s * (p2[0] - p1[0]) + 3 * s * s * (p3[0] - p2[0]),
+        3 * u * u * (p1[1] - p0[1]) + 6 * u * s * (p2[1] - p1[1]) + 3 * s * s * (p3[1] - p2[1]),
+    )
+
+
+def bezier_eval_segment(seg, s):
+    kind = seg["kind"]
+    c = [_pt(*p) for p in seg["control"]]
+    if kind == "quadratic":
+        return bezier_eval_quad(c[0], c[1], c[2], s)
+    if kind == "cubic":
+        return bezier_eval_cubic(c[0], c[1], c[2], c[3], s)
+    raise ValueError(f"unknown bezier kind: {kind}")
+
+
+def bezier_deriv_segment(seg, s):
+    kind = seg["kind"]
+    c = [_pt(*p) for p in seg["control"]]
+    if kind == "quadratic":
+        return bezier_deriv_quad(c[0], c[1], c[2], s)
+    if kind == "cubic":
+        return bezier_deriv_cubic(c[0], c[1], c[2], c[3], s)
+    raise ValueError(f"unknown bezier kind: {kind}")
+
+
+def validate_c1_piecewise(segments):
+    """C1 check at 50 digits: position match + tangent cross product zero at joints."""
+    if len(segments) <= 1:
+        return {"ok": True, "joints": []}
+    joints = []
+    for i in range(1, len(segments)):
+        left, right = segments[i - 1], segments[i]
+        end_pos = bezier_eval_segment(left, mp.mpf(1))
+        start_pos = bezier_eval_segment(right, mp.mpf(0))
+        pos_delta = (
+            abs(end_pos[0] - start_pos[0]),
+            abs(end_pos[1] - start_pos[1]),
+        )
+        end_tan = bezier_deriv_segment(left, mp.mpf(1))
+        start_tan = bezier_deriv_segment(right, mp.mpf(0))
+        cross = end_tan[0] * start_tan[1] - end_tan[1] * start_tan[0]
+        joint = {
+            "joint_index": i - 1,
+            "pos_delta_x": mp.nstr(pos_delta[0], 50),
+            "pos_delta_y": mp.nstr(pos_delta[1], 50),
+            "tangent_cross": mp.nstr(cross, 50),
+            "pass": pos_delta[0] <= mp.mpf("1e-45")
+            and pos_delta[1] <= mp.mpf("1e-45")
+            and abs(cross) <= mp.mpf("1e-45"),
+        }
+        joints.append(joint)
+        if not joint["pass"]:
+            return {"ok": False, "joints": joints}
+    return {"ok": True, "joints": joints}
+
+
+def invert_x_on_segment(seg, x_target, lo=mp.mpf(0), hi=mp.mpf(1)):
+    """Solve x(s)=x_target on a segment with monotonic x in s."""
+    x_lo = bezier_eval_segment(seg, lo)[0]
+    x_hi = bezier_eval_segment(seg, hi)[0]
+    if x_target < min(x_lo, x_hi) or x_target > max(x_lo, x_hi):
+        return None
+    a, b = lo, hi
+    for _ in range(200):
+        m = (a + b) / 2
+        xm = bezier_eval_segment(seg, m)[0]
+        if xm == x_target:
+            return m
+        if (xm - x_target) * (x_lo - x_target) <= 0:
+            b, x_hi = m, xm
+        else:
+            a, x_lo = m, xm
+    return (a + b) / 2
+
+
+def y_at_x_bezier(segments, x_target):
+    for seg in segments:
+        x0 = bezier_eval_segment(seg, mp.mpf(0))[0]
+        x1 = bezier_eval_segment(seg, mp.mpf(1))[0]
+        if x_target < min(x0, x1) - mp.mpf("1e-40") or x_target > max(x0, x1) + mp.mpf("1e-40"):
+            continue
+        s = invert_x_on_segment(seg, x_target)
+        if s is None:
+            continue
+        return bezier_eval_segment(seg, s)[1]
+    return None
+
+
+def bezier_curve_normal(seg, s):
+    d = bezier_deriv_segment(seg, s)
+    nx, ny = -d[1], d[0]
+    nn = mp.sqrt(nx * nx + ny * ny)
+    if nn == 0:
+        return mp.mpf(0), mp.mpf(1)
+    return nx / nn, ny / nn
+
+
+def find_s_for_x(segments, x_pos):
+    for idx, seg in enumerate(segments):
+        s = invert_x_on_segment(seg, x_pos)
+        if s is not None:
+            return idx, s
+    return None, None
+
+
+def collision_poly_bezier(segments, x0, y0, vx, vy, g):
+    """q(t) = y_ball(t) - y_curve(x_ball(t)) sampled as polynomial in t via series."""
+    # Build q(t) by composing ballistic x(t) with y(x) on the active segment domain.
+    # For segments with monotonic x, use implicit root finding on t directly.
+    t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+    t_max = mp.mpf(50)
+    nseg = 64
+    step = (t_max - t_min) / nseg
+    brackets = []
+    prev_t = t_min
+    prev_v = y0 + vy * prev_t - g * prev_t * prev_t / 2 - y_at_x_bezier(
+        segments, x0 + vx * prev_t
+    )
+    for i in range(1, nseg + 1):
+        t = t_min + step * i
+        xb = x0 + vx * t
+        yc = y_at_x_bezier(segments, xb)
+        if yc is None:
+            prev_t, prev_v = t, mp.mpf(1)
+            continue
+        v = y0 + vy * t - g * t * t / 2 - yc
+        if prev_v == 0:
+            brackets.append((prev_t, prev_t))
+        elif v == 0:
+            brackets.append((t, t))
+        elif prev_v * v < 0:
+            brackets.append((prev_t, t))
+        prev_t, prev_v = t, v
+    if not brackets:
+        return None, None
+    lo, hi = brackets[0]
+    for _ in range(80):
+        m = (lo + hi) / 2
+        xb = x0 + vx * m
+        yc = y_at_x_bezier(segments, xb)
+        if yc is None:
+            break
+        fm = y0 + vy * m - g * m * m / 2 - yc
+        if fm == 0:
+            return m, xb
+        flo = y0 + vy * lo - g * lo * lo / 2 - y_at_x_bezier(segments, x0 + vx * lo)
+        if flo * fm <= 0:
+            hi = m
+        else:
+            lo = m
+    t_hit = (lo + hi) / 2
+    return t_hit, x0 + vx * t_hit
+
+
+def simulate_piecewise_bezier(segments, x0, y0, vx, vy, g, e, n_events):
+    x0, y0, vx, vy, g, e = (mp.mpf(v) for v in (x0, y0, vx, vy, g, e))
+    events = []
+    t_abs = mp.mpf(0)
+    settled = False
+    t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+    for _ in range(n_events):
+        if settled:
+            break
+        dt, xc = collision_poly_bezier(segments, x0, y0, vx, vy, g)
+        if dt is None or dt <= t_min:
+            break
+        seg_idx, s_hit = find_s_for_x(segments, xc)
+        if seg_idx is None:
+            break
+        seg = segments[seg_idx]
+        yc = bezier_eval_segment(seg, s_hit)[1]
+        vyf = vy - g * dt
+        nx, ny = bezier_curve_normal(seg, s_hit)
+        vn_in = abs(vx * nx + vyf * ny)
+        if vn_in < V_GRAZE:
+            x0, y0 = xc, yc
+            vy = vyf
+            t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+            continue
+        t_abs = t_abs + dt
+        events.append((t_abs, xc, yc))
+        vn = vx * nx + vyf * ny
+        vx = vx - (1 + e) * vn * nx
+        vy = vyf - (1 + e) * vn * ny
+        vn_out = abs(vx * nx + vy * ny)
+        x0, y0 = xc, yc
+        if vn_out < V_SETTLE:
+            settled = True
+            break
+        t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+    return events
+
+
+def agreement_digits(a, b):
+    if a == b:
+        return 100.0
+    diff = abs(a - b)
+    if diff == 0:
+        return 100.0
+    scale = max(abs(a), abs(b), mp.mpf(1))
+    rel = diff / scale
+    if rel == 0:
+        return 100.0
+    return float(-mp.log10(rel))
+
+
+def dual_precision_worst(regen, dps_lo=50, dps_hi=100):
+    ev_lo = regen(dps_lo)
+    ev_hi = regen(dps_hi)
+    if len(ev_lo) != len(ev_hi):
+        raise ValueError(f"event count mismatch: {len(ev_lo)} vs {len(ev_hi)}")
+    worst = 100.0
+    for row_lo, row_hi in zip(ev_lo, ev_hi):
+        for a, b in zip(row_lo, row_hi):
+            worst = min(worst, agreement_digits(a, b))
+    if worst < 45:
+        raise ValueError(f"dual-precision convergence failed: worst={worst}")
+    return worst
+
+
+def sensitivity_certificate(regen, perturb_component, perturbation=mp.mpf("1e-30"), max_events=25):
+    """Compare event-time sequences under base vs perturbed IC."""
+    base = regen(55, mp.mpf(0))
+    pert = regen(55, perturbation)
+    rows = []
+    diverged = False
+    for i in range(min(len(base), len(pert), max_events)):
+        div = abs(base[i][0] - pert[i][0])
+        rows.append({"event": i, "t_base": mp.nstr(base[i][0], 20), "t_pert": mp.nstr(pert[i][0], 20),
+                     "divergence": mp.nstr(div, 20)})
+        if div > mp.mpf("1e-10"):
+            diverged = True
+    return {"perturbed_component": perturb_component, "perturbation": "1e-30",
+            "diverged": diverged, "table": rows}
+
+
+def _f64(x):
+    import struct
+    return struct.unpack("!d", struct.pack("!d", float(x)))[0]
+
+
+def simulate_float64_polynomial(coeffs, x0, y0, vx, vy, g, e, n_events):
+    """Float64 shadow trajectory for quasi-chaotic sensitivity certification (I-003-T3)."""
+    coeffs = [float(c) for c in coeffs]
+    x0, y0, vx, vy, g, e = float(x0), float(y0), float(vx), float(vy), float(g), float(e)
+    v_graze, v_settle = 1e-9, 1e-9
+    events = []
+    t_abs = 0.0
+    settled = False
+    t_min = 1e-12
+    for _ in range(n_events):
+        if settled:
+            break
+        # quadratic collision for low-degree polynomial via sampling
+        t_max = 50.0
+        best_t = None
+        prev = y0 - poly_eval(coeffs, x0)
+        for i in range(1, 513):
+            t = t_min + (t_max - t_min) * i / 512
+            xb = x0 + vx * t
+            yb = y0 + vy * t - 0.5 * g * t * t
+            val = yb - poly_eval(coeffs, xb)
+            if prev * val <= 0 and i > 1:
+                best_t = t
+                break
+            prev = val
+        if best_t is None:
+            break
+        dt = best_t
+        xc = x0 + vx * dt
+        yc = poly_eval(coeffs, xc)
+        vyf = vy - g * dt
+        dp = poly_eval(poly_deriv(coeffs), xc)
+        nn = (dp * dp + 1.0) ** 0.5
+        nx, ny = -dp / nn, 1.0 / nn
+        vn_in = abs(vx * nx + vyf * ny)
+        if vn_in < v_graze:
+            x0, y0, vy = xc, yc, vyf
+            t_min = 1e-12
+            continue
+        t_abs += dt
+        events.append((t_abs, xc, yc))
+        vn = vx * nx + vyf * ny
+        vx = vx - (1.0 + e) * vn * nx
+        vy = vyf - (1.0 + e) * vn * ny
+        vn_out = abs(vx * nx + vy * ny)
+        x0, y0 = xc, yc
+        if vn_out < v_settle:
+            settled = True
+            break
+        t_min = 1e-12
+    return events
+
+
+def simulate_rounded(coeffs, x0, y0, vx, vy, g, e, n_events, keep_digits=50):
+    """Simulate with state rounded to keep_digits after each event (chaotic envelope)."""
+    coeffs = [mp.mpf(c) for c in coeffs]
+    x0, y0, vx, vy, g, e = (mp.mpf(v) for v in (x0, y0, vx, vy, g, e))
+
+    def round_state(x, y, vx, vy):
+        return (
+            mp.mpf(mp.nstr(x, keep_digits)),
+            mp.mpf(mp.nstr(y, keep_digits)),
+            mp.mpf(mp.nstr(vx, keep_digits)),
+            mp.mpf(mp.nstr(vy, keep_digits)),
+        )
+
+    events = []
+    t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+    t_max = mp.mpf(1000)
+    settled = False
+    for _ in range(n_events):
+        if settled:
+            break
+        q = collision_poly(coeffs, x0, y0, vx, vy, g)
+        dt = isolate_smallest_positive_root(q, t_min, t_max)
+        if dt is None:
+            break
+        xc = x0 + vx * dt
+        yc = poly_eval(coeffs, xc)
+        vyf = vy - g * dt
+        vn_in = normal_impact_speed(coeffs, xc, vx, vyf)
+        if vn_in < V_GRAZE:
+            x0, y0, vy = xc, yc, vyf
+            x0, y0, vx, vy = round_state(x0, y0, vx, vy)
+            t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+            continue
+        t_abs = (events[-1][0] + dt) if events else dt
+        events.append((t_abs, xc, yc))
+        vx, vy, vn_out = reflect(coeffs, xc, vx, vyf, e)
+        x0, y0 = xc, yc
+        x0, y0, vx, vy = round_state(x0, y0, vx, vy)
+        if vn_out < V_SETTLE:
+            settled = True
+            break
+        t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
+    return events
+
+
+def certify_quasi_chaotic_mpmath(coeffs, y0, vx, vy, e, component, n_events=25):
+    """Sensitivity certificate with per-event rounding envelope (I-003-T3)."""
+    pert = mp.mpf("1e-30")
+
+    def run(apply_pert):
+        mp.mp.dps = 55
+        x, y, vvx, vvy = mp.mpf(0), mp.mpf(y0), mp.mpf(vx), mp.mpf(vy)
+        if component == "vx":
+            vvx += apply_pert
+        elif component == "vy":
+            vvy += apply_pert
+        else:
+            y += apply_pert
+        return simulate_rounded(coeffs, x, y, vvx, vvy, 10, e, n_events, keep_digits=50)
+
+    base = run(mp.mpf(0))
+    p = run(pert)
+    rows = []
+    diverged = False
+    for i in range(min(len(base), len(p), n_events)):
+        div = abs(base[i][0] - p[i][0])
+        rows.append(
+            {
+                "event": i,
+                "t_base": mp.nstr(base[i][0], 20),
+                "t_pert": mp.nstr(p[i][0], 20),
+                "divergence": mp.nstr(div, 20),
+            }
+        )
+        if div > mp.mpf("1e-10"):
+            diverged = True
+    return {
+        "perturbed_component": component,
+        "perturbation": "1e-30",
+        "method": "rounded-state-envelope",
+        "diverged": diverged,
+        "table": rows,
+    }
+
+
+def poly_discriminant_at_first_contact(coeffs, x0, y0, vx, vy, g):
+    coeffs_m = [mp.mpf(c) for c in coeffs]
+    x0, y0, vx, vy, g = mp.mpf(x0), mp.mpf(y0), mp.mpf(vx), mp.mpf(vy), mp.mpf(g)
+    q = collision_poly(coeffs_m, x0, y0, vx, vy, g)
+    # discriminant of quadratic factor if degree 2, else use resultant approximation
+    while len(q) > 1 and q[-1] == 0:
+        q.pop()
+    deg = len(q) - 1
+    if deg == 2:
+        a, b, c = q[2], q[1], q[0]
+        return b * b - 4 * a * c
+    if deg == 4:
+        # depressed quartic discriminant via resultant with derivative
+        dq = poly_deriv(q)
+        # evaluate discriminant numerically as product of root differences squared
+        roots = []
+        t_min = mp.mpf("1e-50")
+        t_max = mp.mpf(20)
+        nseg = 128
+        step = (t_max - t_min) / nseg
+        prev_t, prev_v = t_min, poly_eval(q, t_min)
+        for i in range(1, nseg + 1):
+            t = t_min + step * i
+            v = poly_eval(q, t)
+            if prev_v * v < 0:
+                lo, hi = prev_t, t
+                for _ in range(60):
+                    m = (lo + hi) / 2
+                    fm = poly_eval(q, m)
+                    if poly_eval(q, lo) * fm <= 0:
+                        hi = m
+                    else:
+                        lo = m
+                roots.append((lo + hi) / 2)
+            prev_t, prev_v = t, v
+        if len(roots) >= 2:
+            return (roots[0] - roots[1]) ** 2
+        return mp.mpf("nan")
+    return mp.mpf("nan")
+
+
 if __name__ == "__main__":
     main()

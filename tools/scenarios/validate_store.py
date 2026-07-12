@@ -58,11 +58,17 @@ def validate_scenario_record(record: dict, path: str) -> None:
     if record["provenance_tier"] not in (1, 2):
         raise ValueError(f"{path}: invalid provenance_tier")
     curve = record["curve"]
-    for key in ("curve_id", "family", "coeffs", "domain"):
+    for key in ("curve_id", "family", "domain"):
         if key not in curve:
             raise ValueError(f"{path}: curve missing {key}")
-    if curve["family"] != "polynomial":
-        raise ValueError(f"{path}: curve family must be polynomial")
+    if curve["family"] not in ("polynomial", "piecewise-bezier"):
+        raise ValueError(f"{path}: curve family must be polynomial or piecewise-bezier")
+    if curve["family"] == "polynomial":
+        if "coeffs" not in curve:
+            raise ValueError(f"{path}: curve missing coeffs")
+    else:
+        if "segments" not in curve:
+            raise ValueError(f"{path}: curve missing segments")
     if not record["initial_state"]:
         raise ValueError(f"{path}: initial_state empty")
     if "gravity" not in record["physics"]:
