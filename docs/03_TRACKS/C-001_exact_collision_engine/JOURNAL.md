@@ -1,4 +1,26 @@
 ---
+### JRN-C001-46 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_36 (apply only) per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | APPLY CONFIRMATION with serial-36 ledger line + four-file list, PREREG flagged created | COMPLIANT |
+| 2 | All applied blocks copied verbatim | COMPLIANT |
+| 3 | FILE DIGESTS: byte count + sha256 for all four files | COMPLIANT |
+| 4 | Step-3 git status: no modified tracked entries; untracked confined to Director courier surface (L-13) | COMPLIANT |
+| 5 | BRANCH/COMMITS ends with L-12 terminator | COMPLIANT |
+Verdict: ACCEPT — PACKET 36 APPLIED; C-001 PREREGISTERED (PREREGISTRATION.md v1.0 binding).
+PM authoring note: the PACKET 35 DIRECTOR ACTION (merge-sizing git outputs) went unanswered
+across two cycles — misrouting owned by the PM: read-only repo evidence is agent-gatherable
+per P6 §7.1(b) and never belonged on the Director. Rerouted as diagnostic steps inside
+PACKET 37's TASK; the merge instruction is sized from OUT_37 in PACKET 38.
+NUMBERS: none
+LEARNED: read-only repo evidence routes to a diagnostic packet step, never to a Director
+action; Director actions are reserved for acts only the Director can perform.
+NEXT: I-004-T1 (PACKET 37); merge instruction + I-003-T2 mint (PACKET 38).
+
+---
 ### JRN-C001-45 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 
