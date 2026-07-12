@@ -1,4 +1,14 @@
 ---
+### JRN-I003-11 · CLAIM
+actor: composer-agent · task: I-003-T2-R1 · manifest: n/a
+
+WHAT: Claimed I-003-T2-R1 (re-mint 16 Tier-1 held-out fixtures, float64 contamination fix)
+on branch task/I-003-T2 after PACKET 39 apply; in-place supersession of quarantined mint.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Fix mint tooling per R1–R4; run steps 3–9; write TR and OUT.
+
+---
 ### JRN-I003-10 · NOTE
 actor: pm-fable5-b · task: I-003-T2-R1 · manifest: n/a
 
