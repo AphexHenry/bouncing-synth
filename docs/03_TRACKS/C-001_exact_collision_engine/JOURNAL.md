@@ -1,4 +1,52 @@
 ---
+### JRN-C001-45 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: C-001 PREREGISTRATION.md authored (PACKET 36); C-001 BRIEFED → PREREGISTERED.
+Registered: P1-A (Design A) primary — max per-event |Δt| ≤ 1e-9 s and |Δs| ≤ 1e-9 over the
+full held-out corpus, exact ball_id/seq, worst-case + distributions reported (L-05 analog);
+P1-B (Design B) primary — bit-identical CollisionEvent sequences across 100 in-process runs,
+10 fresh-process runs, 2 clean-checkout rebuilds, scoped to the environment of record until
+I-007 (PROJECT §9 safeguard b); P1-C (Design C) primary — bit-exact interval-sequence
+repetition over 10^4 periods on held-out periodic fixtures including non-dyadic orbits;
+P1-D (Design D) DEFERRED — budget registration requires a measured basis via I-004/I-005
+profiling; no realtime claim before its addendum. Law 7: compute matched by wall-time per
+simulated scenario-second (±10%) on the environment of record via I-004; margin — exact
+engine worst-case held-out event-time error ≤ baseline/100 at matched-or-lower compute, and
+zero drift on periodic fixtures where the baseline drifts; baseline agent-authored (L-14).
+Coverage table fixed over {flat line, explicit polynomial deg 2–6, piecewise Bézier C1} ×
+{settle, periodic, quasi-chaotic} × {1, 2–4 balls}; declared empty: transcendental families
+(R3), ball–ball (R2), Bézier×quasi-chaotic (Phase-1 reference-horizon cost), 8–16 balls
+(P1-D scope); grazing mandatory — ≥3 near-tangency scenarios at |v_n| ∈ {0.5, 1.0, 2.0} ×
+v_graze plus one near-double-root geometry. Held-out: ~40%, stratified by family × regime,
+minted by I-003-T2 from Tier-1 CAS + Tier-2 refsim, locked before any engine run, access via
+I-004 only (Law 1).
+NUMBERS: tolerances 1e-9/1e-9; nuisance set 100+10+2; horizon 10^4 periods; margin 100×;
+compute match ±10%; held-out ~40%; grazing ≥3+1.
+LEARNED: nothing
+NEXT: I-004 gate-runner brief + merge instruction (PACKET 37); Tier-2 hard-cell fixture mint
+(PACKET 38); C-001-T11 spec (agent-authored baseline) after I-004 is briefed.
+
+---
+### JRN-C001-44 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_35 (apply only) per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | APPLY CONFIRMATION with serial-35 ledger line + five-file list with directions | COMPLIANT |
+| 2 | All applied blocks copied verbatim | COMPLIANT |
+| 3 | FILE DIGESTS: byte count + sha256 for all five files | COMPLIANT |
+| 4 | Step-3 git status: no modified tracked entries; untracked confined to Director courier surface (L-13) | COMPLIANT |
+| 5 | BRANCH/COMMITS ends with L-12 terminator | COMPLIANT |
+Verdict: ACCEPT — PACKET 35 APPLIED. Model B (L-14), gate scoping (JRN-C001-43), and the
+packet-as-file delivery rule are on the record. PACKET 35 DIRECTOR ACTION outputs (tip of
+task/C-001-T10; branches unmerged to main) still outstanding — non-blocking; merge
+instruction deferred to PACKET 37 and sized to that evidence when pasted.
+NUMBERS: none
+LEARNED: nothing
+NEXT: PACKET 36 (this packet — prereg).
+---
 ### JRN-C001-43 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 
