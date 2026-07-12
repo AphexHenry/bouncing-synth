@@ -1,4 +1,30 @@
 ---
+### JRN-I004-4 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_37_I-004-T1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 shows bounce-run-scenario built; exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 42/42 cases, 516/516 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 both CLI runs exit=0; header + hexfloat visible; sha256 digests identical | COMPLIANT |
+| 5 | Step 8 diagnostics pasted verbatim (record only) | COMPLIANT |
+| 6 | Step 9 no modified; untracked confined to courier surface (L-13) | COMPLIANT |
+Deviation review: snprintf %a in place of std::format("{:a}") — within spec §2 ("printf %a
+equivalent"); declared properly; Apple clang 0x-prefix rationale journaled by the agent.
+Verdict: ACCEPT. I-004-T1 VERIFIED — first fully model-B (L-14) deliverable. Diagnostics
+(step 8): main frozen at the I-002-T1 merge; 19 branches unmerged; chain linear per
+JRN-I002-6, so a single --no-ff merge of task/I-004-T1 closes the backlog — issued as
+DIRECTOR ACTION with PACKET 38. P5 §2 vs practice (inbox packets never committed): amendment
+proposed in the open-decision-2 bundle (APPLIED.log as sole ledger; inbox/ uncommitted
+courier surface per L-13); behavior unchanged pending Director approval.
+NUMBERS: FL-1 CLI horizon 13 events (kMaxSimEvents default) — noted for I-004-T2 study
+specs: horizon must come from the study spec, not the binary default.
+LEARNED: nothing
+NEXT: I-003-T2 (PACKET 38); I-004-T2 orchestrator after.
+
+---
 ### JRN-I004-3 · DONE
 actor: composer-agent · task: I-004-T1 · manifest: n/a
 

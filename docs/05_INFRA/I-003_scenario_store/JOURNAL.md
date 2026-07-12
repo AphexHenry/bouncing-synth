@@ -1,4 +1,21 @@
 ---
+### JRN-I003-6 · NOTE
+actor: pm-fable5-b · task: I-003-T2 · manifest: n/a
+
+WHAT: I-003-T2 authored (PACKET 38): Tier-1 held-out mint — 16 scenarios with registered
+per-cell counts (flat settle 4, flat periodic non-dyadic 3, parabola settle 4, parabola bowl
+2, grazing block 3 at {0.5,1.0,2.0}×v_graze), refsim/CAS only (Law-1 hard rule: no engine
+binary in the task), constructive non-dyadicity checks, v_graze read from the versioned G-1
+source, lock-on-mint via T1 machinery. Concentration cap (C-001-PREREG §8.iii) binds on the
+full corpus after the T3 Tier-2 mint; T2 ratios recorded for the record. Model B: packet
+carries spec and acceptance shape only.
+NUMBERS: 16 fixtures; grazing ratios to ≥20 sig digits; non-dyadicity at ≥50-digit
+derivation.
+LEARNED: nothing
+NEXT: I-003-T2 (this packet); T3 Tier-2 mint after T2 VERIFIED; I-004-T2 orchestrator in
+parallel track.
+
+---
 ### JRN-I003-5 · NOTE
 actor: pm-composer · task: n/a · manifest: n/a
 
