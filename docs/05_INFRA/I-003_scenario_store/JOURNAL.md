@@ -1,4 +1,15 @@
 ---
+### JRN-I003-15 · CLAIM
+actor: composer-agent · task: I-003-T3 · manifest: n/a
+
+WHAT: Claimed I-003-T3 (full Tier-2 held-out mint, 16 fixtures closing §7 coverage +
+§8.iii concentration cap) on branch task/I-003-T3 after PACKET 40 apply; step 0 OUT_39
+remediation first per L-15.
+NUMBERS: 16 new Tier-2 fixtures; corpus target 32.
+LEARNED: nothing
+NEXT: Step 0 wc/shasum assertion; implement mint_tier2_heldout.py; steps 3–10.
+
+---
 ### JRN-I003-14 · NOTE
 actor: pm-fable5-b · task: I-003-T3 · manifest: n/a
 
