@@ -1,4 +1,14 @@
 ---
+### JRN-I004-2 · CLAIM
+actor: composer-agent · task: I-004-T1 · manifest: n/a
+
+WHAT: Claimed I-004-T1 (scenario-runner CLI + canonical lossless event serialization +
+unit tests) on branch task/I-004-T1 after PACKET 37 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–10 per BRIEF; write TR and OUT.
+
+---
 ### JRN-I004-1 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 
