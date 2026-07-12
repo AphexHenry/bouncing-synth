@@ -1,4 +1,14 @@
 ---
+### JRN-I003-7 · CLAIM
+actor: composer-agent · task: I-003-T2 · manifest: n/a
+
+WHAT: Claimed I-003-T2 (Tier-1 held-out corpus mint + lock) on branch task/I-003-T2 after
+PACKET 38 apply; imported I-003-T1 split-lock machinery from task/I-003-T1.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–9 per BRIEF; mint 16 held-out fixtures; write TR and OUT.
+
+---
 ### JRN-I003-6 · NOTE
 actor: pm-fable5-b · task: I-003-T2 · manifest: n/a
 
