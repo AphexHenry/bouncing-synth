@@ -73,3 +73,15 @@ build/test output, is a P6 incident. Origin: C-001-T1–T10 (packets 25–34), w
 implementation rode packet FILES sections with digests pre-registered and test counts pre-built;
 surfaced at Director review of OUT_34; second occurrence of the PM-authoring class after the
 I-002 fixture-generator correction → P6 §4.6 amendment proposed per P6 §6.3 (JRN-C001-42).
+
+L-15: Review proportionality for evidence defects. A miss on a substantive acceptance
+criterion (a registered number, bound, or behavior) is always REJECT. A miss on evidence
+completeness where the underlying datum appears byte-verbatim elsewhere in the same OUT
+(e.g., digests present in a command paste but absent from the FILE DIGESTS section) is
+ACCEPT with a mandatory remediation step at the top of the next dispatched task; the
+remediation re-derives the missing evidence and asserts it against the OUT's existing
+copies — any mismatch is a BLOCK. Evidence absent from the OUT entirely is REJECT. Rationale:
+re-running a substantively perfect task to reformat evidence is process worship, but leaving
+the ledger incomplete silently rots L-10; the remediation step closes the ledger at the cost
+of one command, not one cycle. Origin: OUT_39 (I-003-T2-R1), FILE DIGESTS carrying 2 of 16
+fixture entries while all 16 sha256s appeared verbatim in the step-4 generator paste.

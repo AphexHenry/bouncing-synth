@@ -1,4 +1,44 @@
 ---
+### JRN-I003-14 · NOTE
+actor: pm-fable5-b · task: I-003-T3 · manifest: n/a
+
+WHAT: I-003-T3 authored (PACKET 40) as one full-width task (Director step-size ruling
+2026-07-12): 16 Tier-2 held-out fixtures — deg 3–6 settle ×4 (one per degree) and periodic
+×2; quasi-chaotic ×4 (parabola ×2, deg 3–6 ×2), each admitted only with a sensitivity
+certificate (1e-30 IC perturbation diverging past 1e-10 in event time within the 25-event
+cap); piecewise Bézier C1 settle ×3 (incl. 2- and 3-ball) and periodic ×2; near-double-root
+×1 (collision-polynomial discriminant within 1e-6 of zero at first contact, 50-digit value
+recorded). Full corpus 32 held-out; expected concentration flat 7/32, parabola 11/32,
+deg 3–6 9/32, Bézier 5/32 — §8.iii cap closes. Carried disciplines: R1 two-touchpoint
+float64 rule, R4-style dual-precision convergence (Tier-2 reference_converged per Law 5),
+R6 verbatim evidence, LAW-1 (no engine binary). New: Python-native C1 continuity check at
+Bézier knots at 50 digits (the C++ validator is LAW-1-forbidden here). Digest completeness
+is a binary criterion per L-15. Step 0 = OUT_39 remediation.
+NUMBERS: 16 fixtures; corpus 32; sensitivity bound 1e-10 within 25 events from 1e-30
+perturbation; discriminant window 1e-6; C1 check at 50 digits.
+LEARNED: nothing
+NEXT: I-003-T3 (this packet); on ACCEPT — I-004-T2+T3 batched (PACKET 41), then C-001-T11
+baseline spec.
+
+---
+### JRN-I003-13 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_39_I-003-T2-R1 per P6 §2. Criteria 1–8 all COMPLIANT: true 50-digit
+periods with correct IEEE gaps (sqrt(2) gap 9.667e-17), exact-zero grazing ratio errors
+with v_graze hex provenance (0x1.12e0be826d695p-30), R4 floor 49.61 digits, validator
+locked at cal=2/heldout=16, LAW-1 + R5 affirmed, byte-verbatim status. L-10 row PARTIAL:
+FILE DIGESTS section carried 2 of 16 fixtures; all 16 sha256s present verbatim in the
+step-4 paste; byte counts of 14 fixtures absent from the OUT. Ruling per new L-15: ACCEPT
+with mandatory remediation (PACKET 40 step 0: wc -c + shasum over all 16 fixtures +
+manifest, asserted against OUT_39's step-4 digests; mismatch → BLOCK). Verdict: ACCEPT —
+I-003-T2 VERIFIED via R1. Deviations (graze-3 curve coeff 1/2; graze-2 closed-form boundary
+reference) reviewed: in-scope parameter choices, properly declared, canonical names kept
+per R7.
+NUMBERS: R4 floor 49.61 digits; ratio errors 0.0.
+LEARNED: L-15 (docs/02_PROGRAM/LESSONS.md).
+NEXT: I-003-T3 (PACKET 40).
+---
 ### JRN-I003-12 · DONE
 actor: composer-agent · task: I-003-T2-R1 · manifest: n/a
 

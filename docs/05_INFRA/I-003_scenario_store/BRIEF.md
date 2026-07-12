@@ -168,3 +168,91 @@ Acceptance criteria (binary, one artifact each):
 8. Step 8: byte-verbatim git status; no modified tracked entries beyond task-owned files
    pre-commit; untracked within the agent-writable surface limited to files this task
    creates; courier surface listed in full, record only (L-13).
+
+## TASK I-003-T3: full Tier-2 held-out mint — closes C-001-PREREG §7 coverage + §8.iii cap
+depends_on: I-003-T2 VERIFIED via R1 (JRN-I003-13); I-002 VERIFIED; C-002-T2 VERIFIED
+(Bézier semantics of record); C-001-PREREG v1.0
+objective: Mint 16 Tier-2 held-out fixtures covering every remaining HO cell of the
+C-001-PREREG §7 table, at Tier-2 standard (refsim, reference_converged per Law 5), locked on
+mint. Full corpus after this task: 32 held-out scenarios; the §8.iii concentration cap
+(no family >50%) closes and binds.
+
+STEP 0 — OUT_39 REMEDIATION (L-15, mandatory, before any T3 work): run `wc -c` and
+`shasum -a 256` over all 16 existing held-out fixtures + MANIFEST.json; paste verbatim;
+assert every sha256 matches OUT_39's step-4 values and the manifest. Any mismatch → BLOCKED
+OUT immediately, no T3 work.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. CARRIED DISCIPLINES, verbatim force: LAW-1 (no engine binary built/linked/invoked);
+   R1 float64 discipline (two touchpoints only); R6 byte-verbatim evidence; naming
+   HO-<family>-<regime>-<k> with graze-style exceptions only if registered here (none are).
+2. Registered per-cell counts (16 total):
+   a. deg 3–6 explicit poly × settle: 4 — one fixture per degree 3, 4, 5, 6; single-ball.
+   b. deg 3–6 × periodic: 2 — degree 4 and degree 6 bowl-type orbits; non-dyadicity per
+      T2-R1 rule R2 (strict P ≠ d, gap ≥30 digits).
+   c. parabola × quasi-chaotic: 2; deg 3–6 × quasi-chaotic: 2 — all four at the 25-event
+      reference cap (C-001-PREREG §1).
+   d. piecewise Bézier C1 × settle: 3 — 1 single-ball, 1 two-ball, 1 three-ball (TB-1
+      merged sequences per T2 rule for independent balls).
+   e. piecewise Bézier C1 × periodic: 1 — non-dyadicity per R2.
+   f. near-double-root geometry: 1 — on a deg-4 curve; the first-contact collision
+      polynomial's discriminant within 1e-6 of zero, computed and recorded at 50 digits;
+      single-ball, settle-type horizon.
+3. QUASI-CHAOTIC ADMISSION (cell c): "quasi-chaotic" is measured, not asserted. Per fixture,
+   run the refsim twice with an initial-condition perturbation of 1e-30 (one state
+   component, registered per fixture); REQUIRE the event-time divergence to exceed 1e-10
+   within ≤25 events. Record the certificate (perturbed component, divergence-vs-event
+   table) per fixture. BLOCK if a candidate does not certify — choose new parameters.
+4. TIER-2 REFERENCES: every reference event set computed by the refsim with the Law-5
+   convergence check passed — dual-dps run (≥50 and ≥100) agreeing to ≥45 significant
+   digits on every value within the fixture's horizon (25-event cap for cell c; otherwise
+   min(200 events, settle)); worst-case agreement digits reported per fixture. The refsim
+   may be extended (agent-authored, tools/ surface) for piecewise-Bézier segment handling;
+   any extension gets the same dual-dps discipline.
+5. BÉZIER SEMANTICS: segment definitions and C1 rules follow the C-002-T2 curve library
+   semantics as the definition of record (read the C++ headers; do not run them — LAW-1).
+   The mint implements a Python-native C1 check at every knot at 50 digits: position and
+   first-derivative continuity, |Δ| = 0 exactly for constructed control points or ≤1e-45
+   for derived ones; recorded per fixture. BLOCK if C-002-T2 semantics are ambiguous on any
+   point needed.
+6. STORAGE + LOCK: fixtures under data/scenarios/heldout/ with provenance fields per T2
+   conventions (tier=2, generator commit, mpmath version, certificates from §3/§5/§6 as
+   applicable); MANIFEST.json extended to 32 entries with sha256s; split-lock updated via
+   the T1 machinery; calibration set untouched.
+7. CONCENTRATION (C-001-PREREG §8.iii, now binding): compute and paste the per-family
+   ratios over the full 32-scenario corpus; REQUIRE every family ≤ 50%. Expected: flat
+   7/32, parabola 11/32, deg 3–6 9/32, Bézier 5/32. BLOCK if any family exceeds the cap.
+
+Steps:
+3. Paste venv record (`python --version`, `pip show mpmath | head -2`).
+4. Implement/extend the mint tooling per §2–§6; run it; paste the full generator output
+   verbatim; exit=0; 16 new fixtures with canonical names.
+5. Paste per-fixture certificates: §3 sensitivity certificates (all four quasi-chaotic),
+   R2 non-dyadicity for cells b/e, §5 C1 checks for all Bézier fixtures, §6 discriminant
+   for the near-double-root fixture (50-digit value shown).
+6. Paste per-fixture Tier-2 convergence results (§4): worst-case agreement digits, all ≥45.
+7. Run the store validator; paste output; exit=0; calibration=2, heldout=32,
+   split_locked=true.
+8. Paste the §7 concentration ratios over the full corpus.
+9. Paste `git status --porcelain --branch` byte-verbatim.
+10. TR + OUT per OUT-REQUIREMENTS.
+
+Acceptance criteria (binary, one artifact each):
+0. Step 0 remediation pasted: wc -c + shasum over the 16 T2-R1 fixtures + manifest; all
+   sha256s match OUT_39 step-4 values.
+1. Step 3 pasted: pinned venv, mpmath 1.3.0.
+2. Step 4 pasted verbatim: exit=0; 16 new fixtures, canonical names.
+3. Step 5 sensitivity certificates: all four quasi-chaotic fixtures diverge >1e-10 within
+   ≤25 events from a 1e-30 perturbation.
+4. Step 5 non-dyadicity (cells b/e): strict P ≠ d with gaps at ≥30 digits.
+5. Step 5 C1 checks: every Bézier knot position+derivative continuous per §5 bound.
+6. Step 5 discriminant: |disc| ≤ 1e-6 at first contact, 50-digit value shown.
+7. Step 6: Tier-2 convergence ≥45 digits worst-case for every fixture.
+8. Step 7: validator exit=0; calibration=2, heldout=32, split_locked=true.
+9. Step 8: every family ≤50% of the 32-scenario corpus, ratios pasted.
+10. TR affirms LAW-1 and lists any refsim extensions made.
+11. Step 9: byte-verbatim git status; no modified tracked entries beyond task-owned files
+    pre-commit; untracked within the agent-writable surface limited to files this task
+    creates (L-13).
+12. FILE DIGESTS section complete (L-15): byte count + sha256 for every applied doc, every
+    tooling file touched, all 16 new fixtures, MANIFEST.json, split-lock.json, and the TR.
