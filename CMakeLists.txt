@@ -21,6 +21,8 @@ add_library(bounce-core STATIC
   src/core/bounce/engine/collision_sim.cpp
   src/core/bounce/scenario/rational.cpp
   src/core/bounce/scenario/calibration_loader.cpp
+  src/core/bounce/io/sha256.cpp
+  src/core/bounce/io/event_file.cpp
 )
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
@@ -46,9 +48,20 @@ add_executable(bounce-tests
   tests/test_vca.cpp
   tests/test_collision_sim.cpp
   tests/test_calibration_scenario.cpp
+  tests/test_event_file.cpp
+  src/tools/run_scenario/run_scenario.cpp
 )
 target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
+target_include_directories(bounce-tests PRIVATE src/tools/run_scenario)
 target_compile_definitions(bounce-tests PRIVATE BOUNCE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 bounce_apply_fp_determinism(bounce-tests)
+
+add_executable(bounce-run-scenario
+  src/tools/run_scenario/main.cpp
+  src/tools/run_scenario/run_scenario.cpp
+)
+target_link_libraries(bounce-run-scenario PRIVATE bounce-core)
+target_include_directories(bounce-run-scenario PRIVATE src/tools/run_scenario)
+bounce_apply_fp_determinism(bounce-run-scenario)
 
 add_test(NAME bounce-tests COMMAND bounce-tests)
