@@ -1,4 +1,72 @@
 ---
+### JRN-C001-43 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Gate-language scoping. The T8/T9/T10 doctests exercise the *shapes* of the §8
+determinism_repro, loop_stability, and reference_agreement gates on the calibration set; they
+are not gate executions. A §8 gate claim requires: C-001 PREREGISTRATION.md (design A/B/C,
+coverage table, tolerances), the I-003 held-out corpus locked and populated, execution via the
+I-004 gate runner, and grazing cases per PROJECT §9. Known power limits recorded for the
+precursors: T8 repeats runs in-process only (no block-size, process, or platform variance —
+Design B nuisance conditions untouched); T9's fixture FL-1 has exactly dyadic bounce times, so
+zero drift is guaranteed by construction and the test has near-zero power against non-dyadic
+periodic orbits; T10's corpus is two easiest-cell fixtures with no Tier-2 members, and its
+per-scenario comparisons aggregate into boolean assertions (4 assertions total), hiding which
+event/field diverged on failure. No VERIFIED status is suspended — the tests are sound as
+calibration coverage — but no journal or register entry may cite them as gates passed.
+NUMBERS: precursor power limits — T8: 1 process, 1 machine; T9: 1 dyadic orbit; T10: 2
+fixtures, 0 Tier-2, 4 assertions.
+LEARNED: naming a development test after a gate invites the record to claim the gate later;
+scope the name at authoring time.
+NEXT: C-001 PREREGISTRATION.md (PACKET 36); I-004 brief (PACKET 37); Tier-2 fixture mint
+targeting grazing / near-double roots / non-dyadic orbit / Bézier segments (PACKET 38).
+
+---
+### JRN-C001-42 · CORRECTION
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: PM deviation owned per P6 §6.1. Deviation: C-001-T1 through T10 implementation and test
+translation units were PM-authored and carried in packet FILES sections (digests pre-registered,
+outputs pre-built), with agents reduced to transcription plus build/test on the environment of
+record. This contradicts the standing role boundary (Director correction at I-002: agents write
+all product code from C-001 onward) and voids the premise of P6 §2.2 / L-10 that the PM has no
+repo access — review became the PM checking its own pre-verified output. Root cause: P6 §7.4
+"pre-verifying acceptance outputs" read expansively as license to compose and execute the
+codebase. Durable fix: Director ruling 2026-07-12, Option B — packets carry specs, interface
+declarations, fixtures, oracle values, and acceptance-test files only; implementation under
+src/ is agent-authored; the PM does not build or execute the repository, and §7.4
+pre-verification means derivation of expected oracle values from specifications. Codified as
+L-14; second occurrence of the PM-authoring class after I-002, so a P6 §4.6 amendment is
+proposed to the Director per P6 §6.3 (folded into STATE open decision 2). Status of T1–T10:
+VERIFIED statuses stand — their acceptance evidence is agreement with Tier-1 closed-form and
+Tier-2 mpmath oracle values, which are independent of implementation authorship — but no §8
+gate claim attaches to them (JRN-C001-43), and C-001-T11 (Law 7 baseline) is mandatorily
+agent-authored: the PM authoring both the exact engine and its named baseline would control
+both sides of the falsifiable bet.
+NUMBERS: scope of deviation — 10 tasks (T1–T10), packets 25–34.
+LEARNED: L-14 (docs/02_PROGRAM/LESSONS.md).
+NEXT: L-14 in force from PACKET 35; P6 §4.6 amendment awaits Director approval (open decision 2).
+
+---
+### JRN-C001-41 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_34_C-001-T10 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 39/39 cases, 503/503 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-34 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-37/-38/-39/-40 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T10 VERIFIED. No further C-001 task dispatches until C-001
+PREREGISTRATION.md lands (PACKET 36) — T11 is agent-authored per L-14 and gated on the prereg's
+matched-compute definition.
+NUMBERS: 1 reference_agreement corpus test case (T10).
+LEARNED: nothing
+NEXT: PACKET 36 (prereg + merge housekeeping).
+---
 ### JRN-C001-40 · DONE
 actor: composer-agent · task: C-001-T10 · manifest: n/a
 

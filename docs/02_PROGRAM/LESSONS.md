@@ -59,3 +59,17 @@ zips, OS metadata) is open, so tolerated-pattern enumeration cannot be made tota
 enumeration fix (L-11's inbox/PACKET_*.md) fails on the next artifact class (docs.zip,
 OUT_10). Surface scoping replaces enumeration. Origin: I-001-T1-R1 FAILED honestly on an
 untracked Director courier zip after two prior defects of the same class (JRN-I001-11).
+
+L-14: The PM authors judges, never contestants. Specs, interface declarations, fixtures, oracle
+values, pre-registered gate thresholds, and acceptance-test files may be PM-authored;
+implementation code under test — and above all any Law 7 named baseline — is agent-authored
+from the spec. A packet whose FILES section carries implementation translation units converts
+review into the PM checking its own output and voids the P6 §2.2 / L-10 premise that the PM has
+no repo access; pre-registered digests of agent deliverables are the tell. Corollary: the PM
+does not build or execute the repository — P6 §7.4 "pre-verifying acceptance outputs" means
+deriving expected oracle values from specifications, never running the codebase. Enforcement:
+any packet carrying src/ implementation content, and any journal entry showing PM-executed
+build/test output, is a P6 incident. Origin: C-001-T1–T10 (packets 25–34), where .cpp/.hpp
+implementation rode packet FILES sections with digests pre-registered and test counts pre-built;
+surfaced at Director review of OUT_34; second occurrence of the PM-authoring class after the
+I-002 fixture-generator correction → P6 §4.6 amendment proposed per P6 §6.3 (JRN-C001-42).

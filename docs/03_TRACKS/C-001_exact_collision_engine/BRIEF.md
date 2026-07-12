@@ -14,6 +14,9 @@ polynomial collision-time root-solving against C-002 curves, TB-1 event ordering
 rules. No JUCE, no heap on the processing path, no libm in the collision core (DELIVERABLE_B
 §3–§4). C-002 leads by one packet — engine tasks dispatch only after the curve layer has the
 slice the task needs. Failures are reported verbatim (FAILED/BLOCKED), never patched mid-task.
+Authorship (L-14): packets supply specs, interface declarations, oracle values, and acceptance
+tests; all implementation under src/ is agent-authored. If a spec is ambiguous, BLOCK — do not
+infer.
 
 ## Files you may read
 - `AGENTS.md` · assigned `inbox/PACKET_<n>.md` · P0 §2–§6 · P3 · P4 · P1 §3 and §7
@@ -71,24 +74,31 @@ objective: load_calibration_scenario + run_calibration_scenario for schema-v1 ca
            JSON; doctest FL-1 eight tier-1 reference events and PB-1 first contact.
 VERIFIED (JRN-C001-29; OUT_31; TR_C-001-T7.md).
 
-## TASK C-001-T8: determinism_repro repeated-run identity on FL-1 + unit tests
+## TASK C-001-T8: determinism_repro-precursor repeated-run identity on FL-1 + unit tests
 depends_on: C-001-T7 VERIFIED (JRN-C001-29)
 objective: events_equal helper (exact == on all CollisionEvent fields) + doctest FL-1
-           determinism_repro — 100 repeated run_calibration_scenario calls, each bit-identical
-           to baseline (PROJECT §8 determinism_repro gate).
+           repeated-run identity — 100 repeated run_calibration_scenario calls, each
+           bit-identical to baseline. Calibration-mode precursor to the §8 determinism_repro
+           gate (JRN-C001-43); not a gate run.
 VERIFIED (JRN-C001-33; OUT_32; TR_C-001-T8.md).
 
-## TASK C-001-T9: loop_stability zero interval-sequence drift on FL-1 + unit tests
+## TASK C-001-T9: loop_stability-precursor zero interval-sequence drift on FL-1 + unit tests
 depends_on: C-001-T8 VERIFIED (JRN-C001-33)
-objective: extract_collision_intervals + intervals_equal helpers; doctest FL-1 loop_stability —
-           11 dyadic-halving intervals bit-exact, 100 repeated full-horizon runs with zero
-           interval-sequence drift through settle (PROJECT §8 loop_stability gate).
+objective: extract_collision_intervals + intervals_equal helpers; doctest FL-1 — 11
+           dyadic-halving intervals bit-exact, 100 repeated full-horizon runs with zero
+           interval-sequence drift through settle. Calibration-mode precursor to the §8
+           loop_stability gate (JRN-C001-43; dyadic fixture — zero drift by construction).
 VERIFIED (JRN-C001-37; OUT_33; TR_C-001-T9.md).
 
-## TASK C-001-T10: reference_agreement tier-1 calibration corpus + unit tests
+## TASK C-001-T10: reference_agreement-precursor tier-1 calibration corpus + unit tests
 depends_on: C-001-T9 VERIFIED (JRN-C001-37)
 objective: agrees_with_tier1_reference helper (ε=1e-12 on t/s, exact ball_id/seq) + doctest
-           tier-1 calibration corpus FL-1 + PB-1 (PROJECT §8 reference_agreement gate).
-(Dispatched in PACKET 34.)
+           tier-1 calibration corpus FL-1 + PB-1. Calibration-mode precursor to the §8
+           reference_agreement gate (JRN-C001-43).
+VERIFIED (JRN-C001-41; OUT_34; TR_C-001-T10.md).
 
-## TASK C-001-T11 (sketch): naive polyline baseline engine (Law 7) — at prereg.
+## TASK C-001-T11 (sketch): naive polyline baseline engine (Law 7)
+Agent-authored per L-14 — the PM supplies the spec, the matched-compute definition, and the
+acceptance tests only. Dispatches only after C-001 PREREGISTRATION.md is on disk (PACKET 36):
+the compute-matching methodology and the drift/accuracy margin are pre-registered before either
+engine is benchmarked.
