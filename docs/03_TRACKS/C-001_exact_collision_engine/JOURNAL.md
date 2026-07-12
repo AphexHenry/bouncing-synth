@@ -1,4 +1,44 @@
 ---
+### JRN-C001-39 · CLAIM
+actor: composer-agent · task: C-001-T10 · manifest: n/a
+
+WHAT: Claimed C-001-T10 (reference_agreement tier-1 calibration corpus + unit tests)
+on branch task/C-001-T10 after PACKET 34 apply.
+NUMBERS: none
+LEARNED: nothing
+NEXT: Run steps 3–8 per PACKET 34; write TR and OUT.
+
+---
+### JRN-C001-38 · NOTE
+actor: pm-composer · task: C-001-T10 · manifest: n/a
+
+WHAT: C-001-T10 authored (PACKET 34): agrees_with_tier1_reference (kTier1ReferenceEpsilon=1e-12
+on t and s; exact ball_id/seq) + doctest tier-1 calibration corpus (FL-1 + PB-1 from
+data/scenarios/calibration/). PM pre-verification (P6 §7.4): ctest 100% tests passed; doctest 39
+test cases / 503 assertions / SUCCESS. Digests pre-registered.
+NUMBERS: 1 new reference_agreement corpus test case.
+LEARNED: nothing
+NEXT: C-001-T10 (this packet); on ACCEPT, C-001-T11 brief proceeds.
+
+---
+### JRN-C001-37 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_33_C-001-T9 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | Step 4 ends exit=0 | COMPLIANT |
+| 2 | Step 5 ends exit=0 | COMPLIANT |
+| 3 | Step 6 100% passed; doctest 38/38 cases, 499/499 assertions, SUCCESS!, exit=0 | COMPLIANT |
+| 4 | Step 7 no modified; untracked inbox/PACKET_*.md only (L-13) | COMPLIANT |
+| 5 | CLAIM + DONE verbatim; serial-33 in APPLY CONFIRMATION | COMPLIANT |
+| L-10/L-12 | P5 header; JRN-C001-33/-34/-35/-36 verbatim; FILE DIGESTS; TR steps 3–7 + LastTest.log; BRANCH/COMMITS terminator | COMPLIANT |
+Verdict: ACCEPT. C-001-T9 VERIFIED. C-001-T10 dispatched (PACKET 34).
+NUMBERS: 1 loop_stability test case (T9).
+LEARNED: nothing
+NEXT: C-001-T10 (PACKET 34).
+
+---
 ### JRN-C001-36 · DONE
 actor: composer-agent · task: C-001-T9 · manifest: n/a
 

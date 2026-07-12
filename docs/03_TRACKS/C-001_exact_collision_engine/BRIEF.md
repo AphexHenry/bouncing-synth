@@ -83,6 +83,12 @@ depends_on: C-001-T8 VERIFIED (JRN-C001-33)
 objective: extract_collision_intervals + intervals_equal helpers; doctest FL-1 loop_stability —
            11 dyadic-halving intervals bit-exact, 100 repeated full-horizon runs with zero
            interval-sequence drift through settle (PROJECT §8 loop_stability gate).
-(Dispatched in PACKET 33.)
+VERIFIED (JRN-C001-37; OUT_33; TR_C-001-T9.md).
 
-## TASK C-001-T10 (sketch): reference_agreement tier-1 calibration corpus — at prereg.
+## TASK C-001-T10: reference_agreement tier-1 calibration corpus + unit tests
+depends_on: C-001-T9 VERIFIED (JRN-C001-37)
+objective: agrees_with_tier1_reference helper (ε=1e-12 on t/s, exact ball_id/seq) + doctest
+           tier-1 calibration corpus FL-1 + PB-1 (PROJECT §8 reference_agreement gate).
+(Dispatched in PACKET 34.)
+
+## TASK C-001-T11 (sketch): naive polyline baseline engine (Law 7) — at prereg.

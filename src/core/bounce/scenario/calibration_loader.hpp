@@ -46,4 +46,9 @@ int extract_collision_intervals(const engine::MultiBallSimResult& result,
 bool intervals_equal(const std::array<double, kMaxCollisionIntervals>& a,
                      const std::array<double, kMaxCollisionIntervals>& b, int count);
 
+constexpr double kTier1ReferenceEpsilon = 1e-12;
+
+bool agrees_with_tier1_reference(const CalibrationScenario& scenario,
+                                 const engine::MultiBallSimResult& result);
+
 } // namespace bounce::core::scenario

@@ -15,6 +15,8 @@ constexpr const char* kFl1Path =
 constexpr const char* kPb1Path =
     BOUNCE_SOURCE_DIR "/data/scenarios/calibration/PB-1-h9-g16-c1.json";
 
+constexpr const char* kTier1CalibrationCorpus[] = {kFl1Path, kPb1Path};
+
 } // namespace
 
 TEST_CASE("parse_rational handles integers and fractions") {
@@ -105,5 +107,15 @@ TEST_CASE("FL-1 loop_stability has zero interval-sequence drift across 100 repea
     CHECK(interval_count == baseline_interval_count);
     CHECK(bounce::core::scenario::intervals_equal(baseline_intervals, intervals,
                                                   baseline_interval_count));
+  }
+}
+
+TEST_CASE("tier-1 calibration corpus passes reference_agreement") {
+  for (const char* path : kTier1CalibrationCorpus) {
+    bounce::core::scenario::CalibrationScenario scenario{};
+    REQUIRE(bounce::core::scenario::load_calibration_scenario(path, scenario));
+    const auto result = bounce::core::scenario::run_calibration_scenario(
+        scenario, scenario.ref_event_count);
+    CHECK(bounce::core::scenario::agrees_with_tier1_reference(scenario, result));
   }
 }

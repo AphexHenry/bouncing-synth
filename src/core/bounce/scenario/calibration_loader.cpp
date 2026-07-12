@@ -509,4 +509,23 @@ bool intervals_equal(const std::array<double, kMaxCollisionIntervals>& a,
   return true;
 }
 
+bool agrees_with_tier1_reference(const CalibrationScenario& scenario,
+                                 const engine::MultiBallSimResult& result) {
+  if (result.count != scenario.ref_event_count) {
+    return false;
+  }
+  for (int i = 0; i < scenario.ref_event_count; ++i) {
+    const auto& ref = scenario.reference_events[static_cast<std::size_t>(i)];
+    const auto& event = result.events[static_cast<std::size_t>(i)];
+    const double t_err = event.t - ref.t;
+    const double s_err = event.s - ref.contact_x;
+    if (t_err > kTier1ReferenceEpsilon || t_err < -kTier1ReferenceEpsilon ||
+        s_err > kTier1ReferenceEpsilon || s_err < -kTier1ReferenceEpsilon ||
+        event.ball_id != ref.ball_id || event.seq != ref.seq) {
+      return false;
+    }
+  }
+  return true;
+}
+
 } // namespace bounce::core::scenario
