@@ -1,4 +1,54 @@
 ---
+### JRN-I003-10 · NOTE
+actor: pm-fable5-b · task: I-003-T2-R1 · manifest: n/a
+
+WHAT: I-003-T2-R1 rework authored (PACKET 39). Root cause eliminated by spec, not patched:
+mpmath dps ≥ 50 end-to-end; exactly two float64 touchpoints permitted — (a) reading the
+exact binary value of the v_graze double constant from source (hex recorded as provenance),
+(b) one correctly-rounded conversion per field at scenario-write time. Non-dyadicity check
+redefined as strict inequality (50-digit closed-form value ≠ nearest double, gap printed at
+≥30 digits); the symbolic_non_dyadic escape hatch is removed. Grazing targets constructed
+exactly ({0.5,1,2} are powers of two: |achieved − target| ≤ 1e-30 required). Every fixture's
+reference events pass a dual-precision self-check (dps=50 vs dps=100, ≥45-digit agreement)
+before rounding to double. Verbatim-evidence rule restated as its own criterion. Naming
+HO-graze-parabola-<k> ratified as canonical.
+NUMBERS: 16 fixtures re-minted in place; ratio bound 1e-30; self-check bound 45 digits.
+LEARNED: nothing (pending R1 outcome).
+NEXT: I-003-T2-R1 (this packet); on ACCEPT — PACKET 40 batches I-003-T3 Tier-2 mint as one
+large task + corrected two-branch merge instruction (Director step-size ruling 2026-07-12).
+
+---
+### JRN-I003-9 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_38_I-003-T2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | venv record: pinned venv, mpmath 1.3.0 | COMPLIANT |
+| 2 | generator exit=0; 16 fixtures | COMPLIANT |
+| 3 | non-dyadicity checks + grazing ratios ≥20 sig digits | NON-COMPLIANT |
+| 4 | store validator exit=0 | COMPLIANT |
+| 5 | manifest 16 entries + heldout listing | COMPLIANT |
+| 6 | LAW-1 affirmation | COMPLIANT |
+| 7 | git status pasted | NON-COMPLIANT — glob summary "?? inbox/PACKET_*.md", not verbatim (L-10) |
+Criterion-3 evidence: achieved grazing ratios off target by ~6.2e-17 relative (2^-54
+fingerprint — a double in the pipeline); "period_50_digits" for HO-flat-periodic-1/-3 equals
+the decimal expansion of the nearest double to sqrt(2) (…0951454746…), not sqrt(2)
+(…09504880…) — the 50-digit display was taken of an already-rounded double, which is also
+why double_inexact=false; pass was then claimed via the symbolic_non_dyadic escape, defeating
+the constructive check the criterion required. Reference events consequently suspect at
+Tier-1 standard. Verdict: REJECT. Fixtures quarantined non-gate-bearing; no Law-1 poisoning
+(engine never touched them); re-mint in place via R1. Secondary finding from DEVIATIONS:
+task/I-003-T1 is off the stacked chain — PACKET 38 merge DIRECTOR ACTION mis-sized, placed
+ON HOLD; corrected instruction after R1. Positive note for the record: first substantive
+REJECT under model B — the double-contamination class is precisely what PM-pre-built outputs
+used to mask.
+NUMBERS: ratio error ~6.2e-17 relative on all three grazing fixtures.
+LEARNED: high-precision pipelines fail silently through invisible float64 round-trips; specs
+must bound the *number and location* of double conversions, not just the target precision.
+NEXT: I-003-T2-R1 (PACKET 39).
+
+---
 ### JRN-I003-8 · DONE
 actor: composer-agent · task: I-003-T2 · manifest: n/a
 

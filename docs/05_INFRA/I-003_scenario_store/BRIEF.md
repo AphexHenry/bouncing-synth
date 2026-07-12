@@ -106,3 +106,65 @@ Acceptance criteria (binary, one artifact each):
 quasi-chaotic (25-event cap), near-double-root geometry — via refsim with
 reference_converged; closes the C-001-PREREG §7 table and the §8.iii concentration cap.
 At next packet after T2 VERIFIED.
+
+## TASK I-003-T2-R1: re-mint of the 16 Tier-1 held-out fixtures (float64 contamination fix)
+depends_on: I-003-T2 REJECTED (JRN-I003-9); supersedes the quarantined 2026-07-12 mint
+objective: Same deliverable as I-003-T2 (16 Tier-1 held-out fixtures per the registered
+per-cell counts, locked on mint), with the float64 contamination class eliminated and the
+evidence bar met exactly.
+
+SPEC DELTAS (binding; everything not restated carries over from I-003-T2):
+R1. PRECISION DISCIPLINE: all derivation runs at mpmath mp.dps ≥ 50 end-to-end. Exactly two
+    float64 touchpoints are permitted in the entire pipeline:
+    (a) reading the v_graze constant: parse the C++ literal from the versioned G-1 source,
+        convert once to its exact IEEE-754 double, and lift that exact binary value into
+        mpmath (e.g. via float.hex round-trip). Record the double's hex form
+        (float.hex(v_graze)) in every grazing fixture as provenance.
+    (b) the final write of each scenario/reference field: one correctly-rounded
+        mpf → double conversion per value, at serialization time only.
+    Any other float() / numpy / Python-float arithmetic on derived quantities is a defect.
+R2. NON-DYADICITY (cells b/d), constructive, no escape hatch: for each fixture, compute the
+    period P from its closed form at dps=50; let d = the nearest double to P; REQUIRE the
+    strict inequality mpf-exact(d) ≠ P and print P (true 50-digit value), d (17-significant-
+    digit round-trip), and |P − d| at ≥30 significant digits. The symbolic_non_dyadic field
+    is removed. BLOCK if a parameterization yields |P − d| = 0; choose new parameters.
+R3. GRAZING EXACTNESS: with v* = the exact double v_graze lifted per R1(a), set the target
+    normal impact speed v_n = r × v* exactly in mpmath for r ∈ {0.5, 1.0, 2.0} (powers of
+    two — exact scalings). Derive initial conditions in closed form from v_n at dps=50.
+    Independently recompute the achieved ratio from the stored ICs at dps=50; REQUIRE
+    |achieved − r| ≤ 1e-30, printed at ≥30 significant digits, for all three fixtures.
+R4. REFERENCE SELF-CHECK: every fixture's reference event set is computed twice, at dps=50
+    and dps=100; REQUIRE agreement of every event value to ≥45 significant digits before
+    the single rounding to double; report the worst-case agreement (in digits) per fixture.
+R5. IN-PLACE SUPERSESSION: overwrite the 16 quarantined fixtures, MANIFEST.json entries
+    (new sha256s), and split-lock state via the T1 machinery; TR states that the superseded
+    mint was never engine-executed (no Law-1 poisoning). Calibration set untouched.
+R6. VERBATIM EVIDENCE (L-10, restated as its own requirement): every command-output paste in
+    the TR/OUT is byte-verbatim — no globbing, elision, or summarizing of `git status`,
+    generator output, or check output. If output is long, paste it long.
+R7. Naming HO-graze-parabola-<k> is ratified canonical; keep all 16 names from the first
+    mint.
+
+Steps:
+3. Paste venv record (`python --version`, `pip show mpmath | head -2`).
+4. Fix the mint tooling per R1–R4; run it; paste the full generator output; exit=0.
+5. Paste per-fixture R2 output (cells b/d) and R3 output (all three grazing fixtures),
+   including v_graze hex provenance.
+6. Paste per-fixture R4 worst-case agreement digits.
+7. Run the store validator; paste output; exit=0 (calibration=2, heldout=16, locked).
+8. Paste `git status --porcelain --branch` VERBATIM (R6).
+9. TR + OUT per PACKET 38's OUT-REQUIREMENTS (serial 39; header task I-003-T2-R1).
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 pasted: pinned venv, mpmath 1.3.0.
+2. Step 4 pasted: generator exit=0; 16 fixtures written with the canonical names.
+3. Step 5/R2: for every cell-b/d fixture, strict P ≠ d with |P − d| printed at ≥30 sig
+   digits and > 0; no symbolic escape field present in checks or fixtures.
+4. Step 5/R3: |achieved − r| ≤ 1e-30 for all three grazing fixtures, printed at ≥30 sig
+   digits; v_graze hex (float.hex) shown as provenance.
+5. Step 6/R4: worst-case dual-precision agreement ≥45 digits for every fixture.
+6. Step 7: validator exit=0; calibration=2, heldout=16, split_locked=true.
+7. TR affirms LAW-1 (no engine binary built/linked/invoked) and R5 supersession statement.
+8. Step 8: byte-verbatim git status; no modified tracked entries beyond task-owned files
+   pre-commit; untracked within the agent-writable surface limited to files this task
+   creates; courier surface listed in full, record only (L-13).
