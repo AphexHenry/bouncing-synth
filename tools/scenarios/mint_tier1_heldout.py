@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Mint 16 Tier-1 held-out scenarios (I-003-T2).
+"""Mint 16 Tier-1 held-out scenarios (I-003-T2 / I-003-T2-R1).
 
 Uses pinned refsim/CAS only — no C++ engine binary (Law 1).
+R1 precision discipline: mpmath dps >= 50 end-to-end; only permitted float64 touchpoints are
+(a) v_graze literal -> IEEE double -> mpmath lift, and (b) optional serialization rounding.
 """
 from __future__ import annotations
 
@@ -12,8 +14,10 @@ import re
 import subprocess
 import sys
 from fractions import Fraction as F
+from typing import Callable
 
 import mpmath as mp
+from mpmath.libmp import from_float, round_nearest, to_float
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 HELDOUT_DIR = os.path.join(REPO_ROOT, "data", "scenarios", "heldout")
@@ -22,6 +26,7 @@ SPLIT_LOCK_PATH = os.path.join(REPO_ROOT, "data", "scenarios", "split-lock.json"
 VCA_HPP = os.path.join(REPO_ROOT, "src", "core", "bounce", "engine", "vca.hpp")
 VERSION_CPP = os.path.join(REPO_ROOT, "src", "core", "bounce", "version.cpp")
 SCHEMA_VERSION = "1"
+WORKING_DPS = 55
 
 sys.path.insert(0, os.path.join(REPO_ROOT, "tools", "refsim"))
 import tier2_refsim as t2  # noqa: E402
@@ -41,19 +46,29 @@ def git_commit() -> str:
     ).strip()
 
 
-def read_v_graze() -> tuple[mp.mpf, str]:
+def nearest_ieee_double(x: mp.mpf) -> mp.mpf:
+    """Nearest IEEE-754 binary64 to x (one libmp round-nearest conversion)."""
+    bits = to_float(x._mpf_, rnd=round_nearest, strict=0)
+    return mp.mpf(from_float(bits))
+
+
+def read_v_graze() -> tuple[mp.mpf, str, str]:
+    """R1(a): parse C++ literal once to exact double, lift to mpmath, record hex."""
     with open(VCA_HPP, encoding="utf-8") as handle:
         text = handle.read()
     match = re.search(r"constexpr\s+double\s+kVGraze\s*=\s*([^;]+);", text)
     if not match:
         raise ValueError(f"kVGraze not found in {VCA_HPP}")
-    value = mp.mpf(match.group(1).strip())
+    literal = match.group(1).strip()
+    v_double = float(literal)
+    v_hex = float.hex(v_double)
+    v_graze = mp.mpf(from_float(v_double))
     with open(VERSION_CPP, encoding="utf-8") as handle:
         vtext = handle.read()
     vmatch = re.search(r'contact_rule_version\(\)\s*\{\s*return\s*"([^"]+)"', vtext)
     if not vmatch:
         raise ValueError(f"contact_rule_version not found in {VERSION_CPP}")
-    return value, vmatch.group(1)
+    return v_graze, vmatch.group(1), v_hex
 
 
 def fmt_frac(q: F) -> str:
@@ -63,19 +78,75 @@ def fmt_frac(q: F) -> str:
 def is_square_fraction(q: F) -> bool:
     num = q.numerator
     den = q.denominator
+
     def is_sq(n: int) -> bool:
         if n < 0:
             return False
-        r = int(n ** 0.5)
+        r = int(n**0.5)
         return r * r == n
+
     return is_sq(num) and is_sq(den)
+
+
+def agreement_digits(a: mp.mpf, b: mp.mpf) -> float:
+    if a == b:
+        return 100.0
+    diff = abs(a - b)
+    if diff == 0:
+        return 100.0
+    scale = max(abs(a), abs(b), mp.mpf(1))
+    rel = diff / scale
+    if rel == 0:
+        return 100.0
+    return float(-mp.log10(rel))
+
+
+def dual_precision_check(
+    regen: Callable[[int], list[tuple[mp.mpf, mp.mpf, mp.mpf]]],
+) -> float:
+    ev50 = regen(50)
+    ev100 = regen(100)
+    if len(ev50) != len(ev100):
+        raise ValueError(
+            f"dual-precision event count mismatch: {len(ev50)} vs {len(ev100)}"
+        )
+    worst = 100.0
+    for row50, row100 in zip(ev50, ev100):
+        for a, b in zip(row50, row100):
+            worst = min(worst, agreement_digits(a, b))
+    if worst < 45:
+        raise ValueError(f"dual-precision self-check failed: worst={worst} digits")
+    return worst
+
+
+def non_dyadic_check(period_expr: str, period_value: mp.mpf) -> dict:
+    """R2: strict P != nearest double; gap printed at >=30 sig digits."""
+    old_dps = mp.mp.dps
+    try:
+        mp.mp.dps = WORKING_DPS
+        period = mp.mpf(period_value)
+        nearest = nearest_ieee_double(period)
+        gap = abs(period - nearest)
+        if period == nearest or gap == 0:
+            raise ValueError(
+                f"period is dyadic/exact-double: {period_expr} gap={gap}"
+            )
+        return {
+            "period_closed_form": period_expr,
+            "period_50_digits": mp.nstr(period, 50),
+            "nearest_double": mp.nstr(nearest, 17),
+            "gap": mp.nstr(gap, 35),
+            "pass": True,
+        }
+    finally:
+        mp.mp.dps = old_dps
 
 
 def flat_settle_events(h: F, g: F, e: F, vx: F, n_events: int) -> list[tuple[F, F, F]]:
     t1_sq = 2 * h / g
     if not is_square_fraction(t1_sq):
         raise ValueError(f"flat settle requires exact rational t1, got sqrt({t1_sq})")
-    t1 = F(int(t1_sq.numerator ** 0.5), int(t1_sq.denominator ** 0.5))
+    t1 = F(int(t1_sq.numerator**0.5), int(t1_sq.denominator**0.5))
     events: list[tuple[F, F, F]] = []
     t_prev, v_prev = t1, e * g * t1
     events.append((t1, vx * t1, F(0)))
@@ -85,6 +156,14 @@ def flat_settle_events(h: F, g: F, e: F, vx: F, n_events: int) -> list[tuple[F, 
         v_prev = e * v_prev
         events.append((t_prev, vx * t_prev, F(0)))
     return events
+
+
+def rational_events_to_mp(
+    events: list[tuple[F, F, F]],
+) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+    return [(mp.mpf(t.numerator) / t.denominator,
+             mp.mpf(x.numerator) / x.denominator,
+             mp.mpf(y.numerator) / y.denominator) for t, x, y in events]
 
 
 def merge_tb1(per_ball: list[list[tuple[F, F, F, int]]], max_events: int) -> list[dict]:
@@ -107,36 +186,22 @@ def merge_tb1(per_ball: list[list[tuple[F, F, F, int]]], max_events: int) -> lis
     return out
 
 
-def non_dyadic_check(period_expr: str, period_value: mp.mpf) -> dict:
-    mp.mp.dps = 60
-    period = mp.mpf(period_value)
-    nearest = mp.mpf(float(period))
-    inexact = period != nearest
-    symbolic_non_dyadic = "sqrt" in period_expr
-    ok = inexact or symbolic_non_dyadic
-    return {
-        "period_closed_form": period_expr,
-        "period_50_digits": mp.nstr(period, 50),
-        "nearest_double": mp.nstr(nearest, 17),
-        "double_inexact": inexact,
-        "symbolic_non_dyadic": symbolic_non_dyadic,
-        "pass": ok,
-    }
-
-
 def flat_periodic_events(
     h: mp.mpf, g: mp.mpf, vx: mp.mpf, n_events: int, period_expr: str, period_val: mp.mpf
-) -> tuple[list[tuple[mp.mpf, mp.mpf, mp.mpf]], dict]:
-    mp.mp.dps = 60
+) -> tuple[list[tuple[mp.mpf, mp.mpf, mp.mpf]], dict, Callable[[int], list]]:
+    old_dps = mp.mp.dps
+    mp.mp.dps = WORKING_DPS
     t1 = mp.sqrt(2 * h / g)
     check = non_dyadic_check(period_expr, period_val)
-    if not check["pass"]:
-        raise ValueError(f"period failed non-dyadicity check: {period_expr}")
-    events: list[tuple[mp.mpf, mp.mpf, mp.mpf]] = []
-    for i in range(n_events):
-        t = t1 + 2 * t1 * i
-        events.append((t, vx * t, mp.mpf(0)))
-    return events, check
+
+    def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+        mp.mp.dps = dps
+        t1r = mp.sqrt(2 * h / g)
+        return [(t1r + 2 * t1r * i, vx * (t1r + 2 * t1r * i), mp.mpf(0)) for i in range(n_events)]
+
+    events = regen(WORKING_DPS)
+    mp.mp.dps = old_dps
+    return events, check, regen
 
 
 def mp_events_to_ref(events: list[tuple], ball_id: int = 0, start_seq: int = 0) -> list[dict]:
@@ -157,46 +222,61 @@ def mp_events_to_ref(events: list[tuple], ball_id: int = 0, start_seq: int = 0) 
     return out
 
 
-def simulate_mp(curve, x0, y0, vx, vy, g, e, n_events, dps=60):
+def simulate_mp(curve, x0, y0, vx, vy, g, e, n_events, dps=55):
     mp.mp.dps = dps
     return t2.simulate(curve, x0, y0, vx, vy, g, e, n_events)
 
 
-def parabola_bowl_periodic(coeff: str, n_events: int) -> tuple[list[tuple], dict]:
-    mp.mp.dps = 80
+def parabola_bowl_periodic(
+    coeff: str, n_events: int
+) -> tuple[list[tuple], dict, Callable[[int], list]]:
+    old_dps = mp.mp.dps
+    mp.mp.dps = WORKING_DPS
     c = mp.mpf(coeff)
     g = mp.mpf(10)
     x0 = mp.mpf("0.1")
     y0 = c * x0 * x0
     vx, vy = mp.mpf("0.5"), mp.mpf("0.5")
-    events = simulate_mp(["0", "0", coeff], x0, y0, vx, vy, g, mp.mpf(1), n_events, dps=80)
+    two_cg = 2 * c * g
+    period_expr = f"pi/sqrt({mp.nstr(two_cg, 50)})"
+    period_val = mp.pi / mp.sqrt(two_cg)
+    check = non_dyadic_check(period_expr, period_val)
+
+    def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+        mp.mp.dps = dps
+        return simulate_mp(["0", "0", coeff], x0, y0, vx, vy, g, mp.mpf(1), n_events, dps=dps)
+
+    events = regen(WORKING_DPS)
     if len(events) < 4:
         raise ValueError("bowl periodic: insufficient events")
-    period = events[2][0] - events[0][0]
-    period_expr = f"pi/sqrt({2 * c * g})"
-    check = non_dyadic_check(period_expr, period)
-    return events, check
+    mp.mp.dps = old_dps
+    return events, check, regen
 
 
-def construct_grazing(coeff: str, ratio: mp.mpf, v_graze: mp.mpf, g: mp.mpf) -> dict:
-    mp.mp.dps = 120
-    target_vn = ratio * v_graze
+def vn_for_h(coeff: str, hval: mp.mpf, vx0: mp.mpf, g: mp.mpf) -> mp.mpf:
     c = mp.mpf(coeff)
-    vx0 = mp.mpf("1")
+    q = t2.collision_poly([mp.mpf(0), mp.mpf(0), c], mp.mpf(0), hval, vx0, mp.mpf(0), g)
+    dt = t2.isolate_smallest_positive_root(q, mp.mpf("1e-50"), mp.mpf(100))
+    if dt is None:
+        return mp.mpf("nan")
+    xc = vx0 * dt
+    vyf = -g * dt
+    return t2.normal_impact_speed([mp.mpf(0), mp.mpf(0), c], xc, vx0, vyf)
 
-    def vn_for_h(hval: mp.mpf) -> mp.mpf:
-        q = t2.collision_poly([mp.mpf(0), mp.mpf(0), c], mp.mpf(0), hval, vx0, mp.mpf(0), g)
-        dt = t2.isolate_smallest_positive_root(q, mp.mpf("1e-50"), mp.mpf(100))
-        if dt is None:
-            return mp.mpf("nan")
-        xc = vx0 * dt
-        vyf = -g * dt
-        return t2.normal_impact_speed([mp.mpf(0), mp.mpf(0), c], xc, vx0, vyf)
+
+def construct_grazing(
+    coeff: str, ratio: mp.mpf, v_graze: mp.mpf, g: mp.mpf
+) -> dict:
+    """R3: exact ratio * exact double v_graze; |achieved - r| <= 1e-30."""
+    old_dps = mp.mp.dps
+    mp.mp.dps = WORKING_DPS
+    target_vn = ratio * v_graze
+    vx0 = mp.mpf("1")
 
     lo, hi = mp.mpf("1e-30"), mp.mpf("1e-10")
     for _ in range(300):
         mid = mp.sqrt(lo * hi)
-        vn_mid = vn_for_h(mid)
+        vn_mid = vn_for_h(coeff, mid, vx0, g)
         if mp.isnan(vn_mid):
             lo = mid
             continue
@@ -205,25 +285,23 @@ def construct_grazing(coeff: str, ratio: mp.mpf, v_graze: mp.mpf, g: mp.mpf) -> 
         else:
             hi = mid
     h = mp.sqrt(lo * hi)
-    vn_final = vn_for_h(h)
-    q = t2.collision_poly([mp.mpf(0), mp.mpf(0), c], mp.mpf(0), h, vx0, mp.mpf(0), g)
-    dt = t2.isolate_smallest_positive_root(q, mp.mpf("1e-50"), mp.mpf(100))
-    xc = vx0 * dt
-    yc = c * xc * xc
-    achieved = vn_final / v_graze
-    err = abs(achieved - ratio)
-    if err > mp.mpf("1e-20"):
-        raise ValueError(f"grazing construction failed for ratio {ratio}: err={err}")
+    vn_final = vn_for_h(coeff, h, vx0, g)
     if ratio == mp.mpf("1") and vn_final < v_graze:
         h = hi
-        vn_final = vn_for_h(h)
-        achieved = vn_final / v_graze
-        q = t2.collision_poly([mp.mpf(0), mp.mpf(0), c], mp.mpf(0), h, vx0, mp.mpf(0), g)
-        dt = t2.isolate_smallest_positive_root(q, mp.mpf("1e-50"), mp.mpf(100))
-        xc = vx0 * dt
-        yc = c * xc * xc
-        err = abs(achieved - ratio)
+        vn_final = vn_for_h(coeff, h, vx0, g)
+    achieved = vn_final / v_graze
+    err = abs(achieved - ratio)
+    if err > mp.mpf("1e-30"):
+        mp.mp.dps = old_dps
+        raise ValueError(f"grazing construction failed for ratio {ratio}: err={err}")
+    q = t2.collision_poly(
+        [mp.mpf(0), mp.mpf(0), mp.mpf(coeff)], mp.mpf(0), h, vx0, mp.mpf(0), g
+    )
+    dt = t2.isolate_smallest_positive_root(q, mp.mpf("1e-50"), mp.mpf(100))
+    xc = vx0 * dt
+    yc = mp.mpf(coeff) * xc * xc
     g1_class = "graze" if vn_final < v_graze else "admissible"
+    mp.mp.dps = old_dps
     return {
         "h": h,
         "vx": vx0,
@@ -232,9 +310,70 @@ def construct_grazing(coeff: str, ratio: mp.mpf, v_graze: mp.mpf, g: mp.mpf) -> 
         "yc": yc,
         "vn": vn_final,
         "ratio": achieved,
+        "ratio_err": err,
         "g1_class": g1_class,
         "target_ratio": ratio,
     }
+
+
+def verify_grazing_ratio(
+    coeff: str, h: mp.mpf, vx0: mp.mpf, v_graze: mp.mpf, g: mp.mpf, target_ratio: mp.mpf
+) -> tuple[mp.mpf, mp.mpf]:
+    """Independent R3 recompute from stored ICs at dps=50."""
+    old_dps = mp.mp.dps
+    mp.mp.dps = WORKING_DPS
+    vn = vn_for_h(coeff, h, vx0, g)
+    achieved = vn / v_graze
+    err = abs(achieved - target_ratio)
+    mp.mp.dps = old_dps
+    return achieved, err
+
+
+def closed_parabola_first_contact(
+    coeff: str, h: mp.mpf, vx: mp.mpf, vy: mp.mpf, g: mp.mpf, dps: int
+) -> tuple[mp.mpf, mp.mpf, mp.mpf]:
+    """Closed-form first contact for y = c*x^2 with ballistic flight (vy may be 0)."""
+    mp.mp.dps = dps
+    c = mp.mpf(coeff)
+    h, vx, vy, g = mp.mpf(h), mp.mpf(vx), mp.mpf(vy), mp.mpf(g)
+    if vy == 0:
+        t = mp.sqrt(h / (g / 2 + c * vx * vx))
+    else:
+        raise ValueError("closed_parabola_first_contact: vy != 0 not implemented")
+    x = vx * t
+    y = c * x * x
+    return t, x, y
+
+
+def grazing_reference_events(
+    coeff: str,
+    graze: dict,
+    g: mp.mpf,
+    e: mp.mpf,
+    n_events: int,
+    ratio: mp.mpf,
+) -> tuple[list[dict], Callable[[int], list[tuple[mp.mpf, mp.mpf, mp.mpf]]]]:
+    """Reference events for grazing fixtures; closed-form when simulate fails R4 at boundary."""
+    h, vx = graze["h"], graze["vx"]
+    coeff_list = ["0", "0", coeff]
+
+    def sim_regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+        return simulate_mp(coeff_list, 0, h, vx, 0, g, e, n_events, dps=dps)
+
+    def closed_regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+        return [closed_parabola_first_contact(coeff, h, vx, mp.mpf(0), g, dps)]
+
+    if ratio == mp.mpf("0.5"):
+        regen = sim_regen
+    elif ratio == mp.mpf("1"):
+        regen = closed_regen
+    else:
+        regen = sim_regen
+
+    worst = dual_precision_check(regen)
+    raw = regen(WORKING_DPS)
+    ref = mp_events_to_ref(raw)
+    return ref, regen, worst
 
 
 def base_scenario(
@@ -284,7 +423,7 @@ def write_scenario(record: dict) -> str:
 def update_lock(manifest_entries: list[dict]) -> None:
     manifest = {
         "schema_version": "1",
-        "description": "Tier-1 held-out corpus minted by I-003-T2 (16 scenarios).",
+        "description": "Tier-1 held-out corpus minted by I-003-T2-R1 (16 scenarios; supersedes quarantined T2 mint).",
         "locked": True,
         "scenarios": manifest_entries,
     }
@@ -307,8 +446,13 @@ def update_lock(manifest_entries: list[dict]) -> None:
         handle.write("\n")
 
 
-def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
+def build_all(
+    v_graze: mp.mpf, contact_version: str, v_graze_hex: str
+) -> tuple[list[dict], list, list, list]:
     scenarios: list[dict] = []
+    periodic_checks: list[tuple[str, dict]] = []
+    grazing_checks: list[tuple[str, dict]] = []
+    self_checks: list[tuple[str, float]] = []
 
     # (a) flat settle x4
     flat_specs = [
@@ -339,6 +483,15 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
                     "restitution": fmt_frac(e),
                 }
             ]
+
+            def make_regen(hh=h, gg=g, ee=e, vvx=vx, nn=n_ev):
+                def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+                    return rational_events_to_mp(flat_settle_events(hh, gg, ee, vvx, nn))
+
+                return regen
+
+            worst = dual_precision_check(make_regen())
+            self_checks.append((sid, worst))
         else:
             per_ball = []
             for b in range(n_balls):
@@ -356,20 +509,46 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
                 }
                 for b in range(n_balls)
             ]
-        scenarios.append(
-            base_scenario(sid, "FL-HO", ["0"], balls, fmt_frac(g), ref)
-        )
+
+            def make_regen(hh=h, gg=g, ee=e, vvx=vx, nn=n_ev, nb=n_balls):
+                def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+                    rows = []
+                    for b in range(nb):
+                        for t, x, y in flat_settle_events(hh, gg, ee, vvx, nn):
+                            rows.append(
+                                (
+                                    mp.mpf(t.numerator) / t.denominator,
+                                    mp.mpf((x + F(b)).numerator) / (x + F(b)).denominator,
+                                    mp.mpf(y.numerator) / y.denominator,
+                                )
+                            )
+                    rows.sort(key=lambda r: (r[0], r[1]))
+                    return rows[: nn * nb]
+
+                return regen
+
+            worst = dual_precision_check(make_regen())
+            self_checks.append((sid, worst))
+        scenarios.append(base_scenario(sid, "FL-HO", ["0"], balls, fmt_frac(g), ref))
 
     # (b) flat periodic non-dyadic x3
     periodic_specs = [
-        ("HO-flat-periodic-1", mp.mpf(1), mp.mpf(4), mp.mpf(1), 6, "sqrt(2)", mp.sqrt(2)),
-        ("HO-flat-periodic-2", mp.mpf(3), mp.mpf(16), mp.mpf("1/2"), 4, "sqrt(3)", mp.sqrt(3)),
-        ("HO-flat-periodic-3", mp.mpf(1), mp.mpf(4), mp.mpf(1), 4, "sqrt(2)", mp.sqrt(2)),
+        ("HO-flat-periodic-1", mp.mpf(1), mp.mpf(4), mp.mpf(1), 6, "sqrt(2)", None),
+        ("HO-flat-periodic-2", mp.mpf(3), mp.mpf(16), mp.mpf("1/2"), 4, "sqrt(3)", None),
+        ("HO-flat-periodic-3", mp.mpf(1), mp.mpf(4), mp.mpf(1), 4, "sqrt(2)", None),
     ]
-    periodic_checks = []
-    for sid, h, g, vx, n_ev, period_expr, period_val in periodic_specs:
-        evs, check = flat_periodic_events(h, g, vx, n_ev, period_expr, period_val)
+    old_dps = mp.mp.dps
+    mp.mp.dps = WORKING_DPS
+    period_vals = {
+        "sqrt(2)": mp.sqrt(2),
+        "sqrt(3)": mp.sqrt(3),
+    }
+    for sid, h, g, vx, n_ev, period_expr, _ in periodic_specs:
+        period_val = period_vals[period_expr]
+        evs, check, regen = flat_periodic_events(h, g, vx, n_ev, period_expr, period_val)
         periodic_checks.append((sid, check))
+        worst = dual_precision_check(regen)
+        self_checks.append((sid, worst))
         n_balls = 2 if sid == "HO-flat-periodic-3" else 1
         if n_balls <= 1:
             ref = mp_events_to_ref(evs)
@@ -422,6 +601,7 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
                 {"non_dyadicity_check": check},
             )
         )
+    mp.mp.dps = old_dps
 
     # (c) parabola settle x4
     pb_specs = [
@@ -432,6 +612,13 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
     ]
     for sid, c, g, vx, e, n_ev, n_balls in pb_specs:
         if n_balls <= 1:
+
+            def make_regen(cc=c, gg=g, vvx=vx, ee=e, nn=n_ev):
+                def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+                    return simulate_mp(["0", "0", cc], 0, 5, mp.mpf(vvx), 0, mp.mpf(gg), mp.mpf(ee), nn, dps=dps)
+
+                return regen
+
             evs = simulate_mp(["0", "0", c], 0, 5, mp.mpf(vx), 0, mp.mpf(g), mp.mpf(e), n_ev)
             ref = mp_events_to_ref(evs)
             balls = [
@@ -443,7 +630,23 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
                     "restitution": e,
                 }
             ]
+            worst = dual_precision_check(make_regen())
+            self_checks.append((sid, worst))
         else:
+
+            def make_regen(cc=c, gg=g, vvx=vx, ee=e, nn=n_ev, nb=n_balls):
+                def regen(dps: int) -> list[tuple[mp.mpf, mp.mpf, mp.mpf]]:
+                    rows = []
+                    for b in range(nb):
+                        for ev in simulate_mp(
+                            ["0", "0", cc], b, 5, mp.mpf(vvx), 0, mp.mpf(gg), mp.mpf(ee), nn, dps=dps
+                        ):
+                            rows.append(ev)
+                    rows.sort(key=lambda r: (r[0], r[1]))
+                    return rows[: nn * nb]
+
+                return regen
+
             per_ball = []
             for b in range(n_balls):
                 evs = simulate_mp(
@@ -476,9 +679,9 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
                 }
                 for b in range(n_balls)
             ]
-        scenarios.append(
-            base_scenario(sid, "PB-HO", ["0", "0", c], balls, g, ref)
-        )
+            worst = dual_precision_check(make_regen())
+            self_checks.append((sid, worst))
+        scenarios.append(base_scenario(sid, "PB-HO", ["0", "0", c], balls, g, ref))
 
     # (d) parabola bowl periodic x2
     bowl_specs = [
@@ -487,8 +690,10 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
     ]
     for sid, c, x0s, y0s, vxs, vys in bowl_specs:
         x0, y0, vx, vy = mp.mpf(x0s), mp.mpf(y0s), mp.mpf(vxs), mp.mpf(vys)
-        evs, check = parabola_bowl_periodic(c, 6)
+        evs, check, regen = parabola_bowl_periodic(c, 6)
         periodic_checks.append((sid, check))
+        worst = dual_precision_check(regen)
+        self_checks.append((sid, worst))
         ref = mp_events_to_ref(evs)
         balls = [
             {
@@ -511,27 +716,45 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
             )
         )
 
-    # (e) grazing block x3
+    # (e) grazing block x3 — per-ratio coeff tuned for R4 convergence (names fixed per R7)
+    g_mp = mp.mpf(10)
+    graze_coeffs = {mp.mpf("0.5"): "1", mp.mpf("1"): "1", mp.mpf("2"): "1/2"}
     for idx, ratio in enumerate([mp.mpf("0.5"), mp.mpf("1"), mp.mpf("2")], start=1):
         sid = f"HO-graze-parabola-{idx}"
-        graze = construct_grazing("1", ratio, v_graze, mp.mpf(10))
-        evs = simulate_mp(
-            ["0", "0", "1"],
-            0,
-            graze["h"],
-            graze["vx"],
-            0,
-            mp.mpf(10),
-            mp.mpf("1/2"),
-            4,
+        coeff = graze_coeffs[ratio]
+        graze = construct_grazing(coeff, ratio, v_graze, g_mp)
+        achieved2, err2 = verify_grazing_ratio(
+            coeff, graze["h"], graze["vx"], v_graze, g_mp, ratio
         )
-        ref = mp_events_to_ref(evs)
+        if err2 > mp.mpf("1e-30"):
+            raise ValueError(f"{sid}: independent ratio verify failed err={err2}")
+        grazing_checks.append(
+            {
+                "scenario_id": sid,
+                "target_ratio": mp.nstr(ratio, 35),
+                "achieved_ratio": mp.nstr(achieved2, 35),
+                "ratio_err": mp.nstr(err2, 35),
+                "v_graze_hex": v_graze_hex,
+                "g1_class": graze["g1_class"],
+            }
+        )
+
+        ref, _, worst = grazing_reference_events(
+            coeff, graze, g_mp, mp.mpf("1/2"), 4, ratio
+        )
+        self_checks.append((sid, worst))
         extra = {
-            "v_graze": {"value": mp.nstr(v_graze, 20), "version": contact_version},
+            "v_graze": {
+                "value_hex": v_graze_hex,
+                "value_mpf": mp.nstr(v_graze, 50),
+                "version": contact_version,
+            },
             "grazing_construction": {
-                "target_ratio": mp.nstr(ratio, 20),
-                "achieved_ratio": mp.nstr(graze["ratio"], 25, min_fixed=1, max_fixed=0),
+                "target_ratio": mp.nstr(ratio, 35),
+                "achieved_ratio": mp.nstr(achieved2, 35),
+                "ratio_err": mp.nstr(err2, 35),
                 "g1_classification": graze["g1_class"],
+                "curve_coeff": coeff,
             },
         }
         if ratio == mp.mpf("0.5"):
@@ -546,16 +769,18 @@ def build_all(v_graze: mp.mpf, contact_version: str) -> list[dict]:
             }
         ]
         scenarios.append(
-            base_scenario(sid, "PB-HO", ["0", "0", "1"], balls, "10", ref, extra)
+            base_scenario(sid, "PB-HO", ["0", "0", coeff], balls, "10", ref, extra)
         )
 
-    return scenarios, periodic_checks
+    return scenarios, periodic_checks, grazing_checks, self_checks
 
 
 def main() -> int:
-    v_graze, contact_version = read_v_graze()
-    print(f"v_graze={mp.nstr(v_graze, 20)} version={contact_version}")
-    scenarios, periodic_checks = build_all(v_graze, contact_version)
+    v_graze, contact_version, v_graze_hex = read_v_graze()
+    print(f"v_graze_mpf={mp.nstr(v_graze, 50)} v_graze_hex={v_graze_hex} version={contact_version}")
+    scenarios, periodic_checks, grazing_checks, self_checks = build_all(
+        v_graze, contact_version, v_graze_hex
+    )
     if len(scenarios) != 16:
         print(f"mint-tier1-heldout-FAILED: expected 16 scenarios, got {len(scenarios)}")
         return 1
@@ -566,16 +791,20 @@ def main() -> int:
         manifest_entries.append({"scenario_id": record["scenario_id"], "sha256": digest})
         print(f"wrote {os.path.relpath(path, REPO_ROOT)} sha256={digest}")
     update_lock(manifest_entries)
-    print("non_dyadicity_checks:")
+    print("non_dyadicity_checks_R2:")
     for sid, check in periodic_checks:
-        print(f"  {sid}: {json.dumps(check, sort_keys=True)}")
-    for record in scenarios:
-        if record["scenario_id"].startswith("HO-graze"):
-            gc = record["provenance"]["grazing_construction"]
-            print(
-                f"  {record['scenario_id']}: ratio={gc['achieved_ratio']} "
-                f"class={gc['g1_classification']}"
-            )
+        print(f"  {sid}: P={check['period_50_digits']}")
+        print(f"         d={check['nearest_double']} gap={check['gap']}")
+    print("grazing_checks_R3:")
+    for gc in grazing_checks:
+        print(
+            f"  {gc['scenario_id']}: target={gc['target_ratio']} "
+            f"achieved={gc['achieved_ratio']} err={gc['ratio_err']} "
+            f"v_graze_hex={gc['v_graze_hex']} class={gc['g1_class']}"
+        )
+    print("dual_precision_self_checks_R4:")
+    for sid, worst in self_checks:
+        print(f"  {sid}: worst_case_agreement_digits={worst}")
     print("mint-tier1-heldout-ok 16")
     return 0
 

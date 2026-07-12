@@ -32,15 +32,14 @@
     "gravity": "10"
   },
   "provenance": {
-    "generator_git_commit": "23d7bfc1b0a5a9f2acb6af9e958e93bb8de333b9",
+    "generator_git_commit": "dc03d7f291f541f845a9df224df866fd46d63fff",
     "mpmath_version": "1.3.0",
     "non_dyadicity_check": {
-      "double_inexact": true,
-      "nearest_double": "0.15857461252661381",
+      "gap": "3.2521091800887107192325152810796564e-17",
+      "nearest_double": "0.70248147310407261",
       "pass": true,
-      "period_50_digits": "0.15857461252661380137456287218200418915011658670541",
-      "period_closed_form": "pi/sqrt(20.0)",
-      "symbolic_non_dyadic": true
+      "period_50_digits": "0.70248147310407263931563746432048947994665091870672",
+      "period_closed_form": "pi/sqrt(20.0)"
     },
     "tier": 1
   },

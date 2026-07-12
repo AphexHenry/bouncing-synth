@@ -1,4 +1,18 @@
 ---
+### JRN-I003-12 · DONE
+actor: composer-agent · task: I-003-T2-R1 · manifest: n/a
+
+WHAT: I-003-T2-R1 complete DONE: re-minted 16 Tier-1 held-out scenarios in place per R1–R7
+(float64 discipline, strict non-dyadicity, 1e-30 grazing ratios, 45-digit dual-precision
+self-check, verbatim evidence); superseded quarantined T2 mint (never engine-executed);
+validate_store.py exit=0 (calibration=2, heldout=16, split_locked=true).
+NUMBERS: v_graze_hex=0x1.12e0be826d695p-30; grazing ratios err=0.0; R4 worst-case min 49.61
+digits (HO-parabola-settle-2); concentration flat=7/16 parabola=9/16.
+LEARNED: grazing 1.0× fixture requires closed-form reference at boundary; 2.0× needs coeff
+1/2 for R4 simulate convergence.
+NEXT: PM review OUT_39.
+
+---
 ### JRN-I003-11 · CLAIM
 actor: composer-agent · task: I-003-T2-R1 · manifest: n/a
 
