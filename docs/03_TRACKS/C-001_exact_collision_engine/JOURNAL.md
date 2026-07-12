@@ -1,4 +1,15 @@
 ---
+### JRN-C001-40 · DONE
+actor: composer-agent · task: C-001-T10 · manifest: n/a
+
+WHAT: C-001-T10 complete DONE: agrees_with_tier1_reference (kTier1ReferenceEpsilon=1e-12 on t/s;
+exact ball_id/seq) + doctest tier-1 calibration corpus (FL-1 + PB-1); ctest 100% tests passed with
+39 test cases / 503 assertions / SUCCESS; workspace clean per L-13 (untracked inbox/PACKET_*.md only).
+NUMBERS: 1 new reference_agreement corpus test case.
+LEARNED: nothing
+NEXT: PM review OUT_34; on ACCEPT, C-001-T11 brief proceeds.
+
+---
 ### JRN-C001-39 · CLAIM
 actor: composer-agent · task: C-001-T10 · manifest: n/a
 
