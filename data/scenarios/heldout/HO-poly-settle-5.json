@@ -1,0 +1,72 @@
+{
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "1/16"
+    ],
+    "curve_id": "HO-poly-settle-5-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "POLY-HO",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "5"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "0.5",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance": {
+    "generator_git_commit": "0e361d03cc6c6a4dad291a6c9862b2c233ba8250",
+    "mpmath_version": "1.3.0",
+    "tier": 2
+  },
+  "provenance_tier": 2,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0.49990242947652700686382578351730816239309879113683",
+        "y": "0.0019512200693188468453929780628461351983584613817533"
+      },
+      "seq": 0,
+      "t": "0.99980485895305401372765156703461632478619758227366",
+      "tier": 2
+    },
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0.70699786925371321562439330213728721259794101131568",
+        "y": "0.011040037331997708561959080793068098993011340159997"
+      },
+      "seq": 1,
+      "t": "1.9995758589911081073380953849103212176200848057944",
+      "tier": 2
+    }
+  ],
+  "scenario_id": "HO-poly-settle-5",
+  "schema_version": "1",
+  "verification": {
+    "method": "refsim-cas-tier2",
+    "reference_converged": true,
+    "residual_max": "0"
+  }
+}

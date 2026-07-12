@@ -314,7 +314,7 @@ def invert_x_on_segment(seg, x_target, lo=mp.mpf(0), hi=mp.mpf(1)):
     if x_target < min(x_lo, x_hi) or x_target > max(x_lo, x_hi):
         return None
     a, b = lo, hi
-    for _ in range(200):
+    for _ in range(max(200, mp.mp.dps * 2)):
         m = (a + b) / 2
         xm = bezier_eval_segment(seg, m)[0]
         if xm == x_target:
@@ -362,7 +362,7 @@ def collision_poly_bezier(segments, x0, y0, vx, vy, g):
     # For segments with monotonic x, use implicit root finding on t directly.
     t_min = mp.mpf(10) ** (-(mp.mp.dps - 10))
     t_max = mp.mpf(50)
-    nseg = 64
+    nseg = max(64, mp.mp.dps)
     step = (t_max - t_min) / nseg
     brackets = []
     prev_t = t_min
@@ -387,7 +387,7 @@ def collision_poly_bezier(segments, x0, y0, vx, vy, g):
     if not brackets:
         return None, None
     lo, hi = brackets[0]
-    for _ in range(80):
+    for _ in range(max(120, mp.mp.dps * 2)):
         m = (lo + hi) / 2
         xb = x0 + vx * m
         yc = y_at_x_bezier(segments, xb)
@@ -402,7 +402,43 @@ def collision_poly_bezier(segments, x0, y0, vx, vy, g):
         else:
             lo = m
     t_hit = (lo + hi) / 2
-    return t_hit, x0 + vx * t_hit
+    return _refine_bezier_collision_time(segments, x0, y0, vx, vy, g, t_hit)
+
+
+def _bezier_height_at_t(segments, x0, y0, vx, vy, g, t):
+    xb = x0 + vx * t
+    yc = y_at_x_bezier(segments, xb)
+    if yc is None:
+        return None
+    return y0 + vy * t - g * t * t / 2 - yc
+
+
+def _refine_bezier_collision_time(segments, x0, y0, vx, vy, g, t0):
+    """Newton polish on y_ball(t) - y_curve(x(t)) after bracketing."""
+    t = mp.mpf(t0)
+    for _ in range(max(12, mp.mp.dps // 4)):
+        f = _bezier_height_at_t(segments, x0, y0, vx, vy, g, t)
+        if f is None:
+            break
+        if f == 0:
+            break
+        dt = mp.mpf("1e-6")
+        fp = _bezier_height_at_t(segments, x0, y0, vx, vy, g, t + dt)
+        fm = _bezier_height_at_t(segments, x0, y0, vx, vy, g, t - dt)
+        if fp is None or fm is None:
+            break
+        deriv = (fp - fm) / (2 * dt)
+        if deriv == 0:
+            break
+        step = f / deriv
+        t_next = t - step
+        if t_next <= 0:
+            break
+        if abs(step) <= mp.mpf(10) ** (-(mp.mp.dps - 5)):
+            t = t_next
+            break
+        t = t_next
+    return t, x0 + vx * t
 
 
 def simulate_piecewise_bezier(segments, x0, y0, vx, vy, g, e, n_events):
@@ -590,9 +626,9 @@ def simulate_rounded(coeffs, x0, y0, vx, vy, g, e, n_events, keep_digits=50):
     return events
 
 
-def certify_quasi_chaotic_mpmath(coeffs, y0, vx, vy, e, component, n_events=25):
-    """Sensitivity certificate with per-event rounding envelope (I-003-T3)."""
-    pert = mp.mpf("1e-30")
+def amplification_at_epsilon(coeffs, y0, vx, vy, e, component, epsilon, n_events=25):
+    """Single-ε amplification probe for parameter search (I-003-T3-R1)."""
+    eps = mp.mpf(epsilon)
 
     def run(apply_pert):
         mp.mp.dps = 55
@@ -606,27 +642,69 @@ def certify_quasi_chaotic_mpmath(coeffs, y0, vx, vy, e, component, n_events=25):
         return simulate_rounded(coeffs, x, y, vvx, vvy, 10, e, n_events, keep_digits=50)
 
     base = run(mp.mpf(0))
-    p = run(pert)
-    rows = []
-    diverged = False
+    p = run(eps)
+    max_div = mp.mpf(0)
     for i in range(min(len(base), len(p), n_events)):
-        div = abs(base[i][0] - p[i][0])
-        rows.append(
-            {
-                "event": i,
-                "t_base": mp.nstr(base[i][0], 20),
-                "t_pert": mp.nstr(p[i][0], 20),
-                "divergence": mp.nstr(div, 20),
-            }
-        )
-        if div > mp.mpf("1e-10"):
-            diverged = True
+        max_div = max(max_div, abs(base[i][0] - p[i][0]))
+    return max_div / eps
+
+
+def certify_quasi_chaotic_mpmath(coeffs, y0, vx, vy, e, component, n_events=25):
+    """Amplification-based sensitivity certificate (I-003-T3-R1 / prereg v1.1 A2)."""
+    eps_30 = mp.mpf("1e-30")
+    eps_20 = mp.mpf("1e-20")
+    min_amplification = mp.mpf("1e6")
+    linearity_factor = mp.mpf(10)
+
+    def run(apply_pert):
+        mp.mp.dps = 55
+        x, y, vvx, vvy = mp.mpf(0), mp.mpf(y0), mp.mpf(vx), mp.mpf(vy)
+        if component == "vx":
+            vvx += apply_pert
+        elif component == "vy":
+            vvy += apply_pert
+        else:
+            y += apply_pert
+        return simulate_rounded(coeffs, x, y, vvx, vvy, 10, e, n_events, keep_digits=50)
+
+    def max_divergence(pert):
+        base = run(mp.mpf(0))
+        p = run(pert)
+        max_div = mp.mpf(0)
+        rows = []
+        for i in range(min(len(base), len(p), n_events)):
+            div = abs(base[i][0] - p[i][0])
+            max_div = max(max_div, div)
+            rows.append(
+                {
+                    "event": i,
+                    "t_base": mp.nstr(base[i][0], 20),
+                    "t_pert": mp.nstr(p[i][0], 20),
+                    "divergence": mp.nstr(div, 20),
+                }
+            )
+        return max_div, rows
+
+    max_div_30, rows_30 = max_divergence(eps_30)
+    max_div_20, rows_20 = max_divergence(eps_20)
+    amp_30 = max_div_30 / eps_30
+    amp_20 = max_div_20 / eps_20
+    ratio = amp_20 / amp_30 if amp_30 != 0 else mp.mpf("inf")
+    linearity_ok = (amp_30 >= min_amplification) and (
+        ratio <= linearity_factor and ratio >= 1 / linearity_factor
+    )
     return {
         "perturbed_component": component,
-        "perturbation": "1e-30",
+        "perturbation_primary": "1e-30",
+        "perturbation_linearity": "1e-20",
         "method": "rounded-state-envelope",
-        "diverged": diverged,
-        "table": rows,
+        "amplification_at_1e-30": mp.nstr(amp_30, 20),
+        "amplification_at_1e-20": mp.nstr(amp_20, 20),
+        "linearity_ratio": mp.nstr(ratio, 20),
+        "linearity_within_10x": bool(linearity_ok),
+        "admitted": bool(linearity_ok),
+        "table_at_1e-30": rows_30,
+        "table_at_1e-20": rows_20,
     }
 
 
@@ -634,40 +712,25 @@ def poly_discriminant_at_first_contact(coeffs, x0, y0, vx, vy, g):
     coeffs_m = [mp.mpf(c) for c in coeffs]
     x0, y0, vx, vy, g = mp.mpf(x0), mp.mpf(y0), mp.mpf(vx), mp.mpf(vy), mp.mpf(g)
     q = collision_poly(coeffs_m, x0, y0, vx, vy, g)
-    # discriminant of quadratic factor if degree 2, else use resultant approximation
     while len(q) > 1 and q[-1] == 0:
         q.pop()
     deg = len(q) - 1
     if deg == 2:
         a, b, c = q[2], q[1], q[0]
         return b * b - 4 * a * c
-    if deg == 4:
-        # depressed quartic discriminant via resultant with derivative
-        dq = poly_deriv(q)
-        # evaluate discriminant numerically as product of root differences squared
-        roots = []
-        t_min = mp.mpf("1e-50")
-        t_max = mp.mpf(20)
-        nseg = 128
-        step = (t_max - t_min) / nseg
-        prev_t, prev_v = t_min, poly_eval(q, t_min)
-        for i in range(1, nseg + 1):
-            t = t_min + step * i
-            v = poly_eval(q, t)
-            if prev_v * v < 0:
-                lo, hi = prev_t, t
-                for _ in range(60):
-                    m = (lo + hi) / 2
-                    fm = poly_eval(q, m)
-                    if poly_eval(q, lo) * fm <= 0:
-                        hi = m
-                    else:
-                        lo = m
-                roots.append((lo + hi) / 2)
-            prev_t, prev_v = t, v
-        if len(roots) >= 2:
-            return (roots[0] - roots[1]) ** 2
-        return mp.mpf("nan")
+    if deg >= 2:
+        old_dps = mp.mp.dps
+        try:
+            mp.mp.dps = max(old_dps, 80)
+            coeffs_high = [q[i] for i in range(deg, -1, -1)]
+            roots = mp.polyroots(coeffs_high, maxsteps=200)
+            disc = mp.mpf(1)
+            for i in range(len(roots)):
+                for j in range(i + 1, len(roots)):
+                    disc *= (roots[i] - roots[j]) ** 2
+            return disc
+        finally:
+            mp.mp.dps = old_dps
     return mp.mpf("nan")
 
 

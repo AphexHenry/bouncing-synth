@@ -1,5 +1,5 @@
 {
-  "description": "Tier-1 held-out corpus minted by I-003-T2-R1 (16 scenarios; supersedes quarantined T2 mint).",
+  "description": "Full held-out corpus: 16 Tier-1 (I-003-T2-R1) + 16 Tier-2 (I-003-T3-R1).",
   "locked": true,
   "scenarios": [
     {
@@ -65,6 +65,70 @@
     {
       "scenario_id": "HO-graze-parabola-3",
       "sha256": "a753f618be6aa7b5c0ffd10ed47680d5d66c15ef88e9b85e1312b227c2a7b1b5"
+    },
+    {
+      "scenario_id": "HO-poly-settle-3",
+      "sha256": "cb19c861e1230cb9e9f70a2c7b3545864a8eee58d484e26b92b150ec64a040e2"
+    },
+    {
+      "scenario_id": "HO-poly-settle-4",
+      "sha256": "6acc07e15cb14f9082aa6c3d4f9c0a0bcc93c4ea678ea404d549d5cebaea348a"
+    },
+    {
+      "scenario_id": "HO-poly-settle-5",
+      "sha256": "4620fc722c63520697caf8741aa7f5153e7daabb9e9dc117e14888ad30d9dbef"
+    },
+    {
+      "scenario_id": "HO-poly-settle-6",
+      "sha256": "9c178e99008dab0e1a0cc8494e57a552727fce1992ea2ab01586a33bf6debf16"
+    },
+    {
+      "scenario_id": "HO-poly-periodic-1",
+      "sha256": "4e63abfde3228aacc7ef28a903c9be56aaa9bc346d94f1a86d5605f2218e5992"
+    },
+    {
+      "scenario_id": "HO-poly-periodic-2",
+      "sha256": "6e7284abb4c7f5e8a0b639e424b4f4c5d61133033e922662a157b0c49248b5ef"
+    },
+    {
+      "scenario_id": "HO-poly-quasichaotic-1",
+      "sha256": "52aeb8983fe42af7d5346009d400140cdd3ed5f0e1bee668b943d7fb9a4adc08"
+    },
+    {
+      "scenario_id": "HO-poly-quasichaotic-2",
+      "sha256": "5250c64b4caf06bc0d50a2abd8a5a94b9b8b3bb3de80df00048816fea5408712"
+    },
+    {
+      "scenario_id": "HO-poly-quasichaotic-3",
+      "sha256": "61c5ba9eb1edd53e040502b10199eac94216dcb5f9a0f9cd8943ed7ba1571ac9"
+    },
+    {
+      "scenario_id": "HO-poly-quasichaotic-4",
+      "sha256": "aa20a8f854a5b6fd8015e31a2290f96f287b22985671f0e35c49947888351a91"
+    },
+    {
+      "scenario_id": "HO-bezier-settle-1",
+      "sha256": "b889d607f29166eec86bb5957d734ae79917af70ae96d8512113decfa89943a3"
+    },
+    {
+      "scenario_id": "HO-bezier-settle-2",
+      "sha256": "b2704a1d80be02f7a2d943eed111326544d262f16f72430607571aad45484008"
+    },
+    {
+      "scenario_id": "HO-bezier-settle-3",
+      "sha256": "812e998bd80f5d18e874fd6ce3ffd3136d8b44406b335224cd2dab80ef23a4c3"
+    },
+    {
+      "scenario_id": "HO-bezier-periodic-1",
+      "sha256": "10ed031dad34f09865f120761e4fedc7675ff64806b63eb431bc4b2c789dfaa8"
+    },
+    {
+      "scenario_id": "HO-bezier-periodic-2",
+      "sha256": "f265e2ab25f461524f4e5defcb1d46f0cc5ffd57b126a6b12e5d23938e832d27"
+    },
+    {
+      "scenario_id": "HO-poly-double-root-1",
+      "sha256": "0495033e158c8e043c0ab573bbb282a685987209f8ecd186856640686ad5e0cc"
     }
   ],
   "schema_version": "1"

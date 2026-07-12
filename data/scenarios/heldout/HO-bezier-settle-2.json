@@ -1,0 +1,125 @@
+{
+  "curve": {
+    "curve_id": "HO-bezier-settle-2-curve",
+    "domain": [
+      "0",
+      "4"
+    ],
+    "family": "piecewise-bezier",
+    "segments": [
+      {
+        "control": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "kind": "quadratic"
+      },
+      {
+        "control": [
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            2
+          ]
+        ],
+        "kind": "quadratic"
+      }
+    ]
+  },
+  "family": "BEZ-HO",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "1",
+        "y": "3"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "0.5",
+        "vy": "0"
+      }
+    },
+    {
+      "ball_id": 1,
+      "pos": {
+        "x": "3",
+        "y": "3"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "0.5",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance": {
+    "c1_validation": {
+      "joints": [
+        {
+          "joint_index": 0,
+          "pass": true,
+          "pos_delta_x": "0.0",
+          "pos_delta_y": "0.0",
+          "tangent_cross": "0.0"
+        }
+      ],
+      "ok": true
+    },
+    "generator_git_commit": "0e361d03cc6c6a4dad291a6c9862b2c233ba8250",
+    "mpmath_version": "1.3.0",
+    "tier": 2
+  },
+  "provenance_tier": 2,
+  "reference_events": [
+    {
+      "ball_id": 1,
+      "contact": {
+        "x": "3.3256756120587152133415682839383480024257041270029",
+        "y": "0.87870791420362459838201783798863219748849183122235"
+      },
+      "seq": 0,
+      "t": "0.65135122411743042668313656787669600485140825400581",
+      "tier": 2
+    },
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "1.3744560998635932621220560888163967829135090050517",
+        "y": "0.1956525854989334028077501572522958215477960926325"
+      },
+      "seq": 1,
+      "t": "0.74891219972718652424411217763279356582701801010338",
+      "tier": 2
+    }
+  ],
+  "scenario_id": "HO-bezier-settle-2",
+  "schema_version": "1",
+  "verification": {
+    "method": "refsim-cas-tier2",
+    "reference_converged": true,
+    "residual_max": "0"
+  }
+}

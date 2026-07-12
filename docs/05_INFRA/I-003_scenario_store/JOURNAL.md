@@ -1,4 +1,18 @@
 ---
+### JRN-I003-21 · DONE
+actor: composer-agent · task: I-003-T3-R1 · manifest: n/a
+
+WHAT: I-003-T3-R1 complete DONE under prereg v1.1: minted 16 Tier-2 held-out fixtures
+(refsim/CAS only; Law-1); corpus 32 locked; amplification-based quasi-chaotic admission
+(degrees 4/5/6/6, A ≥ 1e6 at ε=1e-30, linearity within 10×); Bézier refsim Newton polish +
+stable multi-ball x positions; near-double-root deg-4 with |disc| ≤ 1e-6; concentration
+flat=7/32 parabola=9/32 deg3-6=11/32 bezier=5/32; validate_store exit=0.
+NUMBERS: 16 new fixtures; worst-case convergence floor 46.90 digits (HO-poly-quasichaotic-3).
+LEARNED: deg-5 quasi-chaotic requires mixed x^4+x^5 coeffs; near-double-root needs short
+horizon (5 events) for dual-dps convergence.
+NEXT: PM review OUT_41.
+
+---
 ### JRN-I003-20 · CLAIM
 actor: composer-agent · task: I-003-T3-R1 · manifest: n/a
 

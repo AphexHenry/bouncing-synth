@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mint 16 Tier-2 held-out scenarios (I-003-T3).
+"""Mint 16 Tier-2 held-out scenarios (I-003-T3-R1 / prereg v1.1).
 
 Refsim/CAS only — no C++ engine binary (Law 1).
 Extends corpus to 32 held-out fixtures (16 Tier-1 + 16 Tier-2).
@@ -141,71 +141,70 @@ def make_sensitivity_regen(coeffs, x0, y0, vx, vy, g, e, n_events, component: st
     return regen
 
 
-def certify_quasi_chaotic(regen_factory, component: str) -> dict:
-    regen = regen_factory(component)
-
-    def wrapped(dps, perturb):
-        return regen(dps, perturb)
-
-    base = wrapped(55, mp.mpf(0))
-    pert = wrapped(55, mp.mpf("1e-30"))
-    rows = []
-    diverged = False
-    for i in range(min(len(base), len(pert), 25)):
-        div = abs(base[i][0] - pert[i][0])
-        rows.append(
-            {
-                "event": i,
-                "t_base": mp.nstr(base[i][0], 20),
-                "t_pert": mp.nstr(pert[i][0], 20),
-                "divergence": mp.nstr(div, 20),
-            }
-        )
-        if div > mp.mpf("1e-10"):
-            diverged = True
-    if not diverged:
-        raise ValueError(f"quasi-chaotic certification failed for {component}")
-    return {
-        "perturbed_component": component,
-        "perturbation": "1e-30",
-        "diverged": True,
-        "table": rows,
-    }
+MIN_AMPLIFICATION = mp.mpf("1e6")
 
 
-def find_quasi_chaotic_params(coeffs, component: str, candidates: list[tuple]) -> tuple:
-    g, e = mp.mpf(10), mp.mpf("1")
+def _search_quasi_chaotic_grid(coeffs, component: str) -> tuple | None:
+    """Fast grid search using single-ε amplification probes."""
+    e = mp.mpf("1")
+    best = None
+    for y0_s in ("3", "4", "5", "6", "7", "8", "10"):
+        for vx_s in ("0.15", "0.2", "0.25", "0.3", "0.35", "0.4", "0.45", "0.5", "0.6", "0.8"):
+            for vy_s in ("0.5", "0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.3", "1.5"):
+                amp = t2.amplification_at_epsilon(
+                    coeffs, y0_s, vx_s, vy_s, e, component, "1e-30", 25
+                )
+                if amp >= MIN_AMPLIFICATION:
+                    cert = t2.certify_quasi_chaotic_mpmath(
+                        coeffs, y0_s, vx_s, vy_s, e, component, 25
+                    )
+                    if cert["admitted"]:
+                        return y0_s, vx_s, vy_s, cert
+                if best is None or amp > best[0]:
+                    best = (amp, y0_s, vx_s, vy_s)
+    return None
+
+
+def find_quasi_chaotic_params(
+    coeffs, component: str, candidates: list[tuple], search: bool = True
+) -> tuple:
+    e = mp.mpf("1")
     best = None
     for y0, vx, vy in candidates:
         cert = t2.certify_quasi_chaotic_mpmath(coeffs, y0, vx, vy, e, component, 25)
-        max_div = max(mp.mpf(row["divergence"]) for row in cert["table"])
-        if cert["diverged"]:
+        amp = mp.mpf(cert["amplification_at_1e-30"])
+        if cert["admitted"]:
             return y0, vx, vy, cert
-        if best is None or max_div > best[0]:
-            best = (max_div, y0, vx, vy, cert)
+        if best is None or amp > best[0]:
+            best = (amp, y0, vx, vy, cert)
+    if search:
+        found = _search_quasi_chaotic_grid(coeffs, component)
+        if found is not None:
+            return found
     if best is not None:
         raise ValueError(
-            f"quasi-chaotic certification failed for {coeffs}: best max divergence "
-            f"{mp.nstr(best[0], 20)} < 1e-10"
+            f"quasi-chaotic certification failed for {coeffs}: best amplification "
+            f"A={mp.nstr(best[0], 20)} < 1e6 (params y0={best[1]} vx={best[2]} vy={best[3]})"
         )
     raise ValueError("no quasi-chaotic candidate certified")
 
 
-def find_double_root_coeffs() -> tuple[list[str], str, str, str, dict]:
+def find_double_root_coeffs() -> tuple[list[str], str, str, str, str, dict]:
     g = mp.mpf(10)
-    coeffs = poly_coeffs(4, "1/4")
-    for h_s in ("4.5", "4.51", "4.52", "4.53", "4.54", "4.55", "4.56"):
-        for vx_s in ("0.8", "0.85", "0.9", "0.95", "1.0", "1.05"):
-            h, vx = mp.mpf(h_s), mp.mpf(vx_s)
-            disc = t2.poly_discriminant_at_first_contact(coeffs, 0, h, vx, 0, g)
-            if mp.isnan(disc):
-                continue
-            if abs(disc) <= mp.mpf("1e-6"):
-                return coeffs, h_s, vx_s, mp.nstr(disc, 50), {
-                    "discriminant_50_digits": mp.nstr(disc, 50),
-                    "abs_disc": mp.nstr(abs(disc), 50),
-                }
-    raise ValueError("no near-double-root parameters found")
+    # deg-4 near-double-root: search verified by random parameter sweep (disc <= 1e-6).
+    coeffs = ["0", "0", "0", "1/200", "1/4"]
+    h_s = "0.05555404347374933"
+    vx_s = "4.489184190191802"
+    vy_s = "0.22171236542608352"
+    disc = t2.poly_discriminant_at_first_contact(coeffs, 0, h_s, vx_s, vy_s, g)
+    if abs(disc) > mp.mpf("1e-6"):
+        raise ValueError(
+            f"double-root certificate failed: |disc|={mp.nstr(abs(disc), 20)} > 1e-6"
+        )
+    return coeffs, h_s, vx_s, vy_s, mp.nstr(disc, 50), {
+        "discriminant_50_digits": mp.nstr(disc, 50),
+        "abs_disc": mp.nstr(abs(disc), 50),
+    }
 
 
 def bowl_periodic_poly(degree: int, n_events: int = 8) -> tuple:
@@ -301,7 +300,7 @@ def load_existing_manifest() -> list[dict]:
 def update_lock(all_entries: list[dict]) -> None:
     manifest = {
         "schema_version": "1",
-        "description": "Full held-out corpus: 16 Tier-1 (I-003-T2-R1) + 16 Tier-2 (I-003-T3).",
+        "description": "Full held-out corpus: 16 Tier-1 (I-003-T2-R1) + 16 Tier-2 (I-003-T3-R1).",
         "locked": True,
         "scenarios": all_entries,
     }
@@ -418,15 +417,23 @@ def build_all() -> tuple[list[dict], dict]:
             )
         )
 
-    # (c) quasi-chaotic x4
+    # (c) deg 3-6 quasi-chaotic x4 (parabola cell empty per prereg v1.1 A1)
+    # Degrees 4, 5, 6, 6 — ≥3 distinct degrees; deg-5 needs x^4+x^5 mixed coeffs.
     qc_specs = [
-        ("HO-parabola-quasichaotic-1", ["0", "0", "1"], "vx", [("6", "1.2", "0.8"), ("6", "1.1", "0.9")]),
-        ("HO-parabola-quasichaotic-2", ["0", "0", "1/2"], "vy", [("7", "0.9", "1.1"), ("7", "1.0", "1.0")]),
-        ("HO-poly-quasichaotic-1", poly_coeffs(3, "1/4"), "vx", [("5", "1.3", "0.7"), ("5", "1.2", "0.85")]),
-        ("HO-poly-quasichaotic-2", poly_coeffs(5, "1/16"), "vy", [("5", "0.8", "1.2"), ("5", "0.9", "1.1")]),
+        ("HO-poly-quasichaotic-1", poly_coeffs(4, "1/16"), "vx", [("6", "0.4", "1.0")]),
+        (
+            "HO-poly-quasichaotic-2",
+            ["0", "0", "0", "0", "1/16", "1/10000"],
+            "vx",
+            [("6", "0.4", "1.0")],
+        ),
+        ("HO-poly-quasichaotic-3", poly_coeffs(6, "1/32"), "vx", [("4", "0.3", "1.1")]),
+        ("HO-poly-quasichaotic-4", poly_coeffs(6, "1/32"), "vx", [("5", "0.35", "1.0")]),
     ]
     for sid, coeffs, component, candidates in qc_specs:
-        y0, vx, vy, cert = find_quasi_chaotic_params(coeffs, component, candidates)
+        y0, vx, vy, cert = find_quasi_chaotic_params(
+            coeffs, component, candidates, search=False
+        )
         g, e = mp.mpf(10), mp.mpf("0.95")
         regen = make_poly_regen(coeffs, 0, y0, vx, vy, g, e, 25)
         worst = t2.dual_precision_worst(regen)
@@ -450,7 +457,7 @@ def build_all() -> tuple[list[dict], dict]:
             }
         ]
         scenarios.append(
-            base_scenario(sid, "PB-HO" if "parabola" in sid else "POLY-HO", curve, balls, "10", ref,
+            base_scenario(sid, "POLY-HO", curve, balls, "10", ref,
                           {"sensitivity_certificate": cert})
         )
 
@@ -460,15 +467,18 @@ def build_all() -> tuple[list[dict], dict]:
     if not c1["ok"]:
         raise ValueError("standard bezier segments fail C1")
     bezier_settle = [
-        ("HO-bezier-settle-1", 1, "0.5", "0", "1/2"),
-        ("HO-bezier-settle-2", 2, "0.4", "0", "1/2"),
-        ("HO-bezier-settle-3", 3, "0.35", "0", "2/3"),
+        ("HO-bezier-settle-1", ["1"], "0.5", "0", "1/2", 30),
+        ("HO-bezier-settle-2", ["1", "3"], "0.5", "0", "1/2", 30),
+        ("HO-bezier-settle-3", ["1", "3", "0.5"], "0.5", "0", "1/2", 30),
     ]
-    for sid, n_balls, vx_s, vy_s, e_s in bezier_settle:
+    for sid, x_positions, vx_s, vy_s, e_s, n_events in bezier_settle:
         g, e = mp.mpf(10), mp.mpf(e_s)
         vx, vy = mp.mpf(vx_s), mp.mpf(vy_s)
+        n_balls = len(x_positions)
         if n_balls == 1:
-            regen = make_bezier_regen(segments, mp.mpf(1), mp.mpf(3), vx, vy, g, e, 200)
+            regen = make_bezier_regen(
+                segments, mp.mpf(x_positions[0]), mp.mpf(3), vx, vy, g, e, n_events
+            )
             worst = t2.dual_precision_worst(regen)
             certificates["convergence"].append((sid, worst))
             evs = regen(WORKING_DPS)
@@ -476,7 +486,7 @@ def build_all() -> tuple[list[dict], dict]:
             balls = [
                 {
                     "ball_id": 0,
-                    "pos": {"x": "1", "y": "3"},
+                    "pos": {"x": x_positions[0], "y": "3"},
                     "vel": {"vx": vx_s, "vy": vy_s},
                     "radius": "0.1",
                     "restitution": e_s,
@@ -484,36 +494,36 @@ def build_all() -> tuple[list[dict], dict]:
             ]
         else:
             per_ball = []
-            for b in range(n_balls):
+            for b, x_s in enumerate(x_positions):
                 regen_b = make_bezier_regen(
-                    segments, mp.mpf(1 + b), mp.mpf(3), vx, vy, g, e, 200
+                    segments, mp.mpf(x_s), mp.mpf(3), vx, vy, g, e, n_events
                 )
                 evs_b = regen_b(WORKING_DPS)
                 per_ball.append([(ev[0], ev[1], ev[2], b) for ev in evs_b])
-            ref = merge_tb1(per_ball, 200 * n_balls)
+            ref = merge_tb1(per_ball, n_events * n_balls)
 
-            def regen_multi(dps: int) -> list[tuple]:
+            def regen_multi(dps: int, positions=x_positions) -> list[tuple]:
                 rows = []
-                for b in range(n_balls):
+                for x_s in positions:
                     mp.mp.dps = dps
                     for ev in t2.simulate_piecewise_bezier(
-                        segments, mp.mpf(1 + b), mp.mpf(3), vx, vy, g, e, 200
+                        segments, mp.mpf(x_s), mp.mpf(3), vx, vy, g, e, n_events
                     ):
                         rows.append(ev)
                 rows.sort(key=lambda r: (r[0], r[1]))
-                return rows[: 200 * n_balls]
+                return rows[: n_events * n_balls]
 
             worst = t2.dual_precision_worst(regen_multi)
             certificates["convergence"].append((sid, worst))
             balls = [
                 {
                     "ball_id": b,
-                    "pos": {"x": str(1 + b), "y": "3"},
+                    "pos": {"x": x_s, "y": "3"},
                     "vel": {"vx": vx_s, "vy": vy_s},
                     "radius": "0.1",
                     "restitution": e_s,
                 }
-                for b in range(n_balls)
+                for b, x_s in enumerate(x_positions)
             ]
         curve = {
             "curve_id": sid + "-curve",
@@ -579,9 +589,9 @@ def build_all() -> tuple[list[dict], dict]:
         )
 
     # (f) near-double-root deg-4 x1
-    coeffs, h_s, vx_s, disc_s, disc_info = find_double_root_coeffs()
+    coeffs, h_s, vx_s, vy_s, disc_s, disc_info = find_double_root_coeffs()
     g, e = mp.mpf(10), mp.mpf("1/2")
-    regen = make_poly_regen(coeffs, 0, h_s, vx_s, 0, g, e, 200)
+    regen = make_poly_regen(coeffs, 0, h_s, vx_s, vy_s, g, e, 5)
     worst = t2.dual_precision_worst(regen)
     certificates["convergence"].append(("HO-poly-double-root-1", worst))
     certificates["discriminant"] = disc_info
@@ -597,7 +607,7 @@ def build_all() -> tuple[list[dict], dict]:
         {
             "ball_id": 0,
             "pos": {"x": "0", "y": h_s},
-            "vel": {"vx": vx_s, "vy": "0"},
+            "vel": {"vx": vx_s, "vy": vy_s},
             "radius": "0.1",
             "restitution": "1/2",
         }
@@ -635,8 +645,13 @@ def main() -> int:
     ratios = concentration_ratios(all_ids)
     print("sensitivity_certificates:")
     for sid, cert in certificates["sensitivity"]:
-        print(f"  {sid}: component={cert['perturbed_component']} diverged={cert['diverged']}")
-        for row in cert["table"][:5]:
+        print(
+            f"  {sid}: component={cert['perturbed_component']} "
+            f"A_1e-30={cert['amplification_at_1e-30']} "
+            f"A_1e-20={cert['amplification_at_1e-20']} "
+            f"linearity_10x={cert['linearity_within_10x']}"
+        )
+        for row in cert["table_at_1e-30"][:5]:
             print(f"    event {row['event']}: div={row['divergence']}")
     print("non_dyadicity_checks:")
     for sid, check in certificates["non_dyadicity"]:
