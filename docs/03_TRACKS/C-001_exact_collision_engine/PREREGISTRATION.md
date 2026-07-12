@@ -147,3 +147,28 @@ held-out scenarios (I-003-T2 mint constraint).
 ## Changelog
 - v1.0 — Initial registration (PACKET 36, JRN-C001-45). P1-A/B/C registered; P1-D deferred;
   Law 7 methodology and margin fixed; coverage table issued as I-003-T2 input contract.
+
+## Amendment v1.1 — registered 2026-07-12 (PACKET 41; Director approval = packet dispatch)
+
+Scope: two changes to §7, one addition to §1's quasi-chaotic handling. No held-out scenario
+has been executed by any engine binary at amendment time; no results voided (§0).
+
+A1. §7 cell "parabola (deg 2) × quasi-chaotic" is DECLARED EMPTY. Reason of record: the
+single-ball gravitational billiard in a parabola is integrable; measured sensitivity
+amplification over 25 events ≈ 2×10^1 (polynomial growth), versus ≈1.7×10^11 (exponential)
+on deg-6 geometry — evidence OUT_40 (JRN-I003-16). Its two fixtures move to
+"deg 3–6 × quasi-chaotic" (now ×4). "Bézier × periodic" corrected ×1 → ×2, restoring the
+Tier-2 batch to 16 and the full corpus to 32. Expected concentration: flat 7/32, parabola
+9/32, deg 3–6 11/32, Bézier 5/32 — all within the §8.iii cap.
+
+A2. Quasi-chaotic admission criterion (replaces the absolute-divergence rule of the T3
+brief): a fixture is admitted to a quasi-chaotic cell iff the measured amplification
+A = max event-time divergence / ε satisfies A ≥ 1e6, at ε = 1e-30 applied to one registered
+state component, within ≤25 events, computed in the refsim at dps ≥ 50; plus a linearity
+spot-check at ε = 1e-20 whose amplification agrees within a factor of 10. Rationale:
+amplification is ε-independent under the confirmed linear regime; the prior absolute bound
+conflated perturbation size with dynamical growth.
+
+A3. Feasibility-derivation rule (authoring discipline, binding on future registrations):
+any registered threshold involving dynamical growth must carry an explicit ε·λ^N
+feasibility bound at authoring time.

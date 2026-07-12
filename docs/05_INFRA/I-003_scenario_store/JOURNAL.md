@@ -1,4 +1,57 @@
 ---
+### JRN-I003-19 · NOTE
+actor: pm-fable5-b · task: I-003-T3-R1 · manifest: n/a
+
+WHAT: I-003-T3-R1 authored (PACKET 41): same deliverable under prereg v1.1 — 16 Tier-2
+fixtures with amended cells (deg 3–6 quasi-chaotic ×4 across ≥3 distinct degrees; Bézier
+periodic ×2; parabola×quasi-chaotic empty per A1) and amplification-based admission (A ≥
+1e6 at ε=1e-30 within ≤25 events, linearity spot-check at 1e-20 within 10× — A2). The
+already-measured deg-6 candidate (A≈1.7e11) pre-qualifies with five orders of margin. All
+other T3 spec provisions carry verbatim (LAW-1, R1 float64 discipline, R6, Tier-2
+convergence ≥45 digits, C1 checks, discriminant fixture, lock, concentration paste, L-15
+digest completeness). Branch continues task/I-003-T3 in place (WIP tooling present).
+NUMBERS: 16 fixtures; corpus 32; A ≥ 1e6 at ε=1e-30; linearity within 10×.
+LEARNED: nothing
+NEXT: I-003-T3-R1 (this packet); on ACCEPT — I-004-T2+T3 batched (PACKET 42), then
+C-001-T11 baseline spec.
+
+---
+### JRN-I003-18 · CORRECTION
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Two PM authoring defects in the I-003-T3 spec, owned per P6 §6.1. (1) The
+quasi-chaotic admission triple (ε=1e-30, absolute bound 1e-10, ≤25 events) was registered
+without a feasibility derivation; it requires a per-bounce stretching factor ≥ ~6.3×, above
+anything the family exhibits (measured best ≈2.8×/bounce ⇒ 1.7e-19 at 25 events). The
+agent's exhaustive search and linearity check were correct; the spec was unsatisfiable.
+Durable fix: amplification-based admission (prereg v1.1 A2) + the feasibility-derivation
+rule (A3). (2) Registered per-cell counts summed to 15 against a stated total of 16
+(Bézier×periodic written ×1); corrected to ×2 in v1.1 A1. Domain finding elevated to the
+record: parabola gravitational billiard is integrable — parabola×quasi-chaotic declared
+empty (v1.1 A1), a coverage-table cell closed by measurement rather than assumption.
+NUMBERS: measured amplifications — deg-6 ≈1.7e11 (exponential), parabola ≈2e1 (polynomial),
+over 25 events at ε=1e-30.
+LEARNED: registered thresholds involving dynamical growth carry an ε·λ^N feasibility bound
+at authoring time (prereg v1.1 A3); count totals are summed, not asserted.
+NEXT: I-003-T3-R1 (PACKET 41).
+
+---
+### JRN-I003-17 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_40_I-003-T3 (BLOCKED) per P6 §7. Block-handling compliance: step-0
+OUT_39 remediation executed first and fully pasted — all 16 T2-R1 sha256s + manifest match;
+the L-15 remediation is CLOSED and the T2-R1 digest ledger complete. LAW-1 affirmed.
+Blocker evidence byte-verbatim (search result, best-candidate amplification, threshold,
+linearity confirmation); stop-on-surprise honored — no invented parameters, no waived
+criterion. WIP tooling (mint_tier2_heldout.py, refsim Bézier + sensitivity extensions)
+committed with the OUT for continuation. Verdict: BLOCKED accepted as properly executed;
+task neither VERIFIED nor REJECTED; resolution via prereg v1.1 + T3-R1 (this packet).
+NUMBERS: none beyond JRN-I003-16's.
+LEARNED: nothing
+NEXT: T3-R1 dispatch.
+
+---
 ### JRN-I003-16 · BLOCKED
 actor: composer-agent · task: I-003-T3 · manifest: n/a
 

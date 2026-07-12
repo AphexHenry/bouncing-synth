@@ -256,3 +256,29 @@ Acceptance criteria (binary, one artifact each):
     creates (L-13).
 12. FILE DIGESTS section complete (L-15): byte count + sha256 for every applied doc, every
     tooling file touched, all 16 new fixtures, MANIFEST.json, split-lock.json, and the TR.
+
+## TASK I-003-T3-R1: full Tier-2 mint under prereg v1.1 (amended cells + admission rule)
+depends_on: I-003-T3 BLOCKED (JRN-I003-16); PREREG v1.1 (Director-approved via PACKET 41
+dispatch)
+objective: Identical deliverable to I-003-T3 — 16 Tier-2 held-out fixtures, corpus 32,
+locked — under the v1.1 amendments.
+
+SPEC DELTAS (everything not restated carries over from I-003-T3, including STEP 0's
+completion status — the OUT_39 remediation is CLOSED and is not repeated):
+D1. Cell counts (16 total): deg 3–6 × settle ×4 (one per degree); deg 3–6 × periodic ×2
+    (deg 4 and deg 6; R2 non-dyadicity); deg 3–6 × quasi-chaotic ×4 spanning ≥3 distinct
+    degrees with distinct parameter sets; piecewise Bézier C1 × settle ×3 (1-, 2-, 3-ball);
+    Bézier × periodic ×2 (R2 non-dyadicity); near-double-root ×1 (deg-4, |disc| ≤ 1e-6 at
+    50 digits). Parabola × quasi-chaotic: none (v1.1 A1).
+D2. Quasi-chaotic admission (v1.1 A2): per fixture, amplification A = max event-time
+    divergence / ε ≥ 1e6 at ε=1e-30 (one registered state component) within ≤25 events at
+    dps ≥ 50; linearity spot-check at ε=1e-20 with amplification agreement within a factor
+    of 10. Certificate per fixture: perturbed component, per-event divergence table, A at
+    both ε values. The OUT_40 deg-6 candidate (A≈1.7e11) may be reused directly.
+D3. Concentration paste over the 32-scenario corpus; expected flat 7/32, parabola 9/32,
+    deg 3–6 11/32, Bézier 5/32; every family ≤50% required.
+
+Steps: as I-003-T3 steps 3–10 with D1–D3 substituted (no step 0). Acceptance criteria: as
+I-003-T3 criteria 1–12 with criterion 3 replaced by D2's amplification certificates
+(all four quasi-chaotic fixtures: A ≥ 1e6 at ε=1e-30, linearity within 10×) and criterion
+0 removed (remediation closed).
