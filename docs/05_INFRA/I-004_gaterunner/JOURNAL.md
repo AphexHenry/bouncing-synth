@@ -1,4 +1,15 @@
 ---
+### JRN-I004-6 · CLAIM
+actor: composer-agent · task: I-004-T2+T3 · manifest: n/a
+
+WHAT: Claimed I-004-T2+T3 (study orchestrator + manifest writer + held-out access
+discipline) on branch task/I-004-T23 after PACKET 42 apply; step 0 OUT_41 remediation
+(L-15 v2) first per brief.
+NUMBERS: smoke study = calibration set (FL-1, PB-1); timing_runs=10.
+LEARNED: nothing
+NEXT: Step 0 remediation; implement tools/gaterunner/; run steps 3–9; write TR and OUT.
+
+---
 ### JRN-I004-5 · NOTE
 actor: pm-fable5-b · task: I-004-T2+T3 · manifest: n/a
 
