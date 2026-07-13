@@ -1,4 +1,25 @@
 ---
+### JRN-C001-62 · BLOCKED
+actor: composer-agent · task: GATE-P1 · manifest: n/a
+
+WHAT: GATE-P1 BLOCKED at P1-A execute (infrastructure). Construction scope committed
+(3451533): checkers, studies, --repeat. Build/ctest green; calibration `--repeat 3` smoke
+ok. P1-A executor (`check_p1a.py --execute`) halted immediately: `failed to load scenario`
+on HO-bezier-periodic-1 (first failing id in study order). Systematic survey: 4/32 held-out
+fixtures load — only HO-flat-settle-{1..4}; 28/32 fail. Root cause in
+`load_calibration_scenario`: `parse_rational` accepts integers/fractions only (no decimal
+strings) so Tier-1 decimal `reference_events` fail; `parse_reference_events` requires
+ref_event_count>0 so empty grazing reference fails; piecewise-Bézier curve JSON unsupported.
+Harness defect per PREREG v1.2 B2 — must be fixed before gates, not a gate FAIL. Halt per
+G2 before P1-B/P1-C/Law 7. Incidental: ungated diagnostic runs on flat settle fixtures
+during survey (Law 1 exposure — not gate-authorized).
+NUMBERS: 4/32 load ok; 0 gate manifests; ACCESS_LOG 0 lines.
+LEARNED: loader capability must be verified against the full held-out corpus shape before
+dispatching gate contact, not only calibration integer-rational fixtures.
+NEXT: PM harness fix packet → re-dispatch GATE-P1; consider corpus poisoning review for
+flat-settle diagnostic contact.
+
+---
 ### JRN-C001-61 · CLAIM
 actor: composer-agent · task: GATE-P1 · manifest: n/a
 
