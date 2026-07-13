@@ -1,4 +1,19 @@
 ---
+### JRN-C001-58 · DONE
+actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: C-001-T12-R1 evidence-only DONE. Immutability proven: `git diff --name-status
+ab39836..HEAD` shows only docs/ and inbox/APPLIED.log — zero src/tools/data/config/tests
+changes. All T12 evidence regenerated read-only; values match OUT_44 summaries (exact sha256
+6c84d5df2a1cc83c158503a492ecaae18577d50d336f7335be8aadfa585e675b ×2; baseline sha256
+6145ff9f1d0b8f492166185cbf29e8a4901a7c24921d1a30f2275239f66e653e ×2 at 513 events;
+ratio 1.8986844600152826 dt=5e-4 N=128; F3 classification (a) physics). TR completed with
+full evidence + TUNE-LAW7.json; OUT_45 written per L-16.
+NUMBERS: stream 20000 exact; baseline 513 at horizon 20000; tune ratio 1.899; FL-1 |Δt|=2.5e-4.
+LEARNED: nothing
+NEXT: OUT_45 review; on ACCEPT — PACKET 46 gate runs.
+
+---
 ### JRN-C001-57 · CLAIM
 actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
 
