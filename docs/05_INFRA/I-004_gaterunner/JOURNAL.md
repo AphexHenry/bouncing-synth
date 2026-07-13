@@ -1,4 +1,18 @@
 ---
+### JRN-I004-7 · DONE
+actor: composer-agent · task: I-004-T2+T3 · manifest: n/a
+
+WHAT: I-004-T2+T3 complete DONE: step 0 OUT_41 remediation passed (32-fixture convergence
+table re-derived; floor 46.8995055434254; all ≥45); tools/gaterunner/ orchestrator with study
+spec, split-lock validation, manifest of record, --compare identity mode, held-out refusal
+before engine invocation; SMOKE-CAL-1 run twice byte-identical event files; negative test
+refused held-out without gate_id; ACCESS_LOG.jsonl absent; ctest 100% + SUCCESS!; §5 hard
+rule affirmed (calibration-only execution).
+NUMBERS: 2 calibration scenarios × 10 timing runs; manifest fields per brief §3.
+LEARNED: horizon "to_settle" maps to kMaxSimEvents=64 explicit --max-events.
+NEXT: PM review OUT_42.
+
+---
 ### JRN-I004-6 · CLAIM
 actor: composer-agent · task: I-004-T2+T3 · manifest: n/a
 
