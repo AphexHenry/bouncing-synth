@@ -98,7 +98,8 @@ BallSimResult simulate_ball_collisions(const curve::CompiledPolynomial& curve_y,
 
 MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomial& curve_y,
                                                   const BallSpec* balls, int ball_count,
-                                                  double x_max, int max_events) {
+                                                  double x_max, int max_events,
+                                                  EventEmitSink* sink) {
   MultiBallSimResult out{};
   if (max_events <= 0 || ball_count <= 0 || ball_count > kMaxBalls || balls == nullptr) {
     return out;
@@ -159,7 +160,14 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
     event.normal_y = n.ny;
     event.seq = out.count;
     event.schema_version = 1;
-    out.events[static_cast<std::size_t>(out.count)] = event;
+    if (sink != nullptr && sink->on_event != nullptr) {
+      if (!sink->on_event(sink->user_data, event)) {
+        break;
+      }
+    }
+    if (out.count < static_cast<int>(kMaxSimEvents)) {
+      out.events[static_cast<std::size_t>(out.count)] = event;
+    }
     ++out.count;
     const ReflectedVelocity reflected = reflect_velocity(curve_y, chosen_step.x, ball.init.vx,
                                                          vy_contact, ball.restitution);

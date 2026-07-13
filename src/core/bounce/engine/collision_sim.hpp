@@ -12,7 +12,13 @@ namespace bounce::core::engine {
 
 constexpr double kVSettle = 1e-9;
 constexpr std::size_t kMaxSimEvents = 256;
+constexpr int kMaxOfflineEvents = 1'000'000;
 constexpr int kMaxBalls = 4;
+
+struct EventEmitSink {
+  void* user_data = nullptr;
+  bool (*on_event)(void* user_data, const events::CollisionEvent& event) = nullptr;
+};
 
 struct ReflectedVelocity {
   double vx = 0.0;
@@ -55,6 +61,7 @@ BallSimResult simulate_ball_collisions(const curve::CompiledPolynomial& curve_y,
 
 MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomial& curve_y,
                                                   const BallSpec* balls, int ball_count,
-                                                  double x_max, int max_events);
+                                                  double x_max, int max_events,
+                                                  EventEmitSink* sink = nullptr);
 
 } // namespace bounce::core::engine

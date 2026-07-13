@@ -6,6 +6,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <format>
+#include <iostream>
 #include <limits>
 #include <vector>
 
@@ -145,7 +147,8 @@ void advance_ballistic(BallState& ball, double tau) {
 MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomial& curve_y,
                                      double domain_min, double domain_max,
                                      const BallSpec* balls, int ball_count, int max_events,
-                                     const BaselineParams& params) {
+                                     const BaselineParams& params,
+                                     bounce::core::engine::EventEmitSink* sink) {
   MultiBallSimResult out{};
   if (max_events <= 0 || ball_count <= 0 || ball_count > kMaxBalls || balls == nullptr ||
       params.dt <= 0.0 || params.segments <= 0 ||
@@ -224,7 +227,14 @@ MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomi
       event.normal_y = n.ny;
       event.seq = out.count;
       event.schema_version = 1;
-      out.events[static_cast<std::size_t>(out.count)] = event;
+      if (sink != nullptr && sink->on_event != nullptr) {
+        if (!sink->on_event(sink->user_data, event)) {
+          break;
+        }
+      }
+      if (out.count < static_cast<int>(kMaxSimEvents)) {
+        out.events[static_cast<std::size_t>(out.count)] = event;
+      }
       ++out.count;
 
       const ReflectedVelocity reflected =
@@ -266,7 +276,7 @@ MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomi
 
 MultiBallSimResult run_baseline_calibration(
     const bounce::core::scenario::CalibrationScenario& scenario, int max_events,
-    const BaselineParams& params) {
+    const BaselineParams& params, bounce::core::engine::EventEmitSink* sink) {
   std::vector<double> coeff_vec(static_cast<std::size_t>(scenario.coeff_count));
   for (int i = 0; i < scenario.coeff_count; ++i) {
     coeff_vec[static_cast<std::size_t>(i)] =
@@ -274,7 +284,79 @@ MultiBallSimResult run_baseline_calibration(
   }
   const auto curve = bounce::core::curve::compile_polynomial(coeff_vec);
   return simulate_baseline(curve, scenario.domain_min, scenario.domain_max, scenario.balls.data(),
-                           scenario.ball_count, max_events, params);
+                           scenario.ball_count, max_events, params, sink);
+}
+
+void dump_baseline_trajectory(const bounce::core::scenario::CalibrationScenario& scenario,
+                              const BaselineParams& params, double t_start, double t_end) {
+  std::vector<double> coeff_vec(static_cast<std::size_t>(scenario.coeff_count));
+  for (int i = 0; i < scenario.coeff_count; ++i) {
+    coeff_vec[static_cast<std::size_t>(i)] =
+        scenario.coeffs[static_cast<std::size_t>(i)];
+  }
+  const auto curve = bounce::core::curve::compile_polynomial(coeff_vec);
+  const Polyline poly = sample_polynomial_polyline(curve, scenario.domain_min, scenario.domain_max,
+                                                   params.segments);
+
+  BallState ball{};
+  ball.ball_id = scenario.balls[0].ball_id;
+  ball.x = scenario.balls[0].init.x0;
+  ball.y = scenario.balls[0].init.y0;
+  ball.vx = scenario.balls[0].init.vx;
+  ball.vy = scenario.balls[0].init.vy;
+  ball.g = scenario.balls[0].init.g;
+  ball.restitution = scenario.balls[0].restitution;
+  ball.x_min = scenario.balls[0].init.x0;
+
+  double global_time = 0.0;
+  int step = 0;
+  std::cout << std::format("# baseline trajectory dump dt={} segments={} window=[{},{}]\n",
+                           params.dt, params.segments, t_start, t_end);
+  std::cout << "step,time,x,y,vx,vy,event\n";
+
+  while (global_time <= t_end + params.dt && step < 10000000) {
+    if (global_time >= t_start - params.dt) {
+      std::cout << std::format("{},{:.17g},{:.17g},{:.17g},{:.17g},{:.17g},-\n", step, global_time,
+                               ball.x, ball.y, ball.vx, ball.vy);
+    }
+
+    const double vy_step = ball.vy - ball.g * params.dt;
+    const ContactCandidate contact = find_segment_contact(
+        poly, ball.x, ball.y, ball.vx, vy_step, params.dt, ball.x_min, scenario.domain_max);
+    if (contact.found && global_time + contact.tau <= t_end + params.dt) {
+      const double t_abs = global_time + contact.tau;
+      advance_ballistic(ball, contact.tau);
+      global_time = t_abs;
+      if (contact.impact_speed >= kVGraze) {
+        if (t_abs >= t_start - params.dt) {
+          std::cout << std::format("{},{:.17g},{:.17g},{:.17g},{:.17g},{:.17g},contact\n", step + 1,
+                                   t_abs, ball.x, ball.y, ball.vx, ball.vy);
+        }
+        const SegmentNormal n = segment_normal(poly, contact.segment);
+        const ReflectedVelocity reflected =
+            reflect_segment(n, ball.vx, ball.vy, ball.restitution);
+        ball.vx = reflected.vx;
+        ball.vy = reflected.vy;
+        ball.x_min = next_x_min(contact.x, ball.vx);
+        ++step;
+        continue;
+      }
+      ball.x_min = next_x_min(contact.x, ball.vx);
+    }
+
+    advance_ballistic(ball, params.dt);
+    if (ball.y < surface_y(poly, ball.x) - kContactEps) {
+      ball.y = surface_y(poly, ball.x);
+    }
+    global_time += params.dt;
+    ++step;
+    if (ball.x < scenario.domain_min - kDomainEps || ball.x > scenario.domain_max + kDomainEps) {
+      if (global_time >= t_start) {
+        std::cout << std::format("# domain exit at t={:.17g} x={:.17g}\n", global_time, ball.x);
+      }
+      break;
+    }
+  }
 }
 
 } // namespace bounce::baseline

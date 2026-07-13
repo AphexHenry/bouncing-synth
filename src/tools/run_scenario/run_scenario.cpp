@@ -14,6 +14,15 @@ void print_usage() {
   std::cerr << "usage: bounce-run-scenario --scenario <path> --out <path> [--max-events N]\n";
 }
 
+struct StreamCtx {
+  bounce::core::io::EventStreamWriter* writer = nullptr;
+};
+
+bool on_event_sink(void* user_data, const bounce::core::events::CollisionEvent& event) {
+  auto* ctx = static_cast<StreamCtx*>(user_data);
+  return bounce::core::io::emit_event_stream(*ctx->writer, event);
+}
+
 } // namespace
 
 int run_scenario_cli(int argc, char** argv) {
@@ -45,7 +54,7 @@ int run_scenario_cli(int argc, char** argv) {
     print_usage();
     return 1;
   }
-  if (max_events <= 0 || max_events > bounce::core::engine::kMaxSimEvents) {
+  if (max_events <= 0 || max_events > bounce::core::io::kMaxOfflineEvents) {
     std::cerr << "invalid --max-events\n";
     return 1;
   }
@@ -57,15 +66,31 @@ int run_scenario_cli(int argc, char** argv) {
     return 1;
   }
 
-  const auto result =
-      bounce::core::scenario::run_calibration_scenario(scenario, max_events);
-
+  bounce::core::io::EventStreamWriter writer{};
   std::string error;
-  if (!bounce::core::io::write_event_file(out_path, scenario_path, result, error)) {
+  if (!bounce::core::io::begin_event_stream(out_path, scenario_path, writer, error)) {
     std::cerr << error << '\n';
     return 1;
   }
 
-  std::cout << "events=" << result.count << '\n';
+  StreamCtx ctx{&writer};
+  bounce::core::engine::EventEmitSink sink{};
+  sink.user_data = &ctx;
+  sink.on_event = on_event_sink;
+
+  const auto result =
+      bounce::core::scenario::run_calibration_scenario(scenario, max_events, &sink);
+
+  if (!bounce::core::io::finish_event_stream(writer, error)) {
+    std::cerr << error << '\n';
+    return 1;
+  }
+
+  if (result.count != writer.count) {
+    std::cerr << "event count mismatch\n";
+    return 1;
+  }
+
+  std::cout << "events=" << writer.count << '\n';
   return 0;
 }

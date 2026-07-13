@@ -187,6 +187,81 @@ bool write_event_file(const char* path, const char* scenario_path,
   return true;
 }
 
+bool begin_event_stream(const char* path, const char* scenario_path, EventStreamWriter& writer,
+                        std::string& error) {
+  std::array<unsigned char, kSha256DigestBytes> digest{};
+  if (!sha256_file(scenario_path, digest)) {
+    error = "cannot hash scenario file";
+    return false;
+  }
+  writer.scenario_sha256 = sha256_hex(digest);
+  writer.final_path = path;
+  writer.body_temp_path = std::string(path) + ".body.tmp";
+  writer.count = 0;
+
+  writer.body_stream.open(writer.body_temp_path, std::ios::binary | std::ios::trunc);
+  if (!writer.body_stream) {
+    error = "cannot open output file";
+    return false;
+  }
+  return true;
+}
+
+bool emit_event_stream(EventStreamWriter& writer, const events::CollisionEvent& event) {
+  if (!writer.body_stream) {
+    return false;
+  }
+  writer.body_stream << event_line(event) << '\n';
+  if (!writer.body_stream) {
+    return false;
+  }
+  ++writer.count;
+  return true;
+}
+
+bool finish_event_stream(EventStreamWriter& writer, std::string& error) {
+  if (!writer.body_stream) {
+    error = "stream not open";
+    return false;
+  }
+  writer.body_stream.close();
+
+  const std::filesystem::path out_path(writer.final_path);
+  const std::filesystem::path temp_path = out_path.string() + ".tmp";
+
+  std::ofstream out(temp_path, std::ios::binary);
+  if (!out) {
+    error = "cannot open output file";
+    return false;
+  }
+
+  out << std::format(
+      "{{\"schema\":\"{}\", \"scenario_sha256\":\"{}\", \"engine_events\":{}}}\n", kSchema,
+      writer.scenario_sha256, writer.count);
+
+  std::ifstream body(writer.body_temp_path, std::ios::binary);
+  if (!body) {
+    error = "cannot read event body";
+    return false;
+  }
+  out << body.rdbuf();
+  out.close();
+  if (!out) {
+    error = "write failed";
+    return false;
+  }
+
+  std::error_code ec;
+  std::filesystem::remove(writer.body_temp_path, ec);
+  std::filesystem::rename(temp_path, out_path, ec);
+  if (ec) {
+    error = "rename failed";
+    std::filesystem::remove(temp_path, ec);
+    return false;
+  }
+  return true;
+}
+
 bool read_event_file(const char* path, EventFileData& out, std::string& error) {
   std::ifstream in(path, std::ios::binary);
   if (!in) {
@@ -220,9 +295,19 @@ bool read_event_file(const char* path, EventFileData& out, std::string& error) {
     if (line.empty()) {
       continue;
     }
-    if (out.count >= static_cast<int>(engine::kMaxSimEvents)) {
+    if (out.count >= kMaxOfflineEvents) {
       error = "too many events";
       return false;
+    }
+    if (out.count >= static_cast<int>(engine::kMaxSimEvents)) {
+      // Skip storing events beyond the in-memory array; still validate the line.
+      events::CollisionEvent event{};
+      if (!parse_event_line(line, event)) {
+        error = "invalid event line";
+        return false;
+      }
+      ++out.count;
+      continue;
     }
     auto& event = out.events[static_cast<std::size_t>(out.count)];
     if (!parse_event_line(line, event)) {

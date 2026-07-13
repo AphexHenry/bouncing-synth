@@ -9,3 +9,6 @@ build/
 
 # I-002 refsim virtual environment (never committed; DELIVERABLE_C §3)
 /tools/refsim/.venv/
+
+# Local tool virtual environments (F2; C-001-T12)
+tools/**/.venv/

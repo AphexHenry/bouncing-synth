@@ -456,7 +456,8 @@ bool load_calibration_scenario(const char* path, CalibrationScenario& out) {
 }
 
 engine::MultiBallSimResult run_calibration_scenario(const CalibrationScenario& scenario,
-                                                    int max_events) {
+                                                    int max_events,
+                                                    engine::EventEmitSink* sink) {
   std::vector<double> coeff_vec(static_cast<std::size_t>(scenario.coeff_count));
   for (int i = 0; i < scenario.coeff_count; ++i) {
     coeff_vec[static_cast<std::size_t>(i)] =
@@ -465,7 +466,7 @@ engine::MultiBallSimResult run_calibration_scenario(const CalibrationScenario& s
   const auto curve = curve::compile_polynomial(coeff_vec);
   return engine::simulate_multi_ball_collisions(curve, scenario.balls.data(),
                                                 scenario.ball_count, scenario.domain_max,
-                                                max_events);
+                                                max_events, sink);
 }
 
 bool events_equal(const engine::MultiBallSimResult& a, const engine::MultiBallSimResult& b) {
