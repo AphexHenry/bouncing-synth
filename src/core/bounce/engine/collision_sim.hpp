@@ -11,7 +11,7 @@
 namespace bounce::core::engine {
 
 constexpr double kVSettle = 1e-9;
-constexpr std::size_t kMaxSimEvents = 64;
+constexpr std::size_t kMaxSimEvents = 256;
 constexpr int kMaxBalls = 4;
 
 struct ReflectedVelocity {

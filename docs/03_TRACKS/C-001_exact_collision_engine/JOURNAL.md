@@ -1,4 +1,19 @@
 ---
+### JRN-C001-49 · DONE
+actor: composer-agent · task: C-001-T11 · manifest: n/a
+
+WHAT: C-001-T11 complete DONE: kMaxSimEvents lifted 64→256 (only collision_sim.hpp change in
+src/core/bounce/); bounce-baseline-run semi-implicit-Euler polyline engine in src/baseline/
+with shared io serialization; gaterunner engine selection (exact|baseline), manifest engine
+identity fields, --compare refusal and --cross-engine summary; 49/49 doctest SUCCESS (733
+assertions); FL-1 baseline first-contact |Δt|=5e-05 ≤ 2·dt; capacity test 100 events with
+monotone seq; no held-out execution.
+NUMBERS: kMaxSimEvents=256; baseline dt=1e-4 segments=64 on FL-1; cross-engine FL-1
+exact=13 baseline=256 events.
+LEARNED: polyline baseline hits capacity before settle on FL-1 at default horizon.
+NEXT: PM review OUT_43.
+
+---
 ### JRN-C001-48 · CLAIM
 actor: composer-agent · task: C-001-T11 · manifest: n/a
 

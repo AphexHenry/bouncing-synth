@@ -45,7 +45,7 @@ int run_scenario_cli(int argc, char** argv) {
     print_usage();
     return 1;
   }
-  if (max_events <= 0) {
+  if (max_events <= 0 || max_events > bounce::core::engine::kMaxSimEvents) {
     std::cerr << "invalid --max-events\n";
     return 1;
   }

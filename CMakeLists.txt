@@ -27,6 +27,14 @@ add_library(bounce-core STATIC
 target_include_directories(bounce-core PUBLIC src/core)
 bounce_apply_fp_determinism(bounce-core)
 
+add_library(bounce-baseline STATIC
+  src/baseline/polyline.cpp
+  src/baseline/baseline_sim.cpp
+)
+target_link_libraries(bounce-baseline PUBLIC bounce-core)
+target_include_directories(bounce-baseline PUBLIC src)
+bounce_apply_fp_determinism(bounce-baseline)
+
 enable_testing()
 
 include(FetchContent)
@@ -49,10 +57,13 @@ add_executable(bounce-tests
   tests/test_collision_sim.cpp
   tests/test_calibration_scenario.cpp
   tests/test_event_file.cpp
+  tests/test_capacity.cpp
+  tests/test_baseline_sim.cpp
   src/tools/run_scenario/run_scenario.cpp
+  src/tools/run_baseline/run_baseline.cpp
 )
-target_link_libraries(bounce-tests PRIVATE bounce-core doctest::doctest)
-target_include_directories(bounce-tests PRIVATE src/tools/run_scenario)
+target_link_libraries(bounce-tests PRIVATE bounce-core bounce-baseline doctest::doctest)
+target_include_directories(bounce-tests PRIVATE src/tools/run_scenario src/tools/run_baseline)
 target_compile_definitions(bounce-tests PRIVATE BOUNCE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 bounce_apply_fp_determinism(bounce-tests)
 
@@ -63,5 +74,13 @@ add_executable(bounce-run-scenario
 target_link_libraries(bounce-run-scenario PRIVATE bounce-core)
 target_include_directories(bounce-run-scenario PRIVATE src/tools/run_scenario)
 bounce_apply_fp_determinism(bounce-run-scenario)
+
+add_executable(bounce-baseline-run
+  src/tools/run_baseline/main.cpp
+  src/tools/run_baseline/run_baseline.cpp
+)
+target_link_libraries(bounce-baseline-run PRIVATE bounce-baseline)
+target_include_directories(bounce-baseline-run PRIVATE src/tools/run_baseline)
+bounce_apply_fp_determinism(bounce-baseline-run)
 
 add_test(NAME bounce-tests COMMAND bounce-tests)

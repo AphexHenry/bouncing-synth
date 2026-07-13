@@ -23,7 +23,8 @@ HELDOUT_MANIFEST_PATH = os.path.join(HELDOUT_DIR, "MANIFEST.json")
 ACCESS_LOG_PATH = os.path.join(HELDOUT_DIR, "ACCESS_LOG.jsonl")
 FP_DETERMINISM_PATH = os.path.join(REPO_ROOT, "config", "fp-determinism.cmake")
 DEFAULT_BINARY = os.path.join(REPO_ROOT, "build", "default", "bounce-run-scenario")
-K_MAX_SIM_EVENTS = 64
+DEFAULT_BASELINE_BINARY = os.path.join(REPO_ROOT, "build", "default", "bounce-baseline-run")
+K_MAX_SIM_EVENTS = 256
 RUNNER_VERSION_PATH = os.path.join(REPO_ROOT, "tools", "gaterunner", "gaterunner.py")
 
 
@@ -207,23 +208,35 @@ def run_single_scenario(
     scenario_id: str,
     out_path: str,
     max_events: int,
+    engine: str,
+    engine_params: dict[str, Any] | None,
 ) -> tuple[int, float]:
     scen_path = scenario_path(scenario_id)
+    cmd = [
+        binary,
+        "--scenario",
+        scen_path,
+        "--out",
+        out_path,
+        "--max-events",
+        str(max_events),
+    ]
+    if engine == "baseline":
+        if engine_params is None:
+            raise RuntimeError("baseline engine requires engine_params")
+        cmd.extend(
+            [
+                "--dt",
+                str(engine_params["dt"]),
+                "--segments",
+                str(engine_params["segments"]),
+            ]
+        )
     start = time.perf_counter()
-    code, _, stderr = run_command(
-        [
-            binary,
-            "--scenario",
-            scen_path,
-            "--out",
-            out_path,
-            "--max-events",
-            str(max_events),
-        ]
-    )
+    code, _, stderr = run_command(cmd)
     elapsed = time.perf_counter() - start
     if code != 0:
-        msg = stderr.strip() or f"bounce-run-scenario failed for {scenario_id}"
+        msg = stderr.strip() or f"engine failed for {scenario_id}"
         raise RuntimeError(msg)
     return code, elapsed
 
@@ -238,11 +251,33 @@ def identity_scenario_record(record: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def compare_manifests(path_a: str, path_b: str) -> int:
+def normalized_study_spec(study: dict[str, Any]) -> dict[str, Any]:
+    keys = ("study_id", "gate_id", "horizon", "scenario_set", "timing_runs")
+    return {key: study[key] for key in keys if key in study}
+
+
+def engine_identity(manifest: dict[str, Any]) -> dict[str, Any]:
+    study = manifest.get("study_spec", {})
+    identity: dict[str, Any] = {
+        "engine": study.get("engine", "exact"),
+        "engine_binary_sha256": manifest.get("engine_binary_sha256"),
+        "engine_params": study.get("engine_params"),
+    }
+    return identity
+
+
+def compare_manifests(path_a: str, path_b: str, *, cross_engine: bool = False) -> int:
     manifest_a = load_json(path_a)
     manifest_b = load_json(path_b)
-    if manifest_a.get("study_spec") != manifest_b.get("study_spec"):
+    if normalized_study_spec(manifest_a.get("study_spec", {})) != normalized_study_spec(
+        manifest_b.get("study_spec", {})
+    ):
         print("compare-failed: study_spec differs")
+        return 1
+    id_a = engine_identity(manifest_a)
+    id_b = engine_identity(manifest_b)
+    if id_a != id_b and not cross_engine:
+        print("compare-failed: engine identity differs")
         return 1
     scenarios_a = {
         row["scenario_id"]: identity_scenario_record(row)
@@ -255,6 +290,17 @@ def compare_manifests(path_a: str, path_b: str) -> int:
     if set(scenarios_a) != set(scenarios_b):
         print("compare-failed: scenario id sets differ")
         return 1
+    if cross_engine and id_a != id_b:
+        print("cross-engine-summary:")
+        for sid in sorted(scenarios_a):
+            count_a = scenarios_a[sid]["event_count"]
+            count_b = scenarios_b[sid]["event_count"]
+            print(f"  {sid}: event_count exact={count_a} baseline={count_b}")
+            if scenarios_a[sid]["event_file_sha256"] == scenarios_b[sid]["event_file_sha256"]:
+                print(f"  {sid}: first-divergence=none (byte-identical)")
+            else:
+                print(f"  {sid}: first-divergence=event_file_sha256")
+        return 0
     ok = True
     for sid in sorted(scenarios_a):
         if scenarios_a[sid] != scenarios_b[sid]:
@@ -301,12 +347,29 @@ def run_study(
     study_path: str,
     *,
     manifest_out: str,
-    binary: str = DEFAULT_BINARY,
+    binary: str | None = None,
+    baseline_binary: str = DEFAULT_BASELINE_BINARY,
 ) -> int:
-    if not os.path.isfile(binary):
-        print(f"gaterunner-failed: missing binary {binary}")
-        return 1
     study = load_json(study_path)
+    engine = study.get("engine", "exact")
+    if engine not in ("exact", "baseline"):
+        print(f"gaterunner-failed: unknown engine {engine!r}")
+        return 1
+    engine_params = study.get("engine_params")
+    if engine == "baseline":
+        if not isinstance(engine_params, dict):
+            print("gaterunner-failed: baseline engine requires engine_params")
+            return 1
+        for key in ("dt", "segments"):
+            if key not in engine_params:
+                print(f"gaterunner-failed: engine_params missing {key}")
+                return 1
+    chosen_binary = binary or (
+        baseline_binary if engine == "baseline" else DEFAULT_BINARY
+    )
+    if not os.path.isfile(chosen_binary):
+        print(f"gaterunner-failed: missing binary {chosen_binary}")
+        return 1
     required = ("study_id", "gate_id", "scenario_set", "horizon", "timing_runs")
     missing = [key for key in required if key not in study]
     if missing:
@@ -336,6 +399,7 @@ def run_study(
     fp_flags = read_fp_flags()
     toolchain = collect_toolchain()
     runner_sha256 = sha256_file(RUNNER_VERSION_PATH)
+    engine_binary_sha256 = sha256_file(chosen_binary)
 
     scenario_records: list[dict[str, Any]] = []
     with tempfile.TemporaryDirectory(prefix="gaterunner-") as tmpdir:
@@ -349,10 +413,12 @@ def run_study(
                 for _ in range(timing_runs):
                     out_path = os.path.join(tmpdir, f"{scenario_id}.jsonl")
                     exit_code, elapsed = run_single_scenario(
-                        binary=binary,
+                        binary=chosen_binary,
                         scenario_id=scenario_id,
                         out_path=out_path,
                         max_events=max_events,
+                        engine=engine,
+                        engine_params=engine_params,
                     )
                     wall_times.append(elapsed)
                     last_out = out_path
@@ -382,6 +448,8 @@ def run_study(
                 )
 
     manifest = {
+        "engine": engine,
+        "engine_binary_sha256": engine_binary_sha256,
         "engine_git_commit": engine_commit,
         "engine_git_dirty": dirty,
         "toolchain": toolchain,
@@ -409,8 +477,13 @@ def main() -> int:
     )
     parser.add_argument(
         "--binary",
-        default=DEFAULT_BINARY,
-        help="path to bounce-run-scenario binary",
+        default=None,
+        help="path to engine binary (default: exact or baseline per study spec)",
+    )
+    parser.add_argument(
+        "--baseline-binary",
+        default=DEFAULT_BASELINE_BINARY,
+        help="path to bounce-baseline-run binary",
     )
     parser.add_argument(
         "--compare",
@@ -418,10 +491,17 @@ def main() -> int:
         metavar=("MANIFEST_A", "MANIFEST_B"),
         help="compare identity-bearing fields across two manifests",
     )
+    parser.add_argument(
+        "--cross-engine",
+        action="store_true",
+        help="with --compare, summarize cross-engine differences instead of refusing",
+    )
     args = parser.parse_args()
 
     if args.compare:
-        return compare_manifests(args.compare[0], args.compare[1])
+        return compare_manifests(
+            args.compare[0], args.compare[1], cross_engine=args.cross_engine
+        )
 
     if args.study is None:
         parser.error("study spec path required unless --compare is used")
@@ -436,7 +516,12 @@ def main() -> int:
             "manifests",
             study["study_id"] + ".json",
         )
-    return run_study(args.study, manifest_out=manifest_out, binary=args.binary)
+    return run_study(
+        args.study,
+        manifest_out=manifest_out,
+        binary=args.binary,
+        baseline_binary=args.baseline_binary,
+    )
 
 
 if __name__ == "__main__":
