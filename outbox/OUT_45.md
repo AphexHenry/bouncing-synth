@@ -1,0 +1,1498 @@
+# OUT 45 — C-001-T12-R1 — DONE
+agent: composer-agent · branch: task/C-001-T12 · commits: 935c074 c607fc0 62a19a2
+
+## APPLY CONFIRMATION
+
+serial 45 applied by composer-agent · files: docs/02_PROGRAM/LESSONS.md, docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md, docs/03_TRACKS/C-001_exact_collision_engine/BRIEF.md, docs/00_STATE.md
+
+Ledger line:
+```
+serial 45 applied by composer-agent · files: docs/02_PROGRAM/LESSONS.md, docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md, docs/03_TRACKS/C-001_exact_collision_engine/BRIEF.md, docs/00_STATE.md
+```
+
+Files written:
+- docs/02_PROGRAM/LESSONS.md — APPEND (L-16)
+- docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md — APPEND (JRN-C001-55, JRN-C001-56)
+- docs/03_TRACKS/C-001_exact_collision_engine/BRIEF.md — APPEND (C-001-T12-R1)
+- docs/00_STATE.md — OVERWRITE
+
+## JOURNAL ENTRIES
+
+---
+### LESSON L-16 (appended to docs/02_PROGRAM/LESSONS.md)
+
+L-16: The OUT is the review surface. Every acceptance criterion's artifact appears
+byte-verbatim inside the OUT itself; a pointer to a repo file (TR or otherwise) is
+inadmissible as evidence, because model-B review independence (P6 §2.2, L-14) rests on the
+PM having no repo access. Truncated digests are not digests — every sha256 appears in full.
+The TR is pasted verbatim into the OUT's REPORT section AND listed in FILE DIGESTS.
+PM-side corollary (owned contributing factor, packets 39–44): OUT-REQUIREMENTS are restated
+in full in every packet — never by reference to a prior serial; requirement-by-reference
+decays across fresh agent instances. Review ladder for the record: substantive criterion
+miss → REJECT (OUT_38); partial completeness with the aggregate byte-verbatim in the OUT →
+ACCEPT + remediation (OUT_39, OUT_41, L-15/v2); wholesale evidence absence or repo-pointer
+evidence → REJECT (OUT_44). Origin: OUT_44.
+
+---
+### JRN-C001-55 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_44_C-001-T12 per P6 §2. Criteria 1–8: evidence ABSENT from the OUT —
+no toolchain/build/ctest pastes; streaming sha256s truncated to ellipses; no F3 dump
+excerpt; no gitignore status excerpt; no tune grid table; no git status; REPORT section is
+a repo pointer ("See TR_C-001-T12.md"); criterion 9 NON-COMPLIANT — TR absent from FILE
+DIGESTS. Verdict: REJECT — inadmissible evidence class. Rationale of record: model-B
+review reads OUT files only (P6 §2.2); accepting repo-pointer evidence one packet before
+gate runs would reinstate trust-me review exactly where evidence discipline matters most.
+Distinct from OUT_38 (substantive miss → REJECT) and OUT_39/41 (partial, aggregate
+verbatim → ACCEPT+remediation, L-15/v2): OUT_44 is wholesale absence → REJECT (ladder
+codified in L-16). PM contributing factor owned: OUT-REQUIREMENTS issued by reference
+("as PACKET 38") since PACKET 39 — decays across fresh agent instances; L-16 binds the PM
+to full restatement per packet. The summarized work product (ratio 1.899, dt=5e-4 N=128,
+F3=physics/domain-exit, 20k streaming) is plausibly sound and is NOT re-executed — R1 is
+evidence-only with an immutability proof.
+NUMBERS: 8 of 9 criteria without in-OUT artifacts.
+LEARNED: L-16 (docs/02_PROGRAM/LESSONS.md).
+NEXT: C-001-T12-R1 (this packet).
+
+---
+### JRN-C001-56 · NOTE
+actor: pm-fable5-b · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: C-001-T12-R1 authored (PACKET 45) — evidence-only rework. The T12 implementation
+commits stand untouched; R1 emits a compliant OUT: every T12 acceptance criterion's
+artifact pasted byte-verbatim (toolchain, configure/build, ctest + doctest summary, 20k
+streaming evidence with FULL sha256s ×2 exact + ×2 baseline parity, F3 dump excerpt +
+classification reasoning, gitignore status excerpt, FULL tune grid timing table +
+TUNE-LAW7.json content, byte-verbatim git status), full TR pasted in REPORT and listed in
+FILE DIGESTS, and an immutability proof: `git diff --name-status <OUT_44 tip>..HEAD`
+showing changes confined to docs/, outbox/, and inbox/APPLIED.log — zero diffs under src/,
+tools/, data/. L-16 in force; OUT-REQUIREMENTS restated in full below and in all future
+packets.
+NUMBERS: none new — R1 may not produce new numbers, only evidence existing ones.
+LEARNED: nothing (pending R1).
+NEXT: OUT_45 review; on ACCEPT — PACKET 46 gate runs (P1-A → P1-B → P1-C → Law 7 per v1.2
+B3; committed tree, dirty=false; first held-out contact, gate-authorized, logged).
+
+---
+### JRN-C001-57 · CLAIM
+actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: Claimed C-001-T12-R1 (evidence-only OUT rework per L-16) on branch task/C-001-T12
+after PACKET 45 apply; OUT_44 tip ab39836 immutable.
+NUMBERS: none new — regenerate existing T12 evidence only.
+LEARNED: nothing
+NEXT: Immutability proof; regenerate all §3 evidence; complete TR; write OUT_45.
+
+---
+### JRN-C001-58 · DONE
+actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: C-001-T12-R1 evidence-only DONE. Immutability proven: `git diff --name-status
+ab39836..HEAD` shows only docs/ and inbox/APPLIED.log — zero src/tools/data/config/tests
+changes. All T12 evidence regenerated read-only; values match OUT_44 summaries (exact sha256
+6c84d5df2a1cc83c158503a492ecaae18577d50d336f7335be8aadfa585e675b ×2; baseline sha256
+6145ff9f1d0b8f492166185cbf29e8a4901a7c24921d1a30f2275239f66e653e ×2 at 513 events;
+ratio 1.8986844600152826 dt=5e-4 N=128; F3 classification (a) physics). TR completed with
+full evidence + TUNE-LAW7.json; OUT_45 written per L-16.
+NUMBERS: stream 20000 exact; baseline 513 at horizon 20000; tune ratio 1.899; FL-1 |Δt|=2.5e-4.
+LEARNED: nothing
+NEXT: OUT_45 review; on ACCEPT — PACKET 46 gate runs.
+
+## IMMUTABILITY PROOF (criterion 1)
+
+`git diff --name-status ab39836..HEAD` (OUT_44 tip ab39836, immediately before OUT commit):
+
+```
+M	docs/00_STATE.md
+M	docs/02_PROGRAM/LESSONS.md
+M	docs/03_TRACKS/C-001_exact_collision_engine/BRIEF.md
+M	docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md
+M	docs/03_TRACKS/C-001_exact_collision_engine/reports/TR_C-001-T12.md
+M	inbox/APPLIED.log
+```
+
+All paths within permitted set (docs/, inbox/APPLIED.log, outbox/OUT_45.md pending); zero
+src/tools/data/config/tests changes.
+
+## FILE DIGESTS
+
+```
+2705 d38849a4e5de5e03e72fb77e35d5a1e2f8e6e906cd8ebb3e9d81a3bccf07d80a docs/00_STATE.md
+8176 2bbf2f0557b64770e1acbf6e3ab21ca6182c89e8942d711e3e5bb6654af40e12 docs/02_PROGRAM/LESSONS.md
+19209 88106692ca2d22debbbc67da33d232feea73995b7f040fedc0104a820ba03148 docs/03_TRACKS/C-001_exact_collision_engine/BRIEF.md
+43447 1b0660905ac44ddaab8b593805e149f4fd9ba5f4d704560ce8931dc681265afd docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md
+44133 21b10577207230435dcc465ee4430d2b0e8e01fb1f76b6d570566129b30b6807 docs/03_TRACKS/C-001_exact_collision_engine/reports/TR_C-001-T12.md
+11054 8628aa38c35f232e79a500eefedaec824a6f45e168063521c42306d958b99400 inbox/APPLIED.log
+```
+
+## TASK REPORT
+
+# TASK REPORT — C-001-T12
+actor: composer-agent / status: DONE / manifest: n/a
+
+PER ACCEPTANCE CRITERION: 1 → Step 4 pasted below; exit=0; all four targets built.
+PER ACCEPTANCE CRITERION: 2 → Step 5 pasted below; 100% passed + SUCCESS! + exit=0.
+PER ACCEPTANCE CRITERION: 3 → Step 6 pasted below; 20000 events, monotone, identical sha256s.
+PER ACCEPTANCE CRITERION: 4 → Step 7 pasted below; classification (a) physics with reasoning.
+PER ACCEPTANCE CRITERION: 5 → Step 8 pasted below; venvs absent from status.
+PER ACCEPTANCE CRITERION: 6 → Step 9 pasted below; ratio ∈ [1.0,2.0]; TUNE-LAW7.json committed.
+PER ACCEPTANCE CRITERION: 7 → Affirmations below; no held-out; emission interface only change.
+PER ACCEPTANCE CRITERION: 8 → Step 10 pasted below.
+PER ACCEPTANCE CRITERION: 9 → FILE DIGESTS in OUT_45 (L-16).
+DEVIATIONS: tune_law7.py dirty-check uses `--untracked-files=no` so courier-surface inbox
+packets do not block tune on a committed implementation tip (L-13). T12-R1 (PACKET 45): no
+source/data changes; evidence regenerated read-only only.
+ARTIFACTS: EventEmitSink, EventStreamWriter, CAL-E1-FLAT-STREAM, TUNE-LAW7.json, tune_law7.py.
+OBSERVATIONS: none
+
+## AFFIRMATIONS (criterion 7)
+- No held-out scenario executed.
+- Real-time-facing engine path unchanged except optional `EventEmitSink*` on
+  `simulate_multi_ball_collisions` (nullptr default preserves prior behavior).
+- Calibration-only tune (FL-1, PB-1).
+
+## EMISSION INTERFACE (criterion 7 documentation)
+- Added `engine::EventEmitSink` callback in `collision_sim.hpp` (zero heap; optional).
+- Offline CLIs write events to a body temp file as produced, then assemble canonical header +
+  body via temp-write + rename (`event_file.cpp`). In-memory `kMaxSimEvents=256` array still
+  fills for in-process callers; streaming count is unbounded up to `kMaxOfflineEvents`.
+
+## STEP 3 — Toolchain
+
+```
+cmake version 3.27.8
+Apple clang version 17.0.0 (clang-1700.6.4.2)
+Python 3.9.6
+```
+
+## STEP 4 — Configure + build
+
+```
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+configure_exit=0
+```
+
+```
+[ 32%] Built target bounce-core
+[ 40%] Built target bounce-baseline
+[ 83%] Built target bounce-tests
+[ 91%] Built target bounce-run-scenario
+[100%] Built target bounce-baseline-run
+build_exit=0
+```
+
+## STEP 5 — ctest
+
+```
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   0.07 sec
+```
+
+```
+[doctest] test cases:  49 |  49 passed | 0 failed | 0 skipped
+[doctest] assertions: 733 | 733 passed | 0 failed |
+[doctest] Status: SUCCESS!
+```
+
+## STEP 6 — Streaming evidence
+
+Scenario: `data/scenarios/calibration/CAL-E1-FLAT-STREAM.json` (e=1, flat, vx=1/1000000).
+
+Exact engine (×2, horizon --max-events 20000):
+
+```
+$ /usr/bin/time -p build/default/bounce-run-scenario --scenario data/scenarios/calibration/CAL-E1-FLAT-STREAM.json --out /tmp/stream-exact-1.jsonl --max-events 20000
+events=20000
+real 0.12
+
+$ /usr/bin/time -p build/default/bounce-run-scenario --scenario data/scenarios/calibration/CAL-E1-FLAT-STREAM.json --out /tmp/stream-exact-2.jsonl --max-events 20000
+events=20000
+real 0.25
+
+sha256 run1: 6c84d5df2a1cc83c158503a492ecaae18577d50d336f7335be8aadfa585e675b
+sha256 run2: 6c84d5df2a1cc83c158503a492ecaae18577d50d336f7335be8aadfa585e675b
+monotone seq: confirmed (seq 0..19999 strictly increasing t)
+```
+
+Baseline parity (dt=1e-4, segments=64, same horizon --max-events 20000):
+
+```
+$ build/default/bounce-baseline-run --scenario data/scenarios/calibration/CAL-E1-FLAT-STREAM.json --dt 1e-4 --segments 64 --out /tmp/stream-base-1.jsonl --max-events 20000
+events=513
+
+$ build/default/bounce-baseline-run --scenario data/scenarios/calibration/CAL-E1-FLAT-STREAM.json --dt 1e-4 --segments 64 --out /tmp/stream-base-2.jsonl --max-events 20000
+events=513
+
+sha256 run1: 6145ff9f1d0b8f492166185cbf29e8a4901a7c24921d1a30f2275239f66e653e
+sha256 run2: 6145ff9f1d0b8f492166185cbf29e8a4901a7c24921d1a30f2275239f66e653e
+```
+
+## STEP 7 — F3 diagnostic (PB-1, baseline dt=1e-4, N=64)
+
+```
+$ build/default/bounce-baseline-run --scenario data/scenarios/calibration/PB-1-h9-g16-c1.json --dt 1e-4 --segments 64 --dump-trajectory 0.9 2.2
+# baseline trajectory dump dt=1e-04 segments=64 window=[0.9,2.2]
+...
+9675,0.96744468241157089,0.96744468241157089,1.5116323558156515,1,-15.479114918585134,contact
+9675,0.96744468241157089,0.96744468241157089,1.5116323558156515,-10.606094155676598,-8.0512146589521123,-
+10001,1.0000446824115674,0.62168601293652481,1.2406345979338136,-10.606094155676598,-8.5728146589520549,-
+...
+$ build/default/bounce-baseline-run --scenario data/scenarios/calibration/PB-1-h9-g16-c1.json --dt 1e-4 --segments 64 --dump-trajectory 0.9 5.0
+...
+# domain exit at t=1.0587446824115609 x=-0.00089171400169173794
+```
+
+Exact engine reference (2 events at t=1):
+
+```
+events=2
+seq0 t=1 s=1; seq1 t=1 s=1.0000000000000002
+```
+
+**CLASSIFICATION (a) physics:** after the first polyline contact (~t=0.967) the baseline
+reflects with large inward normal impulse (vx→−10.6), the trajectory retreats left of x=0 and
+**domain-exits** at t≈1.059 before any second contact at x≈1 — expected under semi-implicit
+Euler on a 64-segment parabola polyline, not a harness/CLI defect.
+
+## STEP 8 — F2 gitignore
+
+`.gitignore` contains `tools/**/.venv/` (also legacy `tools/refsim/.venv/` entries).
+`git status` shows no `.venv` entries (only courier inbox packets untracked).
+
+## STEP 9 — Compute-match tune
+
+Chosen row (from `tools/gaterunner/tune/TUNE-LAW7.json`):
+
+```json
+{
+  "dt": 0.0005,
+  "fl1_first_contact_abs_dt": 0.00025000000004959944,
+  "mean_ratio_vs_exact": 1.8986844600152826,
+  "segments": 128
+}
+```
+
+Full grid timing table (21 feasible cells of 35-grid):
+
+```
+dt       N     mean_ratio  fl1_|dt|      in [1,2]
+0.001    64    1.269243    0.0005        yes      
+0.001    128   1.420767    0.0005        yes      
+0.001    256   2.752227    0.0005        no       
+0.0005   64    1.522202    0.00025       yes      
+0.0005   128   1.898684    0.00025       yes        ← chosen (min FL-1 |Δt|, tie N)
+0.0005   256   2.573634    0.00025       no       
+0.0002   64    2.029242    0.0001        no       
+0.0002   128   2.969545    0.0001        no       
+0.0002   256   4.770427    0.0001        no       
+0.0001   64    2.953229    5e-05         no       
+0.0001   128   4.822365    5e-05         no       
+0.0001   256   8.496838    5e-05         no       
+5e-05    64    5.293713    2.5e-05       no       
+5e-05    128   8.572493    2.5e-05       no       
+5e-05    256   16.129280   2.5e-05       no       
+2e-05    64    10.731099   1e-05         no       
+2e-05    128   19.794428   1e-05         no       
+2e-05    256   37.874475   1e-05         no       
+1e-05    64    20.310110   5e-06         no       
+1e-05    128   38.648842   5e-06         no       
+1e-05    256   74.351064   5e-06         no       
+```
+
+Complete `tools/gaterunner/tune/TUNE-LAW7.json` (36203 bytes, sha256
+d5b3ab74429dad9e390cc412f8b66dd55600045e8bf4baa352576f6af72ed457):
+
+```json
+{
+  "baseline_engine_binary_sha256": "6efb40cb48098003d4c9dd65168ae3a0c5fda75b0a79fa3578e655edd5983979",
+  "chosen": {
+    "dt": 0.0005,
+    "fl1_first_contact_abs_dt": 0.00025000000004959944,
+    "mean_ratio_vs_exact": 1.8986844600152826,
+    "segments": 128
+  },
+  "date": "2026-07-13",
+  "exact_engine_binary_sha256": "2a48c775baf57137b90273e5f8a61ea9cf95e11a425f4f50fff574a01c2a2b4e",
+  "exact_timing": {
+    "FL-1-h5-g10-e1o2": {
+      "event_count": 13,
+      "median_rate_wall_per_sim_second": 0.0008676852829694254,
+      "median_wall_seconds": 0.0026022084999999945,
+      "simulated_seconds": 2.999023437501,
+      "wall_times_seconds": [
+        0.0031735420000000014,
+        0.0026199579999999917,
+        0.0025844589999999973,
+        0.002541500000000002,
+        0.002482999999999999,
+        0.002562250000000002,
+        0.0024567919999999993,
+        0.0042518329999999965,
+        0.0033668329999999996,
+        0.0031746250000000004
+      ]
+    },
+    "PB-1-h9-g16-c1": {
+      "event_count": 2,
+      "median_rate_wall_per_sim_second": 0.002523750000000005,
+      "median_wall_seconds": 0.002523750000000005,
+      "simulated_seconds": 1.0,
+      "wall_times_seconds": [
+        0.0030456249999999963,
+        0.00243525,
+        0.0023170420000000053,
+        0.002578208999999998,
+        0.0027088749999999995,
+        0.0025333330000000126,
+        0.0023643339999999957,
+        0.002688041000000002,
+        0.0025141669999999977,
+        0.002442625000000004
+      ]
+    }
+  },
+  "git_commit": "db501e32bd41dd1fb82264e94931e6278c2f76f6",
+  "grid": [
+    {
+      "dt": 0.001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.0004999999999926175,
+      "mean_ratio_vs_exact": 1.2692428898501433,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.001138038571592051,
+          "median_wall_seconds": 0.003382354000000004,
+          "ratio_vs_exact": 1.311579894149423,
+          "simulated_seconds": 2.97209082752642,
+          "wall_times_seconds": [
+            0.0034224579999999893,
+            0.003243208999999997,
+            0.0031684170000000067,
+            0.003271666999999978,
+            0.0031825420000000104,
+            0.0033762499999999973,
+            0.003388458000000011,
+            0.003625582999999988,
+            0.0035436670000000003,
+            0.0035156249999999944
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.0030964037286589983,
+          "median_wall_seconds": 0.0029943340000000013,
+          "ratio_vs_exact": 1.2269058855508637,
+          "simulated_seconds": 0.9670360399988274,
+          "wall_times_seconds": [
+            0.003132541999999988,
+            0.0031018329999999983,
+            0.0030619580000000035,
+            0.0030243339999999896,
+            0.002964334000000013,
+            0.0028747499999999815,
+            0.002911416,
+            0.0030434159999999932,
+            0.0028380829999999913,
+            0.0029274159999999882
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 0.001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.0004999999999926175,
+      "mean_ratio_vs_exact": 1.420766508749411,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.001410083420461263,
+          "median_wall_seconds": 0.0041908959999999995,
+          "ratio_vs_exact": 1.625109297273802,
+          "simulated_seconds": 2.97209082752642,
+          "wall_times_seconds": [
+            0.0041929169999999905,
+            0.004041708000000005,
+            0.004200750000000003,
+            0.004047749999999989,
+            0.004294625000000024,
+            0.0041888750000000086,
+            0.003985707999999977,
+            0.004180832999999995,
+            0.004387292000000015,
+            0.004429416999999991
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.003069949363917901,
+          "median_wall_seconds": 0.003047958500000031,
+          "ratio_vs_exact": 1.21642372022502,
+          "simulated_seconds": 0.9928367339942686,
+          "wall_times_seconds": [
+            0.0038102079999999816,
+            0.003442332999999964,
+            0.003346917000000005,
+            0.0029809170000000274,
+            0.0029874579999999984,
+            0.0030057500000000292,
+            0.002974791000000032,
+            0.0029436250000000053,
+            0.00318291599999998,
+            0.0030901670000000325
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 0.001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.0004999999999926175,
+      "mean_ratio_vs_exact": 2.752226805471461,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.0018358638132674851,
+          "median_wall_seconds": 0.005456353999999969,
+          "ratio_vs_exact": 2.1158176233953427,
+          "simulated_seconds": 2.97209082752642,
+          "wall_times_seconds": [
+            0.0053456250000000205,
+            0.00528637500000001,
+            0.005480624999999961,
+            0.005203665999999996,
+            0.005484166999999984,
+            0.0054320829999999765,
+            0.005292124999999981,
+            0.005588124999999999,
+            0.006081124999999965,
+            0.006423750000000006
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.00855207007357322,
+          "median_wall_seconds": 0.008530333500000015,
+          "ratio_vs_exact": 3.388635987547579,
+          "simulated_seconds": 0.9974583260676998,
+          "wall_times_seconds": [
+            0.023143208000000026,
+            0.010478290999999973,
+            0.008897500000000003,
+            0.01495020800000002,
+            0.012332292000000022,
+            0.005759750000000008,
+            0.005051749999999966,
+            0.004701166000000034,
+            0.006966166000000051,
+            0.008163167000000027
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 0.001,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 0.001,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 0.0005,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00025000000004959944,
+      "mean_ratio_vs_exact": 1.5222023897871497,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.001536924126647635,
+          "median_wall_seconds": 0.004586978999999963,
+          "ratio_vs_exact": 1.7712921456820323,
+          "simulated_seconds": 2.984518832432646,
+          "wall_times_seconds": [
+            0.005323874999999978,
+            0.005127707999999953,
+            0.005515708000000008,
+            0.004677957999999982,
+            0.004407250000000029,
+            0.00445395799999998,
+            0.004285625000000015,
+            0.005322624999999914,
+            0.0044959999999999445,
+            0.004267459000000029
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.0032130180097856157,
+          "median_wall_seconds": 0.00310783349999999,
+          "ratio_vs_exact": 1.2731126338922671,
+          "simulated_seconds": 0.9672630189232447,
+          "wall_times_seconds": [
+            0.003195791999999975,
+            0.0030405829999999856,
+            0.00307637500000002,
+            0.0031392919999999602,
+            0.0031476250000000983,
+            0.003045541000000096,
+            0.0029620830000000042,
+            0.003299791999999968,
+            0.003169124999999995,
+            0.0030588749999999054
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 0.0005,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00025000000004959944,
+      "mean_ratio_vs_exact": 1.8986844600152826,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.001952150188059316,
+          "median_wall_seconds": 0.005826228999999961,
+          "ratio_vs_exact": 2.24983669352855,
+          "simulated_seconds": 2.984518832432646,
+          "wall_times_seconds": [
+            0.005741208999999969,
+            0.005709833000000053,
+            0.006292500000000034,
+            0.006341166999999981,
+            0.0054007090000000035,
+            0.005944416000000063,
+            0.005841499999999944,
+            0.006426166000000011,
+            0.005795749999999988,
+            0.005810957999999977
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.0039055844566344682,
+          "median_wall_seconds": 0.0038784584999999594,
+          "ratio_vs_exact": 1.547532226502015,
+          "simulated_seconds": 0.9930545717457396,
+          "wall_times_seconds": [
+            0.0038988749999999683,
+            0.004001083000000016,
+            0.003728042000000098,
+            0.00387358399999993,
+            0.0036159169999999685,
+            0.0038051660000000265,
+            0.0036397910000000033,
+            0.003883332999999989,
+            0.004046915999999956,
+            0.004313708000000083
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 0.0005,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00025000000004959944,
+      "mean_ratio_vs_exact": 2.57363370449408,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.0028048001939317536,
+          "median_wall_seconds": 0.008370979000000056,
+          "ratio_vs_exact": 3.2325086629717403,
+          "simulated_seconds": 2.984518832432646,
+          "wall_times_seconds": [
+            0.008871874999999974,
+            0.008789916000000009,
+            0.008772000000000002,
+            0.009100792000000024,
+            0.008393500000000054,
+            0.008348458000000059,
+            0.008260000000000045,
+            0.008174665999999942,
+            0.008272667000000067,
+            0.008166457999999932
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.004832372385258949,
+          "median_wall_seconds": 0.004821166499999974,
+          "ratio_vs_exact": 1.9147587460164195,
+          "simulated_seconds": 0.9976810799405365,
+          "wall_times_seconds": [
+            0.004755708000000025,
+            0.0047640829999999745,
+            0.004603625,
+            0.00502145899999995,
+            0.004755332999999973,
+            0.004878249999999973,
+            0.0050108339999999085,
+            0.00494558299999992,
+            0.0046662079999999495,
+            0.004989582999999964
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 0.0005,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 0.0005,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 0.0002,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00010000000005128129,
+      "mean_ratio_vs_exact": 2.0292424210622837,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.0021174367670277446,
+          "median_wall_seconds": 0.006337458500000004,
+          "ratio_vs_exact": 2.4403280873698496,
+          "simulated_seconds": 2.9929859529623277,
+          "wall_times_seconds": [
+            0.006253417000000039,
+            0.006347792000000019,
+            0.006404958999999932,
+            0.009940542000000052,
+            0.006416749999999971,
+            0.006156083000000034,
+            0.006018540999999988,
+            0.006640625000000067,
+            0.006327124999999989,
+            0.006237333999999928
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.0040838231098122265,
+          "median_wall_seconds": 0.003950687499999994,
+          "ratio_vs_exact": 1.6181567547547175,
+          "simulated_seconds": 0.9673992711652112,
+          "wall_times_seconds": [
+            0.004151333000000035,
+            0.003997458000000065,
+            0.004085915999999967,
+            0.003944750000000052,
+            0.0038346249999999804,
+            0.004074416999999997,
+            0.0038085839999999482,
+            0.003956624999999936,
+            0.003849749999999985,
+            0.003923374999999951
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 0.0002,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00010000000005128129,
+      "mean_ratio_vs_exact": 2.9695446016999645,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.003311666561678882,
+          "median_wall_seconds": 0.009911771499999944,
+          "ratio_vs_exact": 3.8166678940843286,
+          "simulated_seconds": 2.9929859529623277,
+          "wall_times_seconds": [
+            0.009551957999999972,
+            0.010025000000000062,
+            0.009940084000000016,
+            0.009700665999999969,
+            0.009877583000000079,
+            0.009814833000000078,
+            0.010045999999999888,
+            0.010317291999999867,
+            0.010006084000000026,
+            0.009883458999999872
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.005356460779385256,
+          "median_wall_seconds": 0.005319958000000069,
+          "ratio_vs_exact": 2.1224213093156,
+          "simulated_seconds": 0.9931852801899211,
+          "wall_times_seconds": [
+            0.005386416999999977,
+            0.005439124999999878,
+            0.005127375000000045,
+            0.005238832999999943,
+            0.00540699999999994,
+            0.00528766600000008,
+            0.005358750000000079,
+            0.005352250000000058,
+            0.005089249999999934,
+            0.005266917000000149
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 0.0002,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 0.00010000000005128129,
+      "mean_ratio_vs_exact": 4.770427462843893,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.005618197934860687,
+          "median_wall_seconds": 0.016815187499999995,
+          "ratio_vs_exact": 6.474925926637683,
+          "simulated_seconds": 2.9929859529623277,
+          "wall_times_seconds": [
+            0.017009041999999974,
+            0.018613916000000064,
+            0.019039083000000012,
+            0.01683491699999995,
+            0.01679545800000004,
+            0.016617333999999984,
+            0.016752584000000015,
+            0.01659216699999999,
+            0.016591417000000108,
+            0.016897458000000087
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.00773763831135271,
+          "median_wall_seconds": 0.007720729500000023,
+          "ratio_vs_exact": 3.0659289990501017,
+          "simulated_seconds": 0.997814732264252,
+          "wall_times_seconds": [
+            0.008169416999999957,
+            0.007986333000000068,
+            0.007943375000000197,
+            0.007714792000000026,
+            0.007666708000000133,
+            0.007675917000000032,
+            0.007636874999999987,
+            0.0076298340000000575,
+            0.007864083000000077,
+            0.00772666700000002
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 0.0002,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 0.0002,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 0.0001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.0000000111460885e-05,
+      "mean_ratio_vs_exact": 2.9532292785974903,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.003275977927584563,
+          "median_wall_seconds": 0.009815437500000024,
+          "ratio_vs_exact": 3.775537043077863,
+          "simulated_seconds": 2.9961854801741965,
+          "wall_times_seconds": [
+            0.009683000000000108,
+            0.009713333999999962,
+            0.009764749999999989,
+            0.009910165999999831,
+            0.00985162500000003,
+            0.009985709000000176,
+            0.0097437090000001,
+            0.010442042000000207,
+            0.010453167000000096,
+            0.009779250000000017
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.005377913171253088,
+          "median_wall_seconds": 0.005202833499999948,
+          "ratio_vs_exact": 2.130921514117118,
+          "simulated_seconds": 0.9674446824115709,
+          "wall_times_seconds": [
+            0.0053687089999998605,
+            0.005219249999999898,
+            0.004883458000000118,
+            0.00533775000000003,
+            0.005058167000000058,
+            0.005216249999999922,
+            0.005262958000000095,
+            0.005186083000000119,
+            0.005189416999999974,
+            0.004988832999999859
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 0.0001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.0000000111460885e-05,
+      "mean_ratio_vs_exact": 4.8223648698799915,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.005628142386905792,
+          "median_wall_seconds": 0.01686295850000008,
+          "ratio_vs_exact": 6.486386824085514,
+          "simulated_seconds": 2.9961854801741965,
+          "wall_times_seconds": [
+            0.01664116700000018,
+            0.01690587500000018,
+            0.017131790999999952,
+            0.01680208399999983,
+            0.016699416999999883,
+            0.01712604200000012,
+            0.01682004199999998,
+            0.017200917000000038,
+            0.01690929200000002,
+            0.01660091600000002
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.007970867933433459,
+          "median_wall_seconds": 0.007916896000000007,
+          "ratio_vs_exact": 3.1583429156744693,
+          "simulated_seconds": 0.9932288511258518,
+          "wall_times_seconds": [
+            0.008413916000000077,
+            0.007921875000000078,
+            0.00795095899999998,
+            0.007637125000000022,
+            0.007678375000000015,
+            0.007792875000000032,
+            0.008393165999999841,
+            0.008013625000000024,
+            0.007822208000000108,
+            0.007911916999999935
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 0.0001,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.0000000111460885e-05,
+      "mean_ratio_vs_exact": 8.496838300667907,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.010264162116629708,
+          "median_wall_seconds": 0.03075333349999998,
+          "ratio_vs_exact": 11.82936061967457,
+          "simulated_seconds": 2.9961854801741965,
+          "wall_times_seconds": [
+            0.030431834000000046,
+            0.031182333999999923,
+            0.030741791999999935,
+            0.030764875000000025,
+            0.03108808299999999,
+            0.030960874999999888,
+            0.030722166999999967,
+            0.030511833999999904,
+            0.030917915999999934,
+            0.030473875000000206
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.013033442458717587,
+          "median_wall_seconds": 0.013005541500000106,
+          "ratio_vs_exact": 5.164315981661242,
+          "simulated_seconds": 0.9978592794032846,
+          "wall_times_seconds": [
+            0.013325041999999954,
+            0.013433583999999943,
+            0.013012916000000097,
+            0.013038083000000089,
+            0.013031041000000076,
+            0.012998167000000116,
+            0.012814457999999807,
+            0.012861624999999766,
+            0.012985124999999709,
+            0.01292270800000006
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 0.0001,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 0.0001,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 5e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 2.5000000069441697e-05,
+      "mean_ratio_vs_exact": 5.293713389747656,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.0063330669761879526,
+          "median_wall_seconds": 0.01898552100000006,
+          "ratio_vs_exact": 7.298806491813127,
+          "simulated_seconds": 2.9978399204342487,
+          "wall_times_seconds": [
+            0.017219708999999916,
+            0.017123499999999847,
+            0.017099582999999807,
+            0.01931670799999985,
+            0.02011716599999991,
+            0.018151208000000363,
+            0.019473583999999988,
+            0.019236334000000355,
+            0.01986737500000002,
+            0.018734707999999767
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.00829965545103793,
+          "median_wall_seconds": 0.008029646000000001,
+          "ratio_vs_exact": 3.2886202876821846,
+          "simulated_seconds": 0.9674673903476122,
+          "wall_times_seconds": [
+            0.00836491699999975,
+            0.00830545799999971,
+            0.007914458999999763,
+            0.008138999999999896,
+            0.008131958000000328,
+            0.00811800000000007,
+            0.007941291999999933,
+            0.007731042000000077,
+            0.007843125000000395,
+            0.007780583000000174
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 5e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 2.5000000069441697e-05,
+      "mean_ratio_vs_exact": 8.572492593073619,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.01033999373639336,
+          "median_wall_seconds": 0.0309976460000001,
+          "ratio_vs_exact": 11.916755924460816,
+          "simulated_seconds": 2.9978399204342487,
+          "wall_times_seconds": [
+            0.03100925000000032,
+            0.031240333000000398,
+            0.030846666999999606,
+            0.03098604199999988,
+            0.03077158400000002,
+            0.031116000000000366,
+            0.030532041999999926,
+            0.030687832999999998,
+            0.03106225000000018,
+            0.031358125000000125
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.013194743599181134,
+          "median_wall_seconds": 0.013105687499999963,
+          "ratio_vs_exact": 5.228229261686422,
+          "simulated_seconds": 0.9932506381414871,
+          "wall_times_seconds": [
+            0.013343332999999902,
+            0.013476666999999942,
+            0.013490541999999994,
+            0.013044457999999981,
+            0.01286079200000012,
+            0.012955917000000206,
+            0.013113624999999907,
+            0.012914541999999862,
+            0.013097750000000019,
+            0.013486540999999796
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 5e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 2.5000000069441697e-05,
+      "mean_ratio_vs_exact": 16.12927965244619,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.019636333180683353,
+          "median_wall_seconds": 0.05886658350000018,
+          "ratio_vs_exact": 22.6307090440478,
+          "simulated_seconds": 2.9978399204342487,
+          "wall_times_seconds": [
+            0.058508292000000406,
+            0.058661500000000366,
+            0.06063183299999997,
+            0.059071666999999994,
+            0.05840216699999967,
+            0.0592307919999997,
+            0.05947920900000003,
+            0.058660333000000175,
+            0.058408000000000015,
+            0.05942008300000001
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.024298287095806552,
+          "median_wall_seconds": 0.024246812499999937,
+          "ratio_vs_exact": 9.627850260844577,
+          "simulated_seconds": 0.9978815545472957,
+          "wall_times_seconds": [
+            0.024060875000000426,
+            0.02427487500000014,
+            0.024218749999999734,
+            0.02506258299999997,
+            0.025878791999999873,
+            0.025197499999999984,
+            0.024037124999999993,
+            0.025067957999999724,
+            0.02350858300000036,
+            0.023610999999999827
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 5e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 5e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 2e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 9.99999954043318e-06,
+      "mean_ratio_vs_exact": 10.731098992193177,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.013083167077529614,
+          "median_wall_seconds": 0.03923435399999997,
+          "ratio_vs_exact": 15.078240157255987,
+          "simulated_seconds": 2.9988422350261894,
+          "wall_times_seconds": [
+            0.039639958999999614,
+            0.03974370900000057,
+            0.03946024999999942,
+            0.03915566600000009,
+            0.039313041999999854,
+            0.044181000000000026,
+            0.03898112500000028,
+            0.03896324999999923,
+            0.03912162499999994,
+            0.039109499999999464
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.016111513566220294,
+          "median_wall_seconds": 0.015587583500000335,
+          "ratio_vs_exact": 6.383957827130366,
+          "simulated_seconds": 0.967481015109689,
+          "wall_times_seconds": [
+            0.016711457999999624,
+            0.016046874999999794,
+            0.015956207999999528,
+            0.015477875000000196,
+            0.015616625000000717,
+            0.015295916999999548,
+            0.018367290999999675,
+            0.015228999999999715,
+            0.015558541999999953,
+            0.015440250000000155
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 2e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 9.99999954043318e-06,
+      "mean_ratio_vs_exact": 19.794427525872003,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.024375059696783927,
+          "median_wall_seconds": 0.07309695850000031,
+          "ratio_vs_exact": 28.092051548191154,
+          "simulated_seconds": 2.9988422350261894,
+          "wall_times_seconds": [
+            0.07271866700000018,
+            0.07281945899999975,
+            0.07308975000000029,
+            0.07310416700000033,
+            0.07308437499999965,
+            0.07316887500000036,
+            0.07468200000000014,
+            0.07369662500000018,
+            0.07271045800000042,
+            0.07316725000000002
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.029015057842091567,
+          "median_wall_seconds": 0.028819604000000165,
+          "ratio_vs_exact": 11.49680350355285,
+          "simulated_seconds": 0.9932637100654729,
+          "wall_times_seconds": [
+            0.028868290999999324,
+            0.02885287500000011,
+            0.02861699999999967,
+            0.028885959000000128,
+            0.028546708000000365,
+            0.028219667000000115,
+            0.03175083299999937,
+            0.02878633300000022,
+            0.040726790999999984,
+            0.02851587499999919
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 2e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 9.99999954043318e-06,
+      "mean_ratio_vs_exact": 37.874474900195615,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.04696386037085736,
+          "median_wall_seconds": 0.14083720799999977,
+          "ratio_vs_exact": 54.125454577419895,
+          "simulated_seconds": 2.9988422350261894,
+          "wall_times_seconds": [
+            0.1401382499999997,
+            0.14013929200000064,
+            0.1403684580000002,
+            0.14097991700000012,
+            0.14083374999999965,
+            0.14005091699999994,
+            0.1408406659999999,
+            0.14245508399999984,
+            0.146913917,
+            0.15213033300000056
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.05457229606897401,
+          "median_wall_seconds": 0.05445741700000051,
+          "ratio_vs_exact": 21.623495222971332,
+          "simulated_seconds": 0.9978949196341618,
+          "wall_times_seconds": [
+            0.054312833000000005,
+            0.05417866600000032,
+            0.05653558299999961,
+            0.05448566700000068,
+            0.05444629200000062,
+            0.05435012500000003,
+            0.05374325000000013,
+            0.05483412500000018,
+            0.055490250000000074,
+            0.0544685420000004
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 2e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 2e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    },
+    {
+      "dt": 1e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.000001774058127e-06,
+      "mean_ratio_vs_exact": 20.310110460329085,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.02504006483598848,
+          "median_wall_seconds": 0.07509958350000012,
+          "ratio_vs_exact": 28.858464385030736,
+          "simulated_seconds": 2.9991768788100064,
+          "wall_times_seconds": [
+            0.07409362499999972,
+            0.07889158299999988,
+            0.07730199999999954,
+            0.07704500000000003,
+            0.07500008400000091,
+            0.07512933399999966,
+            0.07555470799999853,
+            0.07506983300000059,
+            0.074951875,
+            0.07506899999999916
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.0296837330567898,
+          "median_wall_seconds": 0.028718582999999853,
+          "ratio_vs_exact": 11.761756535627434,
+          "simulated_seconds": 0.9674855566534216,
+          "wall_times_seconds": [
+            0.03094933400000066,
+            0.028475459000000924,
+            0.0286602079999998,
+            0.028776957999999908,
+            0.029054208999999886,
+            0.028890249999999895,
+            0.029778957999999633,
+            0.02863237500000082,
+            0.028305708999999624,
+            0.028482874999999908
+          ]
+        }
+      },
+      "segments": 64
+    },
+    {
+      "dt": 1e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.000001774058127e-06,
+      "mean_ratio_vs_exact": 38.64884235870274,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.04795312924560287,
+          "median_wall_seconds": 0.14381991650000003,
+          "ratio_vs_exact": 55.26557864563042,
+          "simulated_seconds": 2.9991768788100064,
+          "wall_times_seconds": [
+            0.14368487499999993,
+            0.14395495800000013,
+            0.2343227499999987,
+            0.14323762499999937,
+            0.1416371250000008,
+            0.1421308329999995,
+            0.14294541599999988,
+            0.14456812500000105,
+            0.14562299999999873,
+            0.1443638749999998
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.05560352769864242,
+          "median_wall_seconds": 0.05522920849999924,
+          "ratio_vs_exact": 22.03210607177506,
+          "simulated_seconds": 0.9932680674386002,
+          "wall_times_seconds": [
+            0.05573200000000078,
+            0.05635645899999986,
+            0.05518804199999927,
+            0.055433084000000576,
+            0.055743041999999576,
+            0.055270374999999206,
+            0.05462429199999974,
+            0.054818750000000804,
+            0.05479229200000013,
+            0.05470208400000054
+          ]
+        }
+      },
+      "segments": 128
+    },
+    {
+      "dt": 1e-05,
+      "feasible": true,
+      "fl1_first_contact_abs_dt": 5.000001774058127e-06,
+      "mean_ratio_vs_exact": 74.35106387492992,
+      "per_scenario": {
+        "FL-1-h5-g10-e1o2": {
+          "event_count": 13,
+          "median_rate_wall_per_sim_second": 0.09321929909346668,
+          "median_wall_seconds": 0.27958116649999987,
+          "ratio_vs_exact": 107.43445915602956,
+          "simulated_seconds": 2.9991768788100064,
+          "wall_times_seconds": [
+            0.2799608330000005,
+            0.2816904170000001,
+            0.2805015839999996,
+            0.2784116250000004,
+            0.27903974999999903,
+            0.2774807500000005,
+            0.2897725419999997,
+            0.28430004099999984,
+            0.2792014999999992,
+            0.278801584
+          ]
+        },
+        "PB-1-h9-g16-c1": {
+          "event_count": 1,
+          "median_rate_wall_per_sim_second": 0.1041492786136794,
+          "median_wall_seconds": 0.1039304999999997,
+          "ratio_vs_exact": 41.26766859383029,
+          "simulated_seconds": 0.9978993746611419,
+          "wall_times_seconds": [
+            0.10393370799999957,
+            0.10392729199999984,
+            0.10451179200000027,
+            0.10355058299999875,
+            0.10427991599999942,
+            0.103970541999999,
+            0.10459904200000025,
+            0.10376295900000088,
+            0.10342358299999965,
+            0.10378370799999992
+          ]
+        }
+      },
+      "segments": 256
+    },
+    {
+      "dt": 1e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 512
+    },
+    {
+      "dt": 1e-05,
+      "error": "write failed",
+      "feasible": false,
+      "per_scenario": {},
+      "segments": 1024
+    }
+  ],
+  "schema": "tune-law7-v1",
+  "timing_runs": 10
+}
+```
+
+## STEP 10 — git status
+
+```
+## task/C-001-T12
+?? inbox/PACKET_13.md
+?? inbox/PACKET_15.md
+?? inbox/PACKET_16.md
+?? inbox/PACKET_17.md
+?? inbox/PACKET_18.md
+?? inbox/PACKET_19.md
+?? inbox/PACKET_20.md
+?? inbox/PACKET_21.md
+?? inbox/PACKET_22.md
+?? inbox/PACKET_23.md
+?? inbox/PACKET_24.md
+?? inbox/PACKET_25.md
+?? inbox/PACKET_26.md
+?? inbox/PACKET_27.md
+?? inbox/PACKET_28.md
+?? inbox/PACKET_29.md
+?? inbox/PACKET_30.md
+?? inbox/PACKET_31.md
+?? inbox/PACKET_32.md
+?? inbox/PACKET_33.md
+?? inbox/PACKET_34.md
+?? inbox/PACKET_35.md
+?? inbox/PACKET_36.md
+?? inbox/PACKET_37.md
+?? inbox/PACKET_38.md
+?? inbox/PACKET_39.md
+?? inbox/PACKET_40.md
+?? inbox/PACKET_41.md
+?? inbox/PACKET_42.md
+?? inbox/PACKET_43.md
+?? inbox/PACKET_44.md
+?? inbox/PACKET_45.md
+```
+
+(Tracked tree clean; untracked limited to L-13 courier inbox.)
+
+
+## BRANCH/COMMITS
+
+```
+62a19a2 C-001-T12-R1: complete TR with full evidence (JRN-C001-58).
+c607fc0 C-001-T12-R1 CLAIM (JRN-C001-57).
+935c074 PACKET 45 apply: L-16, T12-R1 brief, STATE update.
++ final OUT commit (hash not self-listable)
+```
