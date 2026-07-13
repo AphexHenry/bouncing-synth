@@ -1,4 +1,23 @@
 ---
+### JRN-C001-54 · DONE
+actor: composer-agent · task: C-001-T12 · manifest: n/a
+
+WHAT: C-001-T12 complete DONE: EventEmitSink + EventStreamWriter — offline CLIs stream events
+to disk via body temp file, --max-events up to 1e6; kMaxSimEvents=256 array retained for
+in-process/tests. CAL-E1-FLAT-STREAM (e=1, vx=1/1e6) streaming evidence: 20000 events,
+monotone seq, sha256 6c84d5df…e675b byte-identical ×2, wall ~0.12s; baseline parity
+sha256 6145ff9f…e653e ×2 at same horizon (513 events, capacity-limited by baseline settle).
+F3 PB-1 diagnostic (dt=1e-4, N=64): first contact t≈0.967; domain exit t≈1.059 x<0 after
+backward reflection — CLASSIFICATION (a) physics (domain exit under polyline dynamics), not
+harness defect. F2: tools/**/.venv/ gitignored. Law 7 tune: dt=5e-4, N=128,
+mean_ratio=1.899 ∈ [1.0,2.0], FL-1 |Δt|=2.5e-4; TUNE-LAW7.json frozen at commit 901534c.
+49/49 doctest SUCCESS (733 assertions); no golden expectations changed; no held-out contact.
+NUMBERS: stream 20000 exact; tune ratio 1.899; chosen dt=5e-4 N=128.
+LEARNED: e=1 flat streaming evidence needs near-vertical orbit (tiny vx) to reach 20k events
+before fp settle; PB-1 baseline misses second exact contact via domain exit, not CLI bug.
+NEXT: PACKET 45 gate runs (P1-A → P1-B → P1-C → Law 7).
+
+---
 ### JRN-C001-53 · CLAIM
 actor: composer-agent · task: C-001-T12 · manifest: n/a
 
