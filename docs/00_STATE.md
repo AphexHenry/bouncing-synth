@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-b | trigger: OUT_40 BLOCKED processed; PREREG v1.1; I-003-T3-R1 dispatched; PACKET 41
+last_updated_by: pm-fable5-b | trigger: OUT_41 ACCEPT — I-003-T3 VERIFIED, corpus complete (JRN-I003-22); L-15 v2; I-004-T2+T3 dispatched; PACKET 42
 
 ```
 doc_id:   STATE
@@ -10,18 +10,20 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core. C-001 PREREGISTERED — v1.1 (PACKET 41, Director-approved by
-dispatch): parabola×quasi-chaotic declared empty by measurement (integrable parabolic
-billiard; A≈2e1 vs deg-6 A≈1.7e11), quasi-chaotic admission amplification-based (A ≥ 1e6
-at ε=1e-30 within ≤25 events), Bézier×periodic ×2, feasibility-derivation authoring rule.
-Two PM authoring defects owned (JRN-I003-18). OUT_40 was a model BLOCK; L-15 remediation
-CLOSED (T2-R1 digest ledger complete). I-003-T3-R1 dispatched on the same branch. After
-OUT_41: I-004-T2+T3 batched (PACKET 42), C-001-T11 baseline spec, gate runs schedulable.
+Phase 1 — Falsifiable core. MILESTONE: held-out corpus COMPLETE — 32 scenarios locked
+covering every non-empty C-001-PREREG v1.1 cell (four measured-chaotic geometries, grazing
+triplet, near-double-root, non-dyadic orbits, five Bézier fixtures); §8.iii cap satisfied
+(max family 34.4%); I-003 VERIFIED and closed. L-15 v2 issued (machine-attested aggregates
+with recoverable per-item artifacts → remediation; ratified by PACKET 42 dispatch).
+I-004-T2+T3 dispatched batched: orchestrator + manifest of record + mechanical split-lock
+discipline; calibration-only execution — the corpus's first engine contact is reserved for
+a real gate run. Remaining Phase-1 critical path: OUT_42 → C-001-T11 baseline spec
+(agent-authored, L-14) → gate runs (P1-A/B/C + Law 7).
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | PREREGISTERED (v1.1) | T11 spec dispatch | I-004-T2/T3 (PACKET 42) |
+| C-001 Exact collision engine | PREREGISTERED (v1.1) | T11 spec dispatch | OUT_42 |
 | C-002 Curve library | BRIEFED | T3 prereg | C-001 prereg pattern (available) |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -30,9 +32,9 @@ C-000 Phase-0 scoping: CLOSED.
 | id | state | next transition | waiting on |
 |---|---|---|---|
 | I-001 engine lib skeleton | VERIFIED | — | — |
-| I-002 high-precision reference sim | VERIFIED (JRN-I002-25) | — complete | — |
-| I-003 scenario store + split-lock | BRIEFED (T1, T2 VERIFIED; T3-R1 in flight) | T3-R1 review | OUT_41 |
-| I-004 gate runner + manifests | BRIEFED (T1 VERIFIED) | T2+T3 batched dispatch | PACKET 42 |
+| I-002 high-precision reference sim | VERIFIED | — | — |
+| I-003 scenario store + split-lock | VERIFIED — corpus complete (32 locked) | — | — |
+| I-004 gate runner + manifests | BRIEFED (T1 VERIFIED; T2+T3 in flight) | T2+T3 review | OUT_42 |
 | I-005 event/pattern analysis harness | SPECCED | brief | I-004; feeds P1-D addendum |
 | I-006 JUCE build scaffold | SPECCED | brief | Phase 1 gate |
 | I-007 CI pipeline | SPECCED | brief | Director hosting (open decision 1 — escalated) |
@@ -43,19 +45,17 @@ C-000 Phase-0 scoping: CLOSED.
 3. GPLv3 -only vs -or-later — Phase 3.
 
 ## Merge housekeeping
-Corrected instruction (PACKET 40 message) stands: main ← chain tip (--no-ff), archive
-task/I-003-T1. If already run, paste outputs with any OUT; otherwise run at convenience —
-non-blocking.
+Corrected instruction (PACKET 40 message) stands, non-blocking: main ← chain tip (--no-ff),
+archive task/I-003-T1. Paste outputs with any OUT when run.
 
 ## Recent review verdicts
-OUT_40/I-003-T3: BLOCKED — properly executed (JRN-I003-17); resolved via prereg v1.1 +
-T3-R1.
-OUT_39/I-003-T2-R1: ACCEPT — I-003-T2 VERIFIED (JRN-I003-13); L-15 remediation CLOSED at
-OUT_40 step 0.
+OUT_41/I-003-T3-R1: ACCEPT — I-003-T3 VERIFIED; corpus complete (JRN-I003-22; L-15 v2
+remediation at PACKET 42 step 0).
+OUT_40/I-003-T3: BLOCKED — properly executed (JRN-I003-17); resolved via prereg v1.1.
+OUT_39/I-003-T2-R1: ACCEPT — I-003-T2 VERIFIED (JRN-I003-13).
 OUT_38/I-003-T2: REJECT (JRN-I003-9).
-OUT_37/I-004-T1: ACCEPT — I-004-T1 VERIFIED (JRN-I004-4).
 
 ## Pointers
-Branch rule: T3-R1 extends task/I-003-T3 in place (WIP tooling present). C-001 confirmatory
-work governed by PREREGISTRATION.md v1.1. Full held-out corpus after T3-R1: 32 scenarios,
-locked, I-004-access-only.
+Branch rule: task/I-004-T23 branches from task/I-003-T3; successors extend it. C-001
+confirmatory work governed by PREREGISTRATION.md v1.1. Held-out access: I-004 runner only,
+gate-authorized, logged.

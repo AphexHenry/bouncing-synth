@@ -1,4 +1,28 @@
 ---
+### JRN-I003-22 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_41_I-003-T3-R1 per P6 §2. Criteria 1–6, 8–12 COMPLIANT: amplification
+certificates A ∈ {1.6e10…4.2e11} at ε=1e-30 with linearity within 10× across degrees 4/5/6;
+strict non-dyadic gaps at ≥30 digits (verified √5, √7 periods are true values); C1 ok at
+all joints; |disc| = 2.082e-7 ≤ 1e-6; validator cal=2/heldout=32/locked; concentration
+21.9/28.1/34.4/15.6% all ≤50%; LAW-1 affirmed; digests complete. Criterion 7 PARTIAL:
+per-fixture convergence table reduced to worst case (46.8995 digits) + machine-emitted
+aggregate "(all 16 ≥45)" gated by exit=0; 15 per-fixture values absent from the OUT,
+recoverable from committed fixture provenance. L-10 PARTIAL: applied PM journal entries and
+file-direction list absent from the OUT (verbatim in the applied packet + committed docs).
+Ruling per L-15 v2 (issued this packet; Director ratifies by dispatch, may override to
+strict REJECT): ACCEPT — I-003-T3 VERIFIED — with three-part remediation at PACKET 42
+step 0. MILESTONE: held-out corpus COMPLETE — 32 scenarios, locked, spanning dyadic and
+non-dyadic orbits, four certified-chaotic geometries (measured, not asserted), five Bézier
+fixtures incl. periodic, the {0.5,1,2}×v_graze grazing triplet, and a near-double-root
+geometry. Law 1 is now physically enforceable; no further minting on the Phase-1 critical
+path.
+NUMBERS: corpus 32; convergence floor 46.8995 digits; max family concentration 34.375%.
+LEARNED: L-15 v2 (docs/02_PROGRAM/LESSONS.md).
+NEXT: I-004-T2+T3 (PACKET 42); C-001-T11 baseline spec (PACKET 43); gate runs.
+
+---
 ### JRN-I003-21 · DONE
 actor: composer-agent · task: I-003-T3-R1 · manifest: n/a
 

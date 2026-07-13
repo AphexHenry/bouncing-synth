@@ -1,4 +1,23 @@
 ---
+### JRN-I004-5 · NOTE
+actor: pm-fable5-b · task: I-004-T2+T3 · manifest: n/a
+
+WHAT: I-004-T2+T3 authored batched (PACKET 42, step-size ruling): Python orchestrator
+(tools/gaterunner/) — study spec in; per-scenario bounce-run-scenario invocations with
+horizons FROM THE STUDY SPEC (JRN-I004-4: never the binary default); manifest of record out
+(engine commit, toolchain versions, FP flags, scenario ids + sha256s, event-file sha256s,
+per-scenario median-of-10 wall-times per C-001-PREREG §5, exit codes) — plus held-out
+access discipline: split-lock verified before any run; every held-out execution appended to
+a persistent access log; runner refuses held-out scenarios absent an explicit gate
+authorization field in the study spec. THIS TASK EXECUTES CALIBRATION SCENARIOS ONLY — the
+corpus's first engine contact is reserved for a real gate run; acceptance includes the
+refusal negative test and proof the access log remains empty.
+NUMBERS: manifest fields 8; smoke study = calibration set (FL-1, PB-1) run twice with
+byte-identical event files.
+LEARNED: nothing
+NEXT: I-004-T2+T3 (this packet); on ACCEPT — C-001-T11 baseline spec, then gate scheduling.
+
+---
 ### JRN-I004-4 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 

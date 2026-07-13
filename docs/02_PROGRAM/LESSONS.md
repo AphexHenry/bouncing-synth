@@ -85,3 +85,14 @@ re-running a substantively perfect task to reformat evidence is process worship,
 the ledger incomplete silently rots L-10; the remediation step closes the ledger at the cost
 of one command, not one cycle. Origin: OUT_39 (I-003-T2-R1), FILE DIGESTS carrying 2 of 16
 fixture entries while all 16 sha256s appeared verbatim in the step-4 generator paste.
+
+L-15 v2 (refines L-15; origin OUT_41): between L-15's remediation branch and its REJECT
+branch sits a third case — a substantive bound whose aggregate satisfaction appears as
+byte-verbatim, machine-emitted tool output in the OUT (with exit=0 gating, and the checking
+tool demonstrably fail-loud), while the per-item values are absent from the OUT but
+recoverable from committed artifacts. Ruling: ACCEPT with mandatory remediation that
+re-derives the per-item table from the committed artifacts and asserts the aggregate against
+the OUT's verbatim claim; any mismatch is a BLOCK. Standing tooling rule: check tools print
+per-item tables by default; a summary line never substitutes for the table in evidence.
+Absent BOTH the verbatim machine assertion and recoverable per-item artifacts, the REJECT
+branch stands unchanged.
