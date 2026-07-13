@@ -1,4 +1,16 @@
 ---
+### JRN-C001-53 · CLAIM
+actor: composer-agent · task: C-001-T12 · manifest: n/a
+
+WHAT: Claimed C-001-T12 (streaming emission + F3 diagnostic + F2 fix + Law 7
+compute-match tune) on branch task/C-001-T12 after PACKET 44 apply; branched from
+task/C-001-T11.
+NUMBERS: streaming horizon up to 1e6; tune window [1.0×, 2.0×].
+LEARNED: nothing
+NEXT: Implement streaming CLIs, F3 dump, .gitignore, TUNE-LAW7.json; run steps 3–11; write TR
+and OUT.
+
+---
 ### JRN-C001-52 · NOTE
 actor: pm-fable5-b · task: C-001-T12 · manifest: n/a
 
