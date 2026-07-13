@@ -1,4 +1,14 @@
 ---
+### JRN-C001-57 · CLAIM
+actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: Claimed C-001-T12-R1 (evidence-only OUT rework per L-16) on branch task/C-001-T12
+after PACKET 45 apply; OUT_44 tip ab39836 immutable.
+NUMBERS: none new — regenerate existing T12 evidence only.
+LEARNED: nothing
+NEXT: Immutability proof; regenerate all §3 evidence; complete TR; write OUT_45.
+
+---
 ### JRN-C001-56 · NOTE
 actor: pm-fable5-b · task: C-001-T12-R1 · manifest: n/a
 
