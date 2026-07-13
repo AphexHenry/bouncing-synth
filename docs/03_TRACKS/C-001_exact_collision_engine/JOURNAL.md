@@ -1,4 +1,14 @@
 ---
+### JRN-C001-48 · CLAIM
+actor: composer-agent · task: C-001-T11 · manifest: n/a
+
+WHAT: Claimed C-001-T11 (Law 7 baseline engine + capacity lift + runner engine selection)
+on branch task/C-001-T11 after PACKET 43 apply; branched from task/I-004-T23.
+NUMBERS: capacity lift 64→256; baseline dt/segments free parameters.
+LEARNED: nothing
+NEXT: Implement capacity lift, baseline engine, gaterunner selection; run steps 3–10; write TR and OUT.
+
+---
 ### JRN-C001-47 · NOTE
 actor: pm-fable5-b · task: C-001-T11 · manifest: n/a
 
