@@ -175,3 +175,76 @@ Acceptance criteria (binary, one artifact each):
    this task creates pre-commit (L-13).
 8. FILE DIGESTS complete per L-15; OUT completeness per L-10 (all journal entries verbatim,
    applied-files directions).
+
+## TASK C-001-T12: streaming emission + F3 diagnostic + F2 fix + Law 7 compute-match tune
+depends_on: C-001-T11 VERIFIED (JRN-C001-50); PREREG v1.2 (Director-approved via PACKET 44
+dispatch)
+objective: Remove every remaining obstacle between the program and its gate runs, and
+freeze the Law 7 contestant configuration — PACKET 45 must contain zero construction.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. STREAMING EMISSION (both offline CLIs): bounce-run-scenario and bounce-baseline-run
+   write each CollisionEvent to the output file as it is produced (fixed small buffer;
+   flush discipline your choice, byte output unchanged for existing horizons),
+   with --max-events honored up to 1,000,000. The in-memory kMaxSimEvents array no longer
+   bounds offline horizons. Constraints: canonical serialization bytes identical to the
+   current format for identical event sequences (existing golden outputs must not change);
+   temp-write + rename preserved; the engine library's real-time-facing API and the
+   src/core/bounce/ processing path unmodified except as strictly required to expose
+   per-event emission (e.g., a callback/sink interface) — zero heap on the processing path
+   preserved; document what changed and why in the TR.
+2. STREAMING EVIDENCE: an e=1 calibration-config scenario (committed under
+   data/scenarios/calibration/, clearly named as calibration; a lossless periodic
+   configuration is fine) run with --max-events 20000 on the exact engine: paste event
+   count, monotone-seq confirmation (test or checker output), wall time, and byte-identical
+   sha256 across two consecutive runs. Run the baseline CLI once at the same horizon to
+   confirm streaming parity (sha256 of two identical baseline runs also identical).
+3. F3 DIAGNOSTIC (PB-1, baseline): dump the baseline trajectory tail around the missing
+   second event (positions/velocities per step near the expected contact window, dt=1e-4,
+   N=64); CLASSIFY: (a) physics under its own dynamics — tunneling through the polyline,
+   missed contact, or domain exit — report only, no fix, shortfall stands per v1.2 B2; or
+   (b) harness/CLI defect (wrong domain, misread scenario, premature termination bug) —
+   fix within this task and re-run the dump. Paste the dump excerpt and the one-line
+   classification with reasoning.
+4. F2 FIX: add .gitignore entries covering local venvs (tools/**/.venv/); paste git status
+   showing they no longer appear.
+5. COMPUTE-MATCH TUNE (v1.2 B1; calibration scenarios only — FL-1 and PB-1; NO held-out
+   contact): measure the exact engine's median wall-time per simulated scenario-second via
+   I-004 (timing_runs=10, horizon to each scenario's natural count, streaming build,
+   committed tree). Grid the baseline over dt ∈ {1e-3, 5e-4, 2e-4, 1e-4, 5e-5, 2e-5, 1e-5}
+   × N ∈ {64, 128, 256, 512, 1024} (prune infeasible cells; extend the grid if the [1.0×,
+   2.0×] window would otherwise be empty — BLOCK only if no configuration can reach 1.0×).
+   Select the configuration with the smallest FL-1 first-contact |Δt| among those whose
+   timing ratio lies in [1.0, 2.0]; tie-break by larger N. Freeze it in
+   tools/gaterunner/tune/TUNE-LAW7.json: chosen dt, N, per-scenario timing table (exact and
+   baseline, all grid points measured), ratio, engine binary sha256s, git commit, date.
+   Paste the table and the chosen row.
+
+Steps:
+3. Toolchain record.
+4. Configure + build; paste tails; exit=0; all four targets built.
+5. ctest; paste output + doctest summary; 100% passed, SUCCESS!, exit=0 (existing golden
+   expectations unchanged).
+6. Streaming evidence per §2 (exact 20k ×2 + baseline parity ×2; sha256s).
+7. F3 diagnostic per §3 (dump excerpt + classification).
+8. F2 per §4 (gitignore + clean status excerpt).
+9. Tune per §5 (full timing table + frozen TUNE-LAW7.json content pasted).
+10. Paste `git status --porcelain --branch` byte-verbatim.
+11. TR + OUT per OUT-REQUIREMENTS.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 4: exit=0; bounce-core, bounce-tests, bounce-run-scenario, bounce-baseline-run
+   built.
+2. Step 5: 100% passed + SUCCESS! + exit=0; no golden-output expectation changed.
+3. Step 6: exact 20,000-event run, monotone seq, two identical sha256s; baseline parity
+   two identical sha256s at the same horizon.
+4. Step 7: dump excerpt + explicit (a)/(b) classification with reasoning; if (b), fix
+   evidenced and re-dump pasted.
+5. Step 8: venvs ignored; status excerpt clean of them.
+6. Step 9: full grid timing table; chosen (dt, N) with ratio ∈ [1.0, 2.0]; TUNE-LAW7.json
+   content pasted and committed.
+7. TR affirms: no held-out contact; real-time-facing engine path unmodified beyond the
+   emission interface (documented); calibration-only.
+8. Step 10: byte-verbatim status; untracked within agent-writable surface limited to files
+   this task creates pre-commit (L-13).
+9. FILE DIGESTS complete per L-15; OUT completeness per L-10.

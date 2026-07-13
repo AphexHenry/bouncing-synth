@@ -1,4 +1,66 @@
 ---
+### JRN-C001-52 · NOTE
+actor: pm-fable5-b · task: C-001-T12 · manifest: n/a
+
+WHAT: C-001-T12 authored (PACKET 44) — final pre-gate task, four parts: (1) streaming event
+emission in both offline CLIs (bounce-run-scenario, bounce-baseline-run): events written to
+the output file as produced through a fixed small buffer; --max-events honored up to 10^6;
+the 256-event in-memory capacity ceases to bound offline horizons; the real-time processing
+path is untouched (constraint applies to the future plugin path, not offline tools);
+evidence — a ~20,000-event e=1 calibration-config run, monotone seq, byte-identical across
+two runs. (2) F3 diagnostic: PB-1 baseline trajectory tail dump; classify the missing
+second event as physics (tunneling/missed contact/domain exit) or harness defect;
+report-only unless harness defect (then fix within task, per prereg v1.2 B2). (3) F2 fix:
+.gitignore for local venvs (tools/**/.venv/); status clean thereafter. (4) Compute-match
+tune per v1.2 B1: (dt, N) grid on calibration via I-004 timing; frozen tune artifact
+tools/gaterunner/tune/TUNE-LAW7.json with the full timing table; chosen ratio in [1.0, 2.0].
+NUMBERS: streaming horizon ≤ 1e6; tune window [1.0×, 2.0×]; evidence run ~2e4 events.
+LEARNED: nothing
+NEXT: C-001-T12 (this packet); PACKET 45 = P1-A → P1-B → P1-C → Law 7 (v1.2 B3), first
+held-out contact, gate-authorized, dirty=false.
+
+---
+### JRN-C001-51 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Director rulings 2026-07-13, registered as PREREG v1.2 (approval = PACKET 44
+dispatch). D-1: no baseline settle criterion — fixed-horizon Law 7 comparison, K = min(200,
+exact event count) per scenario; baseline shortfall scores against it after F3
+classification (v1.2 B2). Director product statement recorded: no imposed damping — balls
+keep energy intact by default (e=1); restitution stays a parameter; e<1 fixtures remain
+valid engine coverage (v1.2 B4). D-2: compute window [1.0×, 2.0×], baseline equal-or-more
+("dials up", v1.2 B1). D-3: gate order P1-A → P1-B → P1-C → Law 7, halt on exact-gate
+failure (v1.2 B3). Ball–ball collisions: confirmed out of scope per R2 — nothing
+implemented, optional future feature; multi-ball remains independent balls under TB-1.
+Pre-gate blocker credited to the Director's long-horizon question: P1-C (10^4 periods,
+~2–3e4 events) exceeds the 256-event buffer — the exact engine could not execute its own
+registered gate; streaming emission dispatched in T12.
+NUMBERS: P1-C demand ~2–3e4 events vs buffer 256.
+LEARNED: registered gates must be checked for *executability* against implementation
+constants at registration time, not discovered at scheduling time.
+NEXT: T12, then gates (PACKET 45).
+
+---
+### JRN-C001-50 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_43 C-001-T11 per P6 §2. Criteria 0-8 all COMPLIANT: capacity 64→256
+with 100-event monotone evidence; baseline byte-identical across runs, FL-1 first contact
+|Δt|=5.0001e-05 ≤ 2·dt vs tier-1 t=1.0; runner engine selection with binary sha256,
+cross-engine compare refusal, cross-engine summary; calibration-only, shared io untouched.
+Verdict: ACCEPT — C-001-T11 VERIFIED. Forward findings: (F1) baseline does not settle —
+FL-1 capacity-capped at 256 vs exact settle at 13; to_settle undefined for Euler chatter;
+resolved by Director D-1 fixed-horizon rule (v1.2 B2). (F2) tools/gaterunner/.venv/
+untracked inside L-13 agent surface; .gitignore fix in T12. (F3) PB-1 baseline=1 vs exact=2
+events — classify missed-contact vs domain-exit before Law 7 so the baseline loses honestly
+or not at all (T12 diagnostic). (F4) gate manifests require engine_git_dirty=false
+(standing rule).
+NUMBERS: FL-1 exact=13 baseline=256(cap); PB-1 exact=2 baseline=1; |Δt|=5.0001e-05.
+LEARNED: a fixed-timestep contestant needs its own termination semantics — the exact
+engine's settle concept does not transfer.
+NEXT: PACKET 44 (this packet) — rulings + T12; PACKET 45 — gate runs.
+
+---
 ### JRN-C001-49 · DONE
 actor: composer-agent · task: C-001-T11 · manifest: n/a
 

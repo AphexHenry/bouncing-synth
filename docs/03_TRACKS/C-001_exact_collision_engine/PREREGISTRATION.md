@@ -172,3 +172,33 @@ conflated perturbation size with dynamical growth.
 A3. Feasibility-derivation rule (authoring discipline, binding on future registrations):
 any registered threshold involving dynamical growth must carry an explicit ε·λ^N
 feasibility bound at authoring time.
+
+## Amendment v1.2 — registered 2026-07-13 (PACKET 44; Director approval = packet dispatch)
+
+Scope: Law 7 execution parameters (§5) and gate scheduling. No held-out scenario has been
+executed by any engine binary at amendment time; nothing voided (§0).
+
+B1. Compute matching (replaces §5's +10% window): the baseline's (dt, N) is tuned on
+CALIBRATION scenarios only to the most accurate configuration whose median wall-time per
+simulated scenario-second (I-004, timing_runs=10) lies within [1.0×, 2.0×] of the exact
+engine's — the baseline always receives equal-or-more compute, never less (Director D-2:
+"dials up"). The chosen (dt, N) is frozen in a committed tune artifact before any gate run
+and recorded in every Law 7 manifest.
+
+B2. Law 7 comparison horizon (Director D-1): per scenario, comparison is over the first
+K = min(200, exact-engine event count) events. No settle criterion is defined for the
+baseline; it runs to its event budget. If the baseline emits fewer than K events, the
+scenario scores maximally against it — after the missing events are classified as physics
+(tunneling/missed contact/domain exit under its own dynamics) rather than harness defect
+(classification: C-001-T12 F3 diagnostic; a harness defect is fixed before gates, a physics
+shortfall stands).
+
+B3. Gate order (Director D-3): P1-A → P1-B → P1-C → Law 7. A FAIL on any exact-engine gate
+halts the sequence before the Law 7 run. Every gate manifest requires
+engine_git_dirty=false (standing rule, JRN-I004-8).
+
+B4. Product-model note (Director, 2026-07-13): the plugin's default is lossless bouncing
+(e=1, energy conserved — the regime P1-C certifies). Restitution remains a scenario/product
+parameter; no damping is imposed by the engine. Registered studies are unchanged: e<1
+fixtures remain valid coverage of the parameter range. Ball–ball collisions remain excluded
+(R2); multi-ball = independent balls under TB-1.
