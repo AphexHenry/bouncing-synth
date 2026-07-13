@@ -1,4 +1,24 @@
 ---
+### JRN-I004-8 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_42_I-004-T2+T3 per P6 §2. Criteria 0–9 all COMPLIANT: OUT_41
+remediation closed (32-fixture table re-derived, floor 46.8995055434254, all ≥45; PM
+entries + v1.1 verbatim; directions restated); builds/tests green (42/516 SUCCESS);
+SMOKE-CAL-1 twice with --compare byte-identity on both calibration scenarios; held-out
+refusal exit=1 before any engine invocation; ACCESS_LOG.jsonl nonexistent; digests and OUT
+completeness full. Verdict: ACCEPT — I-004-T2+T3 VERIFIED; I-004 COMPLETE for Phase-1.
+Forward findings: (1) smoke manifest showed engine_git_dirty=true (expected mid-task) —
+STANDING GATE-CALL RULE: confirmatory manifests must show dirty=false; a gate run from an
+uncommitted tree does not count. (2) Agent observation "to_settle → --max-events 64
+(kMaxSimEvents)" exposes that the engine cannot reach the P1-A horizon (min(200, settle))
+or serve P1-C interval extraction at its current capacity — lift folded into C-001-T11.
+NUMBERS: kMaxSimEvents=64 vs prereg horizon 200.
+LEARNED: smoke runs surface gate-blocking constants that unit tests scoped to small
+fixtures never touch.
+NEXT: C-001-T11 (PACKET 43); gate scheduling packet after.
+
+---
 ### JRN-I004-7 · DONE
 actor: composer-agent · task: I-004-T2+T3 · manifest: n/a
 

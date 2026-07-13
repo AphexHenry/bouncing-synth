@@ -1,4 +1,27 @@
 ---
+### JRN-C001-47 · NOTE
+actor: pm-fable5-b · task: C-001-T11 · manifest: n/a
+
+WHAT: C-001-T11 authored (PACKET 43) — the Law 7 named baseline, agent-authored per L-14;
+first contestant-class deliverable under model B, which exists precisely so the PM does not
+control both sides of the falsifiable bet (JRN-C001-42). Scope, three coherent parts:
+(1) engine event-capacity lift — kMaxSimEvents 64 → 256, runtime --max-events honored up to
+capacity, zero heap on the processing path preserved (only src/core/bounce/ change; tested);
+(2) baseline engine per C-001-PREREG §5: fixed-timestep semi-implicit Euler over an
+N-segment polyline sampling of the curve, impulse reflection at segment crossings with
+linear-interpolated crossing times, same restitution/G-1/S-1 constants from the same source
+of record, --dt and --segments free parameters, canonical event serialization via the
+shared io layer (bounce-baseline-run CLI); (3) gaterunner "engine" study-spec field
+(exact|baseline) with binary sha256 recorded in the manifest. dt/N compute-matching is NOT
+in this task — it runs on calibration only, via I-004 timing, in the gate packet per
+C-001-PREREG §5. Standing gate-call rule recorded: gate manifests require
+engine_git_dirty=false.
+NUMBERS: capacity 256; baseline parameters dt, N free; prereg margin at stake 100×.
+LEARNED: nothing
+NEXT: C-001-T11 (this packet); PACKET 44 = compute-match tune + P1-A/P1-B/P1-C + Law 7 gate
+runs — first held-out engine contact, gate-authorized and logged.
+
+---
 ### JRN-C001-46 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 

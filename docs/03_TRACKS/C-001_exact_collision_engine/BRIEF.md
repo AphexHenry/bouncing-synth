@@ -97,8 +97,81 @@ objective: agrees_with_tier1_reference helper (ε=1e-12 on t/s, exact ball_id/se
            reference_agreement gate (JRN-C001-43).
 VERIFIED (JRN-C001-41; OUT_34; TR_C-001-T10.md).
 
-## TASK C-001-T11 (sketch): naive polyline baseline engine (Law 7)
-Agent-authored per L-14 — the PM supplies the spec, the matched-compute definition, and the
-acceptance tests only. Dispatches only after C-001 PREREGISTRATION.md is on disk (PACKET 36):
-the compute-matching methodology and the drift/accuracy margin are pre-registered before either
-engine is benchmarked.
+## TASK C-001-T11: Law 7 baseline engine + capacity lift + runner engine selection
+depends_on: I-004-T2+T3 VERIFIED (JRN-I004-8); C-001-PREREG v1.1 §5; L-14
+objective: Deliver the named baseline (PROJECT §5 Law 7) as a parameterized, good-faith
+competitive engine emitting the same canonical event format as the exact engine, plus the
+capacity lift both contestants need to reach prereg horizons, plus runner selection —
+leaving PACKET 44 nothing to build, only to tune and run.
+
+AUTHORSHIP (L-14, restated because this task is why the rule exists): everything below is
+specification. All implementation is yours. The baseline must be your best honest
+fixed-timestep engine within this spec — if it beats the exact engine at matched compute,
+report it; that outcome is a valid result of the program, not a failure of yours.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. CAPACITY LIFT (the only permitted src/core/bounce/ change): event capacity 64 → 256
+   (compile-time constant), zero heap allocation on the processing path preserved;
+   bounce-run-scenario --max-events accepted up to 256 and honored exactly; existing
+   defaults and all existing test expectations unchanged unless a test hardcodes the
+   constant (adjust with a note). New test: a calibration-style scenario configuration
+   producing >64 events runs to its requested horizon with correct monotone seq.
+2. BASELINE ENGINE (new code, physically separated: src/baseline/ + src/tools/run_baseline/;
+   it must not modify or specialize src/core/bounce/ physics — the shared io layer
+   (src/core/bounce/io/) is reused as-is for serialization):
+   a. Integrator: fixed-timestep semi-implicit (symplectic) Euler — v ← v + g·dt;
+      x ← x + v·dt.
+   b. Geometry: the curve sampled as a polyline of N equal-x segments over the scenario's
+      domain; sampling uses the same curve-evaluation semantics as the scenario schema
+      defines (explicit polynomial / piecewise Bézier per C-002 definitions, evaluated in
+      double).
+   c. Collision: penetration test against the polyline per step; on crossing, contact time
+      by linear interpolation within the step, reflection about the crossed segment's
+      normal with the scenario's restitution; G-1 graze and S-1 settle constants read from
+      the same versioned source of record as the exact engine.
+   d. Event emission: same CollisionEvent schema, same canonical JSONL via shared io;
+      events timestamped at the interpolated contact time.
+   e. CLI: bounce-baseline-run --scenario <path> --out <path> --dt <seconds>
+      --segments <N> [--max-events M (≤256)]; exit/stdout/stderr contract identical to
+      bounce-run-scenario; temp-write + rename.
+   f. Determinism: no RNG, no time-of-day reads; two identical invocations byte-identical.
+3. RUNNER SELECTION: study spec gains optional field "engine": "exact" (default) |
+   "baseline", and for baseline, "engine_params": {"dt": float, "segments": int}. Manifest
+   records the engine name, its binary's sha256, and engine_params verbatim. --compare
+   refuses to compare manifests with differing engine identity (one-line error) unless
+   passed --cross-engine (prints per-scenario event-count and first-divergence summary
+   instead of asserting identity).
+4. TESTS (doctest for C++; runner behavior evidenced by CLI pastes): capacity test (§1);
+   baseline sanity on FL-1 — with dt=1e-4, N=64: first-contact time within 2·dt of the
+   tier-1 reference, event count ≥ 8 before settle; serialization round-trip on baseline
+   output; byte-identity of two identical baseline invocations.
+
+Steps:
+3. Toolchain record.
+4. Configure + build; paste tails; both exit=0; build shows bounce-baseline-run target.
+5. ctest; paste output + LastTest.log summary; 100% passed, SUCCESS!, exit=0.
+6. Capacity evidence: paste the >64-event test's scenario parameters and the run
+   confirming horizon reached (from test output or a CLI run with --max-events 200).
+7. Baseline smoke: run bounce-baseline-run on FL-1 (dt=1e-4, segments=64) twice; paste both
+   invocations + exits, head -3 of output, both sha256s (identical); paste first-contact
+   t versus tier-1 reference with |Δt| shown (≤ 2·dt).
+8. Runner selection: run a baseline study (gate_id=null, calibration, engine=baseline,
+   engine_params dt=1e-4 segments=64); paste manifest head showing engine identity fields;
+   paste --compare refusal across engine identities and --cross-engine summary output.
+9. Paste `git status --porcelain --branch` byte-verbatim.
+10. TR + OUT per OUT-REQUIREMENTS.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 4: both exit=0; bounce-baseline-run built.
+2. Step 5: 100% passed + SUCCESS! + exit=0.
+3. Step 6: >64-event horizon reached with monotone seq; --max-events honored.
+4. Step 7: two identical baseline runs byte-identical; first-contact |Δt| ≤ 2·dt vs tier-1
+   reference, value shown.
+5. Step 8: manifest records engine=baseline, binary sha256, engine_params; --compare
+   refuses cross-engine without the flag; --cross-engine prints the summary.
+6. TR affirms: no src/core/bounce/ physics modified beyond §1's constant; no held-out
+   scenario executed; shared io unmodified.
+7. Step 9: byte-verbatim status; untracked within agent-writable surface limited to files
+   this task creates pre-commit (L-13).
+8. FILE DIGESTS complete per L-15; OUT completeness per L-10 (all journal entries verbatim,
+   applied-files directions).
