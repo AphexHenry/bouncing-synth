@@ -96,3 +96,15 @@ the OUT's verbatim claim; any mismatch is a BLOCK. Standing tooling rule: check 
 per-item tables by default; a summary line never substitutes for the table in evidence.
 Absent BOTH the verbatim machine assertion and recoverable per-item artifacts, the REJECT
 branch stands unchanged.
+
+L-16: The OUT is the review surface. Every acceptance criterion's artifact appears
+byte-verbatim inside the OUT itself; a pointer to a repo file (TR or otherwise) is
+inadmissible as evidence, because model-B review independence (P6 §2.2, L-14) rests on the
+PM having no repo access. Truncated digests are not digests — every sha256 appears in full.
+The TR is pasted verbatim into the OUT's REPORT section AND listed in FILE DIGESTS.
+PM-side corollary (owned contributing factor, packets 39–44): OUT-REQUIREMENTS are restated
+in full in every packet — never by reference to a prior serial; requirement-by-reference
+decays across fresh agent instances. Review ladder for the record: substantive criterion
+miss → REJECT (OUT_38); partial completeness with the aggregate byte-verbatim in the OUT →
+ACCEPT + remediation (OUT_39, OUT_41, L-15/v2); wholesale evidence absence or repo-pointer
+evidence → REJECT (OUT_44). Origin: OUT_44.

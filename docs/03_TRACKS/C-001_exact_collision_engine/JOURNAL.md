@@ -1,4 +1,45 @@
 ---
+### JRN-C001-56 · NOTE
+actor: pm-fable5-b · task: C-001-T12-R1 · manifest: n/a
+
+WHAT: C-001-T12-R1 authored (PACKET 45) — evidence-only rework. The T12 implementation
+commits stand untouched; R1 emits a compliant OUT: every T12 acceptance criterion's
+artifact pasted byte-verbatim (toolchain, configure/build, ctest + doctest summary, 20k
+streaming evidence with FULL sha256s ×2 exact + ×2 baseline parity, F3 dump excerpt +
+classification reasoning, gitignore status excerpt, FULL tune grid timing table +
+TUNE-LAW7.json content, byte-verbatim git status), full TR pasted in REPORT and listed in
+FILE DIGESTS, and an immutability proof: `git diff --name-status <OUT_44 tip>..HEAD`
+showing changes confined to docs/, outbox/, and inbox/APPLIED.log — zero diffs under src/,
+tools/, data/. L-16 in force; OUT-REQUIREMENTS restated in full below and in all future
+packets.
+NUMBERS: none new — R1 may not produce new numbers, only evidence existing ones.
+LEARNED: nothing (pending R1).
+NEXT: OUT_45 review; on ACCEPT — PACKET 46 gate runs (P1-A → P1-B → P1-C → Law 7 per v1.2
+B3; committed tree, dirty=false; first held-out contact, gate-authorized, logged).
+
+---
+### JRN-C001-55 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_44_C-001-T12 per P6 §2. Criteria 1–8: evidence ABSENT from the OUT —
+no toolchain/build/ctest pastes; streaming sha256s truncated to ellipses; no F3 dump
+excerpt; no gitignore status excerpt; no tune grid table; no git status; REPORT section is
+a repo pointer ("See TR_C-001-T12.md"); criterion 9 NON-COMPLIANT — TR absent from FILE
+DIGESTS. Verdict: REJECT — inadmissible evidence class. Rationale of record: model-B
+review reads OUT files only (P6 §2.2); accepting repo-pointer evidence one packet before
+gate runs would reinstate trust-me review exactly where evidence discipline matters most.
+Distinct from OUT_38 (substantive miss → REJECT) and OUT_39/41 (partial, aggregate
+verbatim → ACCEPT+remediation, L-15/v2): OUT_44 is wholesale absence → REJECT (ladder
+codified in L-16). PM contributing factor owned: OUT-REQUIREMENTS issued by reference
+("as PACKET 38") since PACKET 39 — decays across fresh agent instances; L-16 binds the PM
+to full restatement per packet. The summarized work product (ratio 1.899, dt=5e-4 N=128,
+F3=physics/domain-exit, 20k streaming) is plausibly sound and is NOT re-executed — R1 is
+evidence-only with an immutability proof.
+NUMBERS: 8 of 9 criteria without in-OUT artifacts.
+LEARNED: L-16 (docs/02_PROGRAM/LESSONS.md).
+NEXT: C-001-T12-R1 (this packet).
+
+---
 ### JRN-C001-54 · DONE
 actor: composer-agent · task: C-001-T12 · manifest: n/a
 

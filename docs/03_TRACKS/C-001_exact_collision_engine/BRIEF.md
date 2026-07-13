@@ -248,3 +248,51 @@ Acceptance criteria (binary, one artifact each):
 8. Step 10: byte-verbatim status; untracked within agent-writable surface limited to files
    this task creates pre-commit (L-13).
 9. FILE DIGESTS complete per L-15; OUT completeness per L-10.
+
+## TASK C-001-T12-R1: evidence-only rework of the OUT_44 submission (L-16)
+depends_on: C-001-T12 implementation commits (OUT_44 tip); OUT_44 REJECTED (JRN-C001-55)
+objective: Produce the compliant OUT for the already-committed T12 work. NOTHING under
+src/, tools/, or data/ may change; the deliverable is evidence.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. IMMUTABILITY: no modification to any file under src/, tools/, data/, config/, tests/,
+   or CMakeLists.txt. Permitted writes: the T12 TR (may be completed/corrected to carry
+   full evidence), the C-001 JOURNAL (CLAIM/DONE), inbox/APPLIED.log (serial 45 line),
+   outbox/OUT_45.md. Proof: paste `git diff --name-status <OUT_44 final commit>..HEAD`
+   immediately before the OUT commit — every listed path must be within the permitted set.
+2. EVIDENCE REGENERATION: read-only commands may be re-run to capture verbatim output
+   (builds, ctest, sha256 of committed artifacts, cat of TUNE-LAW7.json, the F3 diagnostic
+   dump if it is a read-only replay; git status). If any regenerated value differs from
+   OUT_44's summarized claims (e.g., a sha256, the tune ratio, event counts), STOP → BLOCKED
+   OUT with both values pasted; a discrepancy means the T12 work needs real review, not
+   evidence dressing.
+3. Every T12 acceptance criterion (PACKET 44 criteria 1–9) is evidenced verbatim in
+   OUT_45: toolchain record; configure + build tails with exit=0; ctest output + LastTest
+   doctest summary; 20,000-event streaming evidence — both exact runs' FULL sha256s and the
+   monotone-seq confirmation, both baseline-parity runs' FULL sha256s with the baseline's
+   event count and horizon stated plainly; F3 trajectory dump excerpt + the (a)/(b)
+   classification with reasoning; gitignore status excerpt; the FULL tune grid timing table
+   and the complete TUNE-LAW7.json content; byte-verbatim `git status --porcelain --branch`.
+
+Steps:
+3. Immutability proof per §1 (diff paste first, so any surprise blocks before effort).
+4. Regenerate and paste all §3 evidence per §2.
+5. Complete/correct the TR to contain the same evidence; paste the full TR verbatim in the
+   OUT's REPORT section.
+6. TR + OUT per OUT-REQUIREMENTS below.
+
+Acceptance criteria (binary, one artifact each):
+1. §1 diff paste: all paths within the permitted set; zero src/tools/data/config/tests
+   changes.
+2. Toolchain + configure + build pastes; exit=0; four targets built.
+3. ctest paste + doctest summary; 100% passed + SUCCESS! + exit=0.
+4. Streaming evidence: exact 20,000 events, monotone seq confirmed, two FULL identical
+   sha256s; baseline parity two FULL identical sha256s with event count + horizon stated.
+5. F3 dump excerpt + explicit (a)/(b) classification with reasoning.
+6. Gitignore status excerpt clean of venvs.
+7. Full tune grid table + complete TUNE-LAW7.json pasted; chosen row dt=5e-4, N=128 with
+   ratio ∈ [1.0, 2.0] — or BLOCKED per §2 if regeneration disagrees.
+8. Byte-verbatim git status; untracked within agent-writable surface limited to files this
+   task creates pre-commit (L-13).
+9. FILE DIGESTS complete per L-15 INCLUDING the TR; full untruncated sha256s throughout;
+   TR pasted verbatim in REPORT (L-16).
