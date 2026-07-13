@@ -1,4 +1,14 @@
 ---
+### JRN-C001-61 · CLAIM
+actor: composer-agent · task: GATE-P1 · manifest: n/a
+
+WHAT: Claimed GATE-P1 on branch task/GATE-P1 from task/C-001-T12 tip after PACKET 46
+apply; construction scope (checkers, studies, --repeat) before first held-out contact.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Implement construction; execute P1-A → P1-B → P1-C → Law 7 per v1.2 B3.
+
+---
 ### JRN-C001-60 · NOTE
 actor: pm-fable5-b · task: GATE-P1 · manifest: n/a
 
