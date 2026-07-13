@@ -1,4 +1,50 @@
 ---
+### JRN-C001-60 · NOTE
+actor: pm-fable5-b · task: GATE-P1 · manifest: n/a
+
+WHAT: GATE-P1 authored (PACKET 46) — the Phase-1 confirmatory runs under PREREG v1.3.
+Order and halt per v1.2 B3. P1-A: exact engine on all 32 held-out scenarios, horizon
+min(200, settle), quasi-chaotic confirmatory window 12 events (v1.3 C1; 13–25 exploratory);
+primary — max |Δt| ≤ 1e-9 AND max |Δs| ≤ 1e-9, exact ball_id/seq; grazing 0.5× fixture:
+empty reference must match zero emitted events; red team — leave-one-family-out and
+Tier-1-only re-evaluations. P1-B: per scenario — 100 in-process repetitions (new --repeat
+flag), 10 fresh-process study runs pairwise byte-identical, 2 clean-checkout rebuilds
+byte-identical. P1-C: 9 periodic fixtures × 10^4 periods; per-period interval vectors
+(binary64 deltas of hexfloat-parsed times) bit-identical to period 1. Law 7: baseline at
+frozen tune on all 32; K = min(200, exact count) per v1.2 B2; shortfalls score maximally
+(classified physics per OUT_45 F3 where applicable); primary — corpus worst exact |Δt| ≤
+corpus worst baseline |Δt| / 100 AND exact drift = 0 where baseline drift > 0 on periodic
+fixtures; finite-scenarios-only ratio reported exploratory. Construction scope: checkers,
+study specs, --repeat flag only (model B — judges' code is agent-authored). Task DONE =
+gates executed per rules; gate verdicts PASS/FAIL are results, not compliance.
+NUMBERS: 32 scenarios; windows 200/12; P1-B set 100+10+2; P1-C 9×10^4; Law 7 margin 100×.
+LEARNED: nothing
+NEXT: OUT_46 review → Phase-1 gate call to Director (PASS) or falsification record (FAIL).
+
+---
+### JRN-C001-59 · NOTE
+actor: pm-fable5-b · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_45_C-001-T12-R1 per P6 §2. Criteria 1–9 COMPLIANT: immutability diff
+confined to docs/ + ledger; builds/tests green; streaming 20k ×2 identical full sha256s
+(exact) + parity (baseline, 513@20000); F3 classified (a) physics — post-contact inward
+reflection, domain exit t≈1.059 — PB-1 shortfall stands per v1.2 B2; venvs ignored; full
+tune grid + complete TUNE-LAW7.json with selection rule correctly applied (min FL-1 |Δt|
+in [1,2] window, tie → larger N ⇒ dt=5e-4, N=128, mean ratio 1.8987); byte-verbatim
+status; digests complete incl. TR; TR verbatim in REPORT. Verdict: ACCEPT — C-001-T12
+VERIFIED via R1. Findings: (i) baseline N≥512 "write failed" — latent defect outside gate
+path, known-issue logged, no pre-gate fix; (ii) compute-match mean-vs-per-scenario
+interpretation recorded (FL-1 2.25× — contestant over-resourced; direction favorable to
+baseline, consistent with Director D-2 "dials up"); (iii) nit — ctest exit code not
+echoed; pass/fail fact verbatim. Pre-gate feasibility audit per v1.2 A3 caught a PM
+registration defect: P1-A's 25-event quasi-chaotic window is unsatisfiable in binary64
+(λ^25 amplification ≈ 2e-5 ≫ 1e-9) — amended to 12 events in v1.3 BEFORE any held-out run.
+NUMBERS: tune (5e-4, 128, 1.8987); λ ∈ [2.56, 2.92]; 12-event bound 3.9e-11.
+LEARNED: run the A3 feasibility audit against EVERY registered tolerance before its gate
+is scheduled, not only the ones that already failed once.
+NEXT: GATE-P1 (this packet).
+
+---
 ### JRN-C001-58 · DONE
 actor: composer-agent · task: C-001-T12-R1 · manifest: n/a
 

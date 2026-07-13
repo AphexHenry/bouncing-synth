@@ -202,3 +202,26 @@ B4. Product-model note (Director, 2026-07-13): the plugin's default is lossless 
 parameter; no damping is imposed by the engine. Registered studies are unchanged: e<1
 fixtures remain valid coverage of the parameter range. Ball–ball collisions remain excluded
 (R2); multi-ball = independent balls under TB-1.
+
+## Amendment v1.3 — registered 2026-07-13 (PACKET 46; Director approval = packet dispatch)
+
+Scope: P1-A comparison window on quasi-chaotic cells. No held-out scenario has been executed
+by any engine binary at amendment time; nothing voided (§0).
+
+C1. Feasibility derivation (per v1.2 A3, applied to §1): the four quasi-chaotic fixtures'
+sensitivity certificates give per-event stretching λ = A^(1/25) ∈ [2.56, 2.92]. A binary64
+engine's per-event rounding (~1e-16 relative) amplifies to ≈ 1e-16 · λ^N; at N=25 this is
+≈ 2e-5 for λ=2.92 — the registered 1e-9 tolerance at a 25-event window is unsatisfiable by
+arithmetic for ANY double-precision engine (shadowing divergence, not implementation
+defect). Therefore: the P1-A confirmatory comparison window on quasi-chaotic cells is the
+first 12 events (bound: 1e-16 · 2.92^12 ≈ 3.9e-11 ≤ 1e-9, margin ≈ 26×). Events 13–25 are
+computed and reported as exploratory, excluded from the primary criterion. All other cells
+keep the §1 horizon min(200 events, settle).
+
+C2. Gate execution rules consolidated (restating standing rules as registered text):
+manifests must show engine_git_dirty=false, where dirty is evaluated over TRACKED files
+(untracked Director courier surface exempt per L-13); every held-out execution runs via the
+I-004 runner with a non-null gate_id and appends to ACCESS_LOG.jsonl; gate order P1-A →
+P1-B → P1-C → Law 7 with halt-on-failure (v1.2 B3). Law 7 compute-match of record:
+TUNE-LAW7.json (dt=5e-4, N=128, corpus-mean ratio 1.8987; FL-1 per-scenario 2.25× —
+baseline over-resourced, favorable to the contestant).

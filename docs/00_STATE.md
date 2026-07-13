@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-b | trigger: OUT_44 REJECT — inadmissible evidence (JRN-C001-55); L-16; C-001-T12-R1 dispatched; PACKET 45
+last_updated_by: pm-fable5-b | trigger: OUT_45 ACCEPT — T12 VERIFIED (JRN-C001-59); PREREG v1.3; GATE-P1 dispatched; PACKET 46
 
 ```
 doc_id:   STATE
@@ -10,21 +10,22 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core. OUT_44 REJECTED: the OUT delegated evidence to a repo pointer —
-inadmissible under model-B review (PM reads OUTs only); L-16 issued (OUT is the review
-surface; full digests; OUT-REQUIREMENTS restated per packet — PM contributing factor
-owned). T12 implementation commits stand; C-001-T12-R1 dispatched as EVIDENCE-ONLY rework
-with immutability proof (zero src/tools/data changes) and a discrepancy tripwire (any
-regenerated value differing from OUT_44's summaries → BLOCK). Summarized T12 outcomes
-pending evidence: streaming at 20k events; F3 = physics (domain exit); tune frozen at
-dt=5e-4, N=128, ratio 1.899. Gates slip one cycle: PACKET 46 = P1-A → P1-B → P1-C → Law 7
-(v1.2 B3) on OUT_45 ACCEPT — committed tree, dirty=false, first held-out contact.
+Phase 1 — Falsifiable core, AT THE GATE. All construction complete and VERIFIED: exact
+engine (T1–T12), Law 7 baseline at frozen tune (dt=5e-4, N=128, ratio 1.8987 —
+over-resourced on FL-1, favorable to contestant), locked 32-scenario corpus, gate runner
+with manifests and mechanical held-out discipline. PREREG v1.3: quasi-chaotic P1-A window
+12 events by A3 feasibility audit (25 unsatisfiable in binary64 — amended BEFORE any
+held-out run). GATE-P1 dispatched: P1-A → P1-B → P1-C → Law 7, halt-on-failure,
+dirty=false, every held-out execution gate-authorized and access-logged. Construction
+scope in-task: checkers, study specs, --repeat flag only. Task compliance ≠ gate verdicts:
+a clean FAIL is a valid outcome and would be the bet's falsification record. On PASS:
+Phase-1 gate call to Director; Phase 2 (C-003 mapping, I-006 JUCE shell — the sound) opens.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | PREREGISTERED (v1.2) | T12-R1 review → gate runs | OUT_45 |
-| C-002 Curve library | BRIEFED | T3 prereg | after Phase-1 gate runs |
+| C-001 Exact collision engine | PREREGISTERED (v1.3) — GATE RUNS IN FLIGHT | gate verdicts → Phase-1 gate call | OUT_46 |
+| C-002 Curve library | BRIEFED | T3 prereg | Phase-1 gate call |
 
 C-000 Phase-0 scoping: CLOSED.
 
@@ -33,10 +34,10 @@ C-000 Phase-0 scoping: CLOSED.
 |---|---|---|---|
 | I-001 | VERIFIED | — | — |
 | I-002 | VERIFIED | — | — |
-| I-003 | VERIFIED — corpus complete (32 locked, untouched) | — | — |
-| I-004 | VERIFIED — Phase-1 complete | — | — |
+| I-003 | VERIFIED — corpus 32 locked; first contact = GATE-P1 | — | — |
+| I-004 | VERIFIED | — | — |
 | I-005 | SPECCED | brief | P1-D addendum timing basis |
-| I-006 JUCE scaffold | SPECCED | brief | Phase 1 gate |
+| I-006 JUCE scaffold | SPECCED | brief | Phase-1 gate call |
 | I-007 CI | SPECCED | brief | Director hosting (open decision 1 — escalated) |
 
 ## Open decisions (Director)
@@ -44,17 +45,17 @@ C-000 Phase-0 scoping: CLOSED.
 2. Protocol amendment bundle (P6 §4.6, §7.4, §7.5; P5 §2 ledger/courier) — non-blocking.
 3. GPLv3 -only vs -or-later — Phase 3.
 
-## Merge housekeeping
-Instruction (PACKET 40 message) stands. Gate runs (PACKET 46) require a committed tree —
-merge or committed chain tip before execution.
+## Known issues
+Baseline CLI write failure at N≥512 (outside gate path; OUT_45). Merge housekeeping
+instruction (PACKET 40 message) stands, optional — dirty=false is a working-tree property.
 
 ## Recent review verdicts
+OUT_45/C-001-T12-R1: ACCEPT — T12 VERIFIED via R1 (JRN-C001-59).
 OUT_44/C-001-T12: REJECT — inadmissible evidence (JRN-C001-55; L-16).
 OUT_43/C-001-T11: ACCEPT — C-001-T11 VERIFIED (JRN-C001-50).
 OUT_42/I-004-T2+T3: ACCEPT — I-004 COMPLETE (JRN-I004-8).
-OUT_41/I-003-T3-R1: ACCEPT — corpus complete (JRN-I003-22).
 
 ## Pointers
-Branch rule: T12-R1 extends task/C-001-T12 in place. Gate runs governed by
-PREREGISTRATION.md v1.2; TUNE-LAW7.json is the frozen Law 7 configuration pending OUT_45
-evidence.
+Branch rule: task/GATE-P1 branches from task/C-001-T12. Gate governance:
+PREREGISTRATION.md v1.3 (windows, tolerances, order, halt, dirty rule, log rule);
+TUNE-LAW7.json by sha256 is the contestant configuration of record.

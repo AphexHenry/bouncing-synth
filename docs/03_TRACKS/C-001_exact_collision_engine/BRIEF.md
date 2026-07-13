@@ -296,3 +296,115 @@ Acceptance criteria (binary, one artifact each):
    task creates pre-commit (L-13).
 9. FILE DIGESTS complete per L-15 INCLUDING the TR; full untruncated sha256s throughout;
    TR pasted verbatim in REPORT (L-16).
+
+## TASK GATE-P1: Phase-1 confirmatory gate runs (P1-A → P1-B → P1-C → Law 7)
+depends_on: C-001-T12 VERIFIED (JRN-C001-59); PREREG v1.3 (Director-approved via PACKET 46
+dispatch); TUNE-LAW7.json (frozen); I-003 corpus (32, locked); I-004 (VERIFIED)
+objective: Execute the registered Phase-1 gates in order with halt-on-failure and produce
+verdict-bearing evidence. TASK COMPLIANCE ≠ GATE VERDICTS: the task is DONE if the gates
+are executed per the rules below and fully evidenced, whatever they show. Do not soften,
+re-run, or reinterpret a failing gate — a clean FAIL is a valid deliverable.
+
+CONSTRUCTION SCOPE (the only code this task may create): tools/gaterunner/studies/*.json
+(P1-A, P1-B, P1-C, LAW7-EXACT, LAW7-BASELINE); tools/gaterunner/check_p1a.py,
+check_p1b.py, check_p1c.py, check_law7.py; a --repeat N flag on bounce-run-scenario (run
+the scenario N times in-process, assert bit-identity of event sequences via the existing
+exact-equality helper, write the file once, print `repeat-identity ok N=<n>`; nonzero exit
++ first-divergence report on mismatch). Nothing else changes; no engine physics, no
+baseline physics, no fixture, no tune value.
+
+EXECUTION RULES (binding; BLOCK on any ambiguity):
+G0. Committed tree: run from the branch tip with zero tracked modifications; every
+    manifest must show engine_git_dirty=false (tracked-file dirty; untracked courier
+    surface exempt, v1.3 C2). Paste tracked-clean status before the first gate run.
+G1. Authorization + logging: every held-out execution goes through the I-004 runner with
+    gate_id set (P1-A / P1-B / P1-C / LAW7); every such execution appends to
+    ACCESS_LOG.jsonl. After all runs, paste the log's line count and a 5-line excerpt, and
+    reconcile the count against the manifests (expected = sum of per-manifest held-out
+    invocations; state the arithmetic).
+G2. Order + halt (v1.2 B3): P1-A, then P1-B, then P1-C, then Law 7. On a gate FAIL: stop,
+    do not execute subsequent gates, document the halt in GATE_SUMMARY.md and the OUT.
+    Infrastructure errors (crash, write failure, runner defect) are BLOCKED, not FAIL —
+    stop and paste.
+
+P1-A (reference_agreement, Design A; PREREG §1 + v1.3 C1):
+  Run: exact engine, all 32 held-out scenarios, --max-events 200 (settle terminates
+  earlier where applicable), timing_runs per study spec (1 timed pass sufficient; timing
+  is not gate-bearing here).
+  Check (check_p1a.py): per scenario, over the confirmatory window (min(200, settle);
+  quasi-chaotic cells first 12 events), compare engine events to fixture reference:
+  |Δt| ≤ 1e-9 s AND |Δs| ≤ 1e-9, ball_id and seq exactly equal, event count equal to the
+  reference count within the window; HO-graze-parabola-1 (0.5×): empty reference ⇒ engine
+  must emit zero events. Output: per-scenario worst |Δt| and |Δs| table, per-family and
+  per-regime distributions (L-05), quasi-chaotic events 13–25 as a separate exploratory
+  table, corpus verdict PASS/FAIL (one scenario over tolerance fails the gate). Red team:
+  re-evaluate the primary excluding the largest family, and on Tier-1 fixtures only; both
+  tables in the report.
+P1-B (determinism_repro, Design B; PREREG §2):
+  (i) In-process: bounce-run-scenario --repeat 100 on each of the 32 (gate-authorized via
+  a runner mode or direct authorized invocation — every execution logged); paste the 32
+  `repeat-identity ok` lines (or the failure).
+  (ii) Fresh-process: run the P1-B study 10 times; pairwise --compare (A vs each of B..J);
+  paste the 9 compare verdicts — byte-identical event files for every scenario.
+  (iii) Clean rebuild ×2: delete the build tree, reconfigure, rebuild, rerun the study,
+  --compare against run A; paste both verdicts. Toolchain identity pasted before/after.
+  Verdict: PASS iff all of (i)(ii)(iii) show zero diffs.
+P1-C (loop_stability, Design C; PREREG §3):
+  The 9 periodic held-out fixtures (HO-flat-periodic-1..3, HO-parabola-periodic-1..2,
+  HO-poly-periodic-1..2, HO-bezier-periodic-1..2), each run to 10^4 periods (per-fixture
+  --max-events = period_event_count × 10^4, from the fixture's reference metadata;
+  streaming).
+  Check (check_p1c.py): parse hexfloat times; per-period interval vector = consecutive
+  binary64 deltas; require every period's vector bit-identical to period 1's, all 10^4
+  periods; report per-fixture first-divergence index (must be none) and an
+  interval-sequence hash. Verdict: PASS iff drift = 0 on all 9.
+LAW 7 (PREREG §5, v1.2 B1/B2, v1.3 C2):
+  Run: baseline engine, all 32 held-out scenarios, frozen tune (dt=5e-4, N=128,
+  TUNE-LAW7.json cited by sha256 in the manifest), gate-authorized, logged.
+  Check (check_law7.py): per scenario, K = min(200, exact event count from the P1-A run);
+  baseline per-event |Δt| vs reference over its emitted events; if the baseline emits
+  fewer than K events, the scenario's baseline worst error is recorded as SHORTFALL
+  (scores maximally; cite the physics classification class per OUT_45 F3 where the
+  mechanism matches). Corpus primary: (worst-case exact |Δt| over the corpus) ≤ (worst-case
+  baseline |Δt| over the corpus, SHORTFALL = maximal) / 100, AND on the 9 periodic
+  fixtures the baseline's measured per-period drift > 0 where the exact engine's = 0
+  (drift measured with the same interval method as P1-C). Exploratory: the ratio over
+  finite (non-shortfall) scenarios only; full accuracy table per family × regime.
+  Verdict: PASS iff both primary arms hold.
+GATE_SUMMARY.md: four verdict lines with the governing numbers (P1-A worst |Δt|/|Δs|;
+P1-B 0-diff counts; P1-C max first-divergence; Law 7 corpus ratio + drift arm), the
+halt point if any, and the manifests' sha256s.
+
+Steps:
+3. Toolchain record; G0 tracked-clean status paste.
+4. Configure + build; ctest; pastes; exit=0; 100% + SUCCESS!.
+5. Implement the construction-scope items; paste `--repeat 3` smoke on a CALIBRATION
+   scenario (no held-out contact yet) showing `repeat-identity ok N=3`.
+6. Execute P1-A per rules; paste checker report (tables + verdict).
+7. If P1-A PASS: execute P1-B; paste (i)(ii)(iii) evidence + verdict. Else halt per G2.
+8. If P1-B PASS: execute P1-C; paste per-fixture table + verdict. Else halt.
+9. If P1-C PASS: execute Law 7; paste comparison table, shortfall list, drift table,
+   both primary arms, verdict. Else halt.
+10. G1 access-log reconciliation paste. GATE_SUMMARY.md pasted verbatim.
+11. Byte-verbatim `git status --porcelain --branch`.
+12. TR + OUT per OUT-REQUIREMENTS below.
+
+Acceptance criteria (binary, one artifact each — INDEPENDENT of gate verdicts):
+1. Step 3: toolchain + tracked-clean status pasted before first gate run.
+2. Step 4: build + ctest pastes; exit=0; 100% + SUCCESS!.
+3. Step 5: --repeat calibration smoke pasted; no held-out contact before step 6.
+4. Step 6: P1-A checker report pasted in full (per-scenario table, distributions,
+   exploratory 13–25 table, red-team tables, verdict line); all 32 manifests
+   dirty=false.
+5. Steps 7–9 (as reached per G2): full evidence + verdict line per gate; halt, if any,
+   documented with the failing numbers.
+6. G1: ACCESS_LOG line count + excerpt + reconciliation arithmetic pasted; count matches
+   manifests.
+7. GATE_SUMMARY.md pasted verbatim.
+8. TR affirms: no fixture/tune/physics modification; all held-out execution
+   gate-authorized; halt rule honored.
+9. Step 11: byte-verbatim status; untracked within agent-writable surface limited to
+   files this task creates pre-commit (L-13).
+10. FILE DIGESTS complete per L-15 (checkers, studies, manifests, reports, GATE_SUMMARY,
+    TR) with full sha256s; TR pasted verbatim in REPORT (L-16); all journal entries of
+    this dispatch verbatim; applied-files directions listed.
