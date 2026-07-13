@@ -50,7 +50,7 @@ def git_head() -> tuple[str, bool]:
     code, out, _ = run_cmd(["git", "rev-parse", "HEAD"])
     if code != 0:
         raise RuntimeError("git rev-parse failed")
-    code, status, _ = run_cmd(["git", "status", "--porcelain"])
+    code, status, _ = run_cmd(["git", "status", "--porcelain", "--untracked-files=no"])
     dirty = code == 0 and bool(status.strip())
     return out.strip(), dirty
 
