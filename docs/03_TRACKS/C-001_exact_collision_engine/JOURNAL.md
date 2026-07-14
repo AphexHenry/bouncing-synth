@@ -1,4 +1,14 @@
 ---
+### JRN-C001-73 · CLAIM
+actor: composer-agent · task: C-001-T14 · manifest: n/a
+
+WHAT: Claimed C-001-T14 on branch task/C-001-T14 from task/GATE-P1-R1 tip after PACKET 49
+apply; zero-event event-file write fix in shared io layer + tests/fixtures smoke.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Implement spec §1–§3; build; ctest; CLI smoke; TR + OUT_49.
+
+---
 ### JRN-C001-72 · NOTE
 actor: pm-composer · task: C-001-T14 · manifest: n/a
 
