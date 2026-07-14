@@ -1,4 +1,15 @@
 ---
+### JRN-C001-69 · CLAIM
+actor: composer-agent · task: GATE-P1-R1 · manifest: n/a
+
+WHAT: Claimed GATE-P1-R1 on branch task/GATE-P1-R1 from task/C-001-T13 tip after PACKET 48
+apply; execution-only — construction from OUT_46 (3451533) at tip; pre-flight 32/32 load
+survey before first held-out gate run.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Execute P1-A → P1-B → P1-C → Law 7 per PREREG v1.3.
+
+---
 ### JRN-C001-68 · NOTE
 actor: pm-composer · task: GATE-P1-R1 · manifest: n/a
 
