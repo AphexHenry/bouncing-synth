@@ -516,3 +516,48 @@ Steps (replace GATE-P1 steps 3–12 numbering for this dispatch):
 Acceptance criteria: identical to TASK GATE-P1 criteria 1–10 with step numbers shifted by
 the D1/D3 insertions above (criterion 3 = D1 survey; criterion 4 = D3 smoke; criterion 5
 = P1-A report; etc.).
+
+## TASK C-001-T14: Zero-event canonical event-file write (streaming + offline)
+depends_on: OUT_48 GATE-P1-R1 BLOCKED (JRN-C001-70); C-001-T13 VERIFIED (JRN-C001-66)
+objective: Fix the shared io layer so `engine_events=0` produces a valid `bounce-events-v1`
+JSONL file (header only, no event lines) via both streaming (`begin_event_stream` /
+`finish_event_stream`) and offline (`write_event_file`) paths. Unblocks P1-A on
+HO-graze-parabola-1 (PREREG §1: empty reference ⇒ zero emitted events). No held-out
+execution in this task.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. ZERO-EVENT WRITE: when the event count is 0, all three operations succeed:
+   a. `finish_event_stream` after `begin_event_stream` with zero `emit_event_stream` calls.
+   b. `write_event_file` with `MultiBallSimResult.count == 0`.
+   c. `read_event_file` round-trips the result (`count == 0`, `engine_events` header matches).
+   Output format: one header line
+   `{"schema":"bounce-events-v1", "scenario_sha256":"<sha>", "engine_events":0}` and no
+   event body lines.
+2. SCOPE: changes confined to `src/core/bounce/io/` and tests; `bounce-run-scenario` and
+   `bounce-baseline-run` inherit the fix via the shared io layer. No engine physics, no tune,
+   no held-out fixture edits.
+3. TEST FIXTURE: add a committed zero-reference scenario JSON under `tests/fixtures/` (not
+   under `data/scenarios/heldout/`) sufficient to produce zero engine events when run with
+   the exact engine — may mirror the grazing construction shape at reduced scope. LAW-1:
+   no binary invocation with `--scenario` pointing at any `data/scenarios/heldout/` path.
+4. REGRESSION: all existing `test_event_file.cpp` and calibration tests pass unchanged.
+
+Steps:
+3. Paste environment record: `cmake --version`; `c++ --version`; `python3 --version`.
+4. Implement spec §1–§3; configure + build; paste configure tail, build tail, exit=0.
+5. ctest + doctest summary; 100% passed + SUCCESS! + exit=0.
+6. Paste zero-event CLI smoke:
+   `./build/default/bounce-run-scenario --scenario <tests/fixtures/...> --out <tmp> --max-events 200`
+   showing exit=0, stdout contains `events=0`, and first line of output file pasted showing
+   `"engine_events":0`.
+7. Paste byte-verbatim `git status --porcelain --branch`.
+8. TR + OUT per OUT-REQUIREMENTS below.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 pasted: toolchain versions.
+2. Step 4 pasted: configure + build tails; exit=0.
+3. Step 5 pasted: ctest + doctest; 100% + SUCCESS! + exit=0.
+4. Step 6 pasted: CLI smoke exit=0; `events=0` line; header line with `engine_events":0`.
+5. TR affirms LAW-1: no held-out path execution; fixture under tests/ or calibration only.
+6. Step 7: byte-verbatim git status; L-13 untracked surface.
+7. FILE DIGESTS complete per L-15; TR pasted verbatim in REPORT (L-16).

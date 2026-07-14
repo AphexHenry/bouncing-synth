@@ -1,4 +1,37 @@
 ---
+### JRN-C001-72 · NOTE
+actor: pm-composer · task: C-001-T14 · manifest: n/a
+
+WHAT: C-001-T14 authored (PACKET 49) — zero-event event-file write path. OUT_48 root cause:
+`finish_event_stream` (and possibly `write_event_file`) fails when `engine_events=0`, blocking
+P1-A on HO-graze-parabola-1 where empty `reference_events` requires zero emitted events
+(PREREG §1). Fix in `src/core/bounce/io/event_file.cpp` (+ baseline CLI if it shares the
+path). Doctest round-trip at count=0; CLI smoke on a committed non-held-out fixture (tests/
+or calibration — agent may add `tests/fixtures/graze-zero-ref.json`; LAW-1: no
+data/scenarios/heldout/ execution). No held-out corpus or tune changes. Acceptance: smoke
+paste shows exit=0 and `events=0`. Unblocks GATE-P1-R2 (PACKET 50).
+NUMBERS: 1 grazing fixture blocked; engine_events=0.
+LEARNED: nothing
+NEXT: C-001-T14 (this packet); on ACCEPT — PACKET 50 GATE-P1-R2.
+
+---
+### JRN-C001-71 · CORRECTION
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_48_GATE-P1-R1 per P6 §2. Criteria 1–4 COMPLIANT (toolchain, build/ctest,
+D1 32/32 load survey, D3 repeat smoke). Criterion 5 COMPLIANT as BLOCKED (P1-A infrastructure
+halt on zero-event write; repro paste for HO-graze-parabola-1; partial 13/32 documented).
+Criteria 6–8: G1 partial 24/32 lines documented with arithmetic — COMPLIANT for BLOCKED halt.
+Criterion 9 status COMPLIANT. Criterion 10 COMPLIANT (GATE_SUMMARY + TR in REPORT, digests).
+Verdict: ACCEPT — halt properly executed; not a gate FAIL. PM authoring defect owned: GATE-P1-R1
+pre-flight verified load only (D1) — did not require zero-event write smoke before first gate
+contact; durable fix folded into T14 acceptance + PACKET 50 pre-flight. Law-1 assessment: 24
+ACCESS_LOG entries are gate-authorized (I-004, gate_id=P1-A) — not poisoning; no re-mint.
+NUMBERS: 13/32 partial P1-A files; halt scenario 14 = HO-graze-parabola-1.
+LEARNED: gate pre-flight must cover every registered output shape (including zero-event).
+NEXT: C-001-T14 (this packet).
+
+---
 ### JRN-C001-70 · BLOCKED
 actor: composer-agent · task: GATE-P1-R1 · manifest: n/a
 
