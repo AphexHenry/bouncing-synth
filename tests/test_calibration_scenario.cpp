@@ -29,6 +29,14 @@ TEST_CASE("parse_rational handles integers and fractions") {
   CHECK(value == doctest::Approx(2.75));
 }
 
+TEST_CASE("parse_rational handles decimal and scientific notation") {
+  double value = 0.0;
+  CHECK(bounce::core::scenario::parse_rational("0.7071067811865475", value));
+  CHECK(value == doctest::Approx(0.7071067811865475));
+  CHECK(bounce::core::scenario::parse_rational("1.04e-20", value));
+  CHECK(value == doctest::Approx(1.04e-20));
+}
+
 TEST_CASE("load FL-1 calibration scenario from JSON") {
   bounce::core::scenario::CalibrationScenario scenario{};
   CHECK(bounce::core::scenario::load_calibration_scenario(kFl1Path, scenario));
@@ -118,4 +126,24 @@ TEST_CASE("tier-1 calibration corpus passes reference_agreement") {
         scenario, scenario.ref_event_count);
     CHECK(bounce::core::scenario::agrees_with_tier1_reference(scenario, result));
   }
+}
+
+TEST_CASE("HO-graze-parabola-1 loads with empty reference events") {
+  bounce::core::scenario::CalibrationScenario scenario{};
+  const char* path = BOUNCE_SOURCE_DIR "/data/scenarios/heldout/HO-graze-parabola-1.json";
+  REQUIRE(bounce::core::scenario::load_calibration_scenario(path, scenario));
+  CHECK(scenario.ref_event_count == 0);
+}
+
+TEST_CASE("HO-bezier-settle-1 first contact matches reference within epsilon") {
+  bounce::core::scenario::CalibrationScenario scenario{};
+  const char* path = BOUNCE_SOURCE_DIR "/data/scenarios/heldout/HO-bezier-settle-1.json";
+  REQUIRE(bounce::core::scenario::load_calibration_scenario(path, scenario));
+  REQUIRE(scenario.ref_event_count >= 1);
+  const auto result = bounce::core::scenario::run_calibration_scenario(scenario, 1);
+  REQUIRE(result.count == 1);
+  const auto& ref = scenario.reference_events[0];
+  const auto& event = result.events[0];
+  CHECK(event.t == doctest::Approx(ref.t).epsilon(1e-12));
+  CHECK(event.s == doctest::Approx(ref.contact_x).epsilon(1e-12));
 }

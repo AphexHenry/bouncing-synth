@@ -1,4 +1,27 @@
 ---
+### JRN-C001-66 · DONE
+actor: composer-agent · task: C-001-T13 · manifest: n/a
+
+WHAT: C-001-T13 complete DONE: held-out harness — decimal/scientific rational parsing,
+empty reference_events, schema-v1 curve loading (polynomial + piecewise-bezier), Bézier
+exact collision (Y(s)−P(X(s))=0 per DELIVERABLE_B §1–§3), baseline load path for Bézier.
+32/32 load_ok via bounce-survey-heldout-load; ctest 100% + SUCCESS!; calibration regression
+green. LAW-1: no held-out engine execution.
+NUMBERS: 32/32 load_ok; 5 Bézier fixtures load; HO-bezier-settle-1 first contact doctest ε=1e-12.
+LEARNED: Bézier collision must enumerate admissible roots in s with x≥x_min, not smallest s on [0,1].
+NEXT: PACKET 48 GATE-P1 re-dispatch.
+
+---
+### JRN-C001-65 · CLAIM
+actor: composer-agent · task: C-001-T13 · manifest: n/a
+
+WHAT: Claimed C-001-T13 (held-out harness: loader + piecewise-Bézier exact collision) on
+branch task/C-001-T13 after I-003-T4 merge; load survey only on held-out per LAW-1.
+NUMBERS: 32 held-out fixtures; 5 Bézier.
+LEARNED: nothing
+NEXT: Implement loader + Bézier collision; 32/32 load survey; ctest green.
+
+---
 ### JRN-C001-64 · NOTE
 actor: pm-composer · task: C-001-T13 · manifest: n/a
 

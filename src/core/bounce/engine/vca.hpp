@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #pragma once
 
+#include "bounce/curve/bezier.hpp"
 #include "bounce/curve/polynomial.hpp"
 #include "bounce/engine/ballistic.hpp"
 
@@ -23,6 +24,8 @@ struct BallCollisionStep {
   double x = 0.0;
   double y = 0.0;
   double impact_speed = 0.0;
+  int segment_index = 0;
+  double segment_s = 0.0;
 };
 
 curve::CompiledPolynomial collision_difference_x(const curve::CompiledPolynomial& curve_y,
@@ -39,5 +42,9 @@ double normal_impact_speed(const curve::CompiledPolynomial& curve_y, double x, d
 BallCollisionStep step_ball_next_collision(const curve::CompiledPolynomial& curve_y,
                                              const BallisticInit& init, double x_min,
                                              double x_max);
+
+BallCollisionStep step_ball_next_collision_bezier(const curve::CompiledPiecewiseBezier& curve,
+                                                  const BallisticInit& init, double x_min,
+                                                  double x_max);
 
 } // namespace bounce::core::engine

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "bounce/curve/polynomial.hpp"
+#include "bounce/curve/bezier.hpp"
 #include "bounce/engine/ballistic.hpp"
 #include "bounce/events/collision_event.hpp"
 
@@ -63,5 +64,9 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
                                                   const BallSpec* balls, int ball_count,
                                                   double x_max, int max_events,
                                                   EventEmitSink* sink = nullptr);
+
+MultiBallSimResult simulate_multi_ball_collisions_bezier(
+    const curve::CompiledPiecewiseBezier& curve, const BallSpec* balls, int ball_count,
+    double x_max, int max_events, EventEmitSink* sink = nullptr);
 
 } // namespace bounce::core::engine

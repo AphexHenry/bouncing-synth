@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #pragma once
 
+#include "bounce/curve/bezier.hpp"
 #include "bounce/curve/polynomial.hpp"
 
 #include <array>
@@ -25,6 +26,9 @@ struct SegmentNormal {
 
 Polyline sample_polynomial_polyline(const bounce::core::curve::CompiledPolynomial& curve,
                                     double x_min, double x_max, int segment_count);
+
+Polyline sample_piecewise_bezier_polyline(
+    const bounce::core::curve::CompiledPiecewiseBezier& curve, int segment_count);
 
 SegmentNormal segment_normal(const Polyline& poly, int segment_index);
 

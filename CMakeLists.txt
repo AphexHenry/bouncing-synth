@@ -83,4 +83,11 @@ target_link_libraries(bounce-baseline-run PRIVATE bounce-baseline)
 target_include_directories(bounce-baseline-run PRIVATE src/tools/run_baseline)
 bounce_apply_fp_determinism(bounce-baseline-run)
 
+add_executable(bounce-survey-heldout-load
+  src/tools/survey_load/survey_heldout_load.cpp
+)
+target_link_libraries(bounce-survey-heldout-load PRIVATE bounce-core)
+target_compile_definitions(bounce-survey-heldout-load PRIVATE BOUNCE_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+bounce_apply_fp_determinism(bounce-survey-heldout-load)
+
 add_test(NAME bounce-tests COMMAND bounce-tests)

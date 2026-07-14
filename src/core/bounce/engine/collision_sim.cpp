@@ -185,4 +185,122 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
   return out;
 }
 
+namespace {
+
+ReflectedVelocity reflect_velocity_bezier(const curve::CompiledBezierSegment& segment, double s,
+                                            double vx, double vy, double restitution) {
+  const auto n = curve::normal(segment, s);
+  const double vn = vx * n.nx + vy * n.ny;
+  ReflectedVelocity out{};
+  out.vx = vx - (1.0 + restitution) * vn * n.nx;
+  out.vy = vy - (1.0 + restitution) * vn * n.ny;
+  out.normal_speed_out = std::abs(vn);
+  return out;
+}
+
+bool time_less_bezier(double t_a, int ball_a, int seg_a, double t_b, int ball_b, int seg_b) {
+  if (t_a != t_b) {
+    return t_a < t_b;
+  }
+  if (ball_a != ball_b) {
+    return ball_a < ball_b;
+  }
+  return seg_a < seg_b;
+}
+
+} // namespace
+
+MultiBallSimResult simulate_multi_ball_collisions_bezier(
+    const curve::CompiledPiecewiseBezier& curve, const BallSpec* balls, int ball_count,
+    double x_max, int max_events, EventEmitSink* sink) {
+  MultiBallSimResult out{};
+  if (max_events <= 0 || ball_count <= 0 || ball_count > kMaxBalls || balls == nullptr) {
+    return out;
+  }
+  std::array<ActiveBall, kMaxBalls> active{};
+  for (int i = 0; i < ball_count; ++i) {
+    active[static_cast<std::size_t>(i)].ball_id = balls[i].ball_id;
+    active[static_cast<std::size_t>(i)].init = balls[i].init;
+    active[static_cast<std::size_t>(i)].restitution = balls[i].restitution;
+    active[static_cast<std::size_t>(i)].x_min = balls[i].init.x0;
+    active[static_cast<std::size_t>(i)].abs_time = 0.0;
+    active[static_cast<std::size_t>(i)].settled = balls[i].init.vx == 0.0;
+  }
+  const double domain_min = curve.segments.empty() ? 0.0 : curve.segments.front().control[0].x;
+  for (int emitted = 0; emitted < max_events; ++emitted) {
+    int chosen = -1;
+    BallCollisionStep chosen_step{};
+    double chosen_t_abs = 0.0;
+    bool have_candidate = false;
+    for (int i = 0; i < ball_count; ++i) {
+      auto& ball = active[static_cast<std::size_t>(i)];
+      if (ball.settled || ball.init.vx == 0.0) {
+        continue;
+      }
+      const double x_bound = ball.init.vx > 0.0 ? x_max : domain_min;
+      const BallCollisionStep step =
+          step_ball_next_collision_bezier(curve, ball.init, ball.x_min, x_bound);
+      if (!step.found) {
+        ball.settled = true;
+        continue;
+      }
+      const double t_abs = ball.abs_time + step.t;
+      if (!have_candidate ||
+          time_less_bezier(t_abs, ball.ball_id, step.segment_index, chosen_t_abs,
+                           active[static_cast<std::size_t>(chosen)].ball_id,
+                           chosen_step.segment_index)) {
+        chosen = i;
+        chosen_step = step;
+        chosen_t_abs = t_abs;
+        have_candidate = true;
+      }
+    }
+    if (!have_candidate || chosen < 0) {
+      break;
+    }
+    auto& ball = active[static_cast<std::size_t>(chosen)];
+    const auto& segment = curve.segments[static_cast<std::size_t>(chosen_step.segment_index)];
+    const double vy_contact = ball.init.vy - ball.init.g * chosen_step.t;
+    if (!chosen_step.accepted) {
+      ball.init.x0 = chosen_step.x;
+      ball.init.y0 = chosen_step.y;
+      ball.init.vy = vy_contact;
+      ball.x_min = next_x_min(chosen_step.x, ball.init.vx);
+      continue;
+    }
+    const auto n = curve::normal(segment, chosen_step.segment_s);
+    events::CollisionEvent event{};
+    event.t = chosen_t_abs;
+    event.ball_id = ball.ball_id;
+    event.s = chosen_step.x;
+    event.impact_speed = chosen_step.impact_speed;
+    event.normal_x = n.nx;
+    event.normal_y = n.ny;
+    event.seq = out.count;
+    event.schema_version = 1;
+    if (sink != nullptr && sink->on_event != nullptr) {
+      if (!sink->on_event(sink->user_data, event)) {
+        break;
+      }
+    }
+    if (out.count < static_cast<int>(kMaxSimEvents)) {
+      out.events[static_cast<std::size_t>(out.count)] = event;
+    }
+    ++out.count;
+    const ReflectedVelocity reflected = reflect_velocity_bezier(
+        segment, chosen_step.segment_s, ball.init.vx, vy_contact, ball.restitution);
+    if (reflected.normal_speed_out < kVSettle) {
+      ball.settled = true;
+    } else {
+      ball.init.x0 = chosen_step.x;
+      ball.init.y0 = chosen_step.y;
+      ball.init.vx = reflected.vx;
+      ball.init.vy = reflected.vy;
+      ball.abs_time = chosen_t_abs;
+      ball.x_min = next_x_min(chosen_step.x, ball.init.vx);
+    }
+  }
+  return out;
+}
+
 } // namespace bounce::core::engine

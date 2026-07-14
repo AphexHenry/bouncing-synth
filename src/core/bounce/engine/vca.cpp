@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "bounce/engine/vca.hpp"
 
+#include "bounce/curve/bezier.hpp"
 #include "bounce/numerics/double_double.hpp"
 
 #include <algorithm>
@@ -200,6 +201,228 @@ BallCollisionStep step_ball_next_collision(const CompiledPolynomial& curve_y,
   out.impact_speed = normal_impact_speed(curve_y, out.x, init.vx, vy_contact);
   out.accepted = out.impact_speed >= kVGraze;
   return out;
+}
+
+} // namespace bounce::core::engine
+
+// Bezier collision (Y(s) - P(X(s)) = 0) appended in same translation unit below.
+
+namespace bounce::core::engine {
+
+namespace {
+
+using bounce::core::curve::BezierKind;
+using bounce::core::curve::CompiledBezierSegment;
+using bounce::core::curve::CompiledPiecewiseBezier;
+using bounce::core::curve::compile_polynomial;
+using bounce::core::curve::CompiledPolynomial;
+using bounce::core::curve::eval;
+using bounce::core::curve::normal;
+using bounce::core::curve::Vec2;
+
+constexpr double kBezierDomainEps = 1e-12;
+
+std::vector<double> bezier_axis_poly(const CompiledBezierSegment& segment, bool y_axis) {
+  if (segment.kind == BezierKind::Quadratic) {
+    const double p0 = y_axis ? segment.control[0].y : segment.control[0].x;
+    const double p1 = y_axis ? segment.control[1].y : segment.control[1].x;
+    const double p2 = y_axis ? segment.control[2].y : segment.control[2].x;
+    return {p0, 2.0 * (p1 - p0), p0 - 2.0 * p1 + p2};
+  }
+  const double p0 = y_axis ? segment.control[0].y : segment.control[0].x;
+  const double p1 = y_axis ? segment.control[1].y : segment.control[1].x;
+  const double p2 = y_axis ? segment.control[2].y : segment.control[2].x;
+  const double p3 = y_axis ? segment.control[3].y : segment.control[3].x;
+  return {p0, 3.0 * (p1 - p0), 3.0 * (p0 - 2.0 * p1 + p2), -p0 + 3.0 * p1 - 3.0 * p2 + p3};
+}
+
+std::vector<double> poly_trim(const std::vector<double>& p) {
+  int deg = static_cast<int>(p.size()) - 1;
+  while (deg > 0 && p[static_cast<std::size_t>(deg)] == 0.0) {
+    --deg;
+  }
+  return std::vector<double>(p.begin(), p.begin() + deg + 1);
+}
+
+std::vector<double> poly_add(const std::vector<double>& a, const std::vector<double>& b) {
+  const int deg = std::max(static_cast<int>(a.size()), static_cast<int>(b.size())) - 1;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int k = 0; k <= deg; ++k) {
+    const double av = k < static_cast<int>(a.size()) ? a[static_cast<std::size_t>(k)] : 0.0;
+    const double bv = k < static_cast<int>(b.size()) ? b[static_cast<std::size_t>(k)] : 0.0;
+    out[static_cast<std::size_t>(k)] = av + bv;
+  }
+  return poly_trim(out);
+}
+
+std::vector<double> poly_sub(const std::vector<double>& a, const std::vector<double>& b) {
+  const int deg = std::max(static_cast<int>(a.size()), static_cast<int>(b.size())) - 1;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int k = 0; k <= deg; ++k) {
+    const double av = k < static_cast<int>(a.size()) ? a[static_cast<std::size_t>(k)] : 0.0;
+    const double bv = k < static_cast<int>(b.size()) ? b[static_cast<std::size_t>(k)] : 0.0;
+    out[static_cast<std::size_t>(k)] = av - bv;
+  }
+  return poly_trim(out);
+}
+
+std::vector<double> poly_mul(const std::vector<double>& a, const std::vector<double>& b) {
+  if (a.empty() || b.empty()) {
+    return {0.0};
+  }
+  const int deg = static_cast<int>(a.size()) + static_cast<int>(b.size()) - 2;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int i = 0; i < static_cast<int>(a.size()); ++i) {
+    for (int j = 0; j < static_cast<int>(b.size()); ++j) {
+      out[static_cast<std::size_t>(i + j)] +=
+          a[static_cast<std::size_t>(i)] * b[static_cast<std::size_t>(j)];
+    }
+  }
+  return poly_trim(out);
+}
+
+std::vector<double> poly_compose(const std::vector<double>& outer,
+                                 const std::vector<double>& inner) {
+  if (outer.empty()) {
+    return {0.0};
+  }
+  std::vector<double> out{0.0};
+  std::vector<double> power{1.0};
+  for (int k = 0; k < static_cast<int>(outer.size()); ++k) {
+    if (outer[static_cast<std::size_t>(k)] != 0.0) {
+      std::vector<double> scaled(power.size());
+      for (std::size_t i = 0; i < power.size(); ++i) {
+        scaled[i] = power[i] * outer[static_cast<std::size_t>(k)];
+      }
+      out = poly_add(out, scaled);
+    }
+    power = poly_mul(power, inner);
+  }
+  return poly_trim(out);
+}
+
+CompiledPolynomial to_compiled_poly(const std::vector<double>& coeffs) {
+  return compile_polynomial(coeffs);
+}
+
+bool x_admissible(double x, double x_min, double x_max, double vx) {
+  if (vx > 0.0) {
+    return x >= x_min - kBezierDomainEps && x <= x_max + kBezierDomainEps;
+  }
+  if (vx < 0.0) {
+    return x <= x_min + kBezierDomainEps && x >= x_max - kBezierDomainEps;
+  }
+  return false;
+}
+
+double bezier_normal_impact_speed(const CompiledBezierSegment& segment, double s, double vx,
+                                  double vy) {
+  const auto n = normal(segment, s);
+  const double vn = vx * n.nx + vy * n.ny;
+  return std::abs(vn);
+}
+
+std::vector<double> poly_roots_in_interval(const CompiledPolynomial& q, double lo, double hi) {
+  std::vector<double> roots;
+  if (q.degree < 1 || hi <= lo) {
+    return roots;
+  }
+  const int nseg = std::max(32, q.degree * 16);
+  const double step = (hi - lo) / static_cast<double>(nseg);
+  double prev_x = lo;
+  double prev_v = eval(q, prev_x);
+  if (prev_v == 0.0) {
+    roots.push_back(prev_x);
+  }
+  for (int i = 1; i <= nseg; ++i) {
+    const double x = lo + step * static_cast<double>(i);
+    const double v = eval(q, x);
+    if (v == 0.0) {
+      roots.push_back(x);
+    } else if (prev_v * v < 0.0) {
+      RootBracket bracket{};
+      bracket.found = true;
+      bracket.lo = prev_x;
+      bracket.hi = x;
+      roots.push_back(vca_refine_root_x(q, bracket.lo, bracket.hi));
+    }
+    prev_x = x;
+    prev_v = v;
+  }
+  return roots;
+}
+
+bool collision_less(double t_a, int seg_a, double t_b, int seg_b) {
+  if (t_a != t_b) {
+    return t_a < t_b;
+  }
+  return seg_a < seg_b;
+}
+
+BallCollisionStep step_ball_next_collision_segment(const CompiledBezierSegment& segment,
+                                                   int segment_index, const BallisticInit& init,
+                                                   double x_min, double x_max) {
+  BallCollisionStep out{};
+  if (init.vx == 0.0) {
+    return out;
+  }
+  const double x_lo = init.vx > 0.0 ? x_min : x_max;
+  const double x_hi = init.vx > 0.0 ? x_max : x_min;
+  const BallisticParabola arc = ballistic_parabola_px(init);
+  const auto x_poly_vec = bezier_axis_poly(segment, false);
+  const auto y_poly = bezier_axis_poly(segment, true);
+  std::vector<double> arc_coeffs(static_cast<std::size_t>(arc.poly.degree) + 1);
+  for (int k = 0; k <= arc.poly.degree; ++k) {
+    arc_coeffs[static_cast<std::size_t>(k)] = arc.poly.coeffs[static_cast<std::size_t>(k)];
+  }
+  const auto composed = poly_compose(arc_coeffs, x_poly_vec);
+  const auto diff_coeffs = poly_sub(y_poly, composed);
+  const CompiledPolynomial diff = to_compiled_poly(diff_coeffs);
+  const auto roots = poly_roots_in_interval(diff, 0.0, 1.0);
+  for (double s_root : roots) {
+    const Vec2 pos = eval(segment, s_root);
+    if (pos.x + kBezierDomainEps < x_lo || pos.x - kBezierDomainEps > x_hi) {
+      continue;
+    }
+    const double t = (pos.x - init.x0) / init.vx;
+    if (t < 0.0) {
+      continue;
+    }
+    const double vy_contact = init.vy - init.g * t;
+    const double impact = bezier_normal_impact_speed(segment, s_root, init.vx, vy_contact);
+    BallCollisionStep candidate{};
+    candidate.found = true;
+    candidate.segment_index = segment_index;
+    candidate.segment_s = s_root;
+    candidate.x = pos.x;
+    candidate.y = pos.y;
+    candidate.t = t;
+    candidate.impact_speed = impact;
+    candidate.accepted = impact >= kVGraze;
+    if (!out.found || collision_less(candidate.t, candidate.segment_index, out.t, out.segment_index)) {
+      out = candidate;
+    }
+  }
+  return out;
+}
+
+} // namespace
+
+BallCollisionStep step_ball_next_collision_bezier(const CompiledPiecewiseBezier& curve,
+                                                  const BallisticInit& init, double x_min,
+                                                  double x_max) {
+  BallCollisionStep best{};
+  for (std::size_t i = 0; i < curve.segments.size(); ++i) {
+    const BallCollisionStep step =
+        step_ball_next_collision_segment(curve.segments[i], static_cast<int>(i), init, x_min, x_max);
+    if (!step.found) {
+      continue;
+    }
+    if (!best.found || collision_less(step.t, step.segment_index, best.t, best.segment_index)) {
+      best = step;
+    }
+  }
+  return best;
 }
 
 } // namespace bounce::core::engine

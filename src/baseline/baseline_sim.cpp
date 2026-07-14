@@ -144,20 +144,16 @@ void advance_ballistic(BallState& ball, double tau) {
 
 } // namespace
 
-MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomial& curve_y,
-                                     double domain_min, double domain_max,
-                                     const BallSpec* balls, int ball_count, int max_events,
-                                     const BaselineParams& params,
-                                     bounce::core::engine::EventEmitSink* sink) {
+MultiBallSimResult simulate_baseline_polyline(const Polyline& poly, double domain_min,
+                                              double domain_max, const BallSpec* balls,
+                                              int ball_count, int max_events,
+                                              const BaselineParams& params,
+                                              bounce::core::engine::EventEmitSink* sink) {
   MultiBallSimResult out{};
   if (max_events <= 0 || ball_count <= 0 || ball_count > kMaxBalls || balls == nullptr ||
-      params.dt <= 0.0 || params.segments <= 0 ||
-      params.segments > kMaxPolylineVertices - 1) {
+      params.dt <= 0.0 || poly.segment_count <= 0) {
     return out;
   }
-
-  const Polyline poly =
-      sample_polynomial_polyline(curve_y, domain_min, domain_max, params.segments);
 
   std::array<BallState, kMaxBalls> state{};
   for (int i = 0; i < ball_count; ++i) {
@@ -274,17 +270,48 @@ MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomi
   return out;
 }
 
+MultiBallSimResult simulate_baseline(const bounce::core::curve::CompiledPolynomial& curve_y,
+                                     double domain_min, double domain_max,
+                                     const BallSpec* balls, int ball_count, int max_events,
+                                     const BaselineParams& params,
+                                     bounce::core::engine::EventEmitSink* sink) {
+  if (params.segments <= 0 || params.segments > kMaxPolylineVertices - 1) {
+    return {};
+  }
+  const Polyline poly =
+      sample_polynomial_polyline(curve_y, domain_min, domain_max, params.segments);
+  return simulate_baseline_polyline(poly, domain_min, domain_max, balls, ball_count, max_events,
+                                    params, sink);
+}
+
+MultiBallSimResult simulate_baseline(const Polyline& poly, const BallSpec* balls, int ball_count,
+                                     int max_events, const BaselineParams& params,
+                                     bounce::core::engine::EventEmitSink* sink) {
+  if (poly.segment_count <= 0) {
+    return {};
+  }
+  return simulate_baseline_polyline(poly, poly.x_min, poly.x_max, balls, ball_count, max_events,
+                                    params, sink);
+}
+
 MultiBallSimResult run_baseline_calibration(
     const bounce::core::scenario::CalibrationScenario& scenario, int max_events,
     const BaselineParams& params, bounce::core::engine::EventEmitSink* sink) {
-  std::vector<double> coeff_vec(static_cast<std::size_t>(scenario.coeff_count));
-  for (int i = 0; i < scenario.coeff_count; ++i) {
-    coeff_vec[static_cast<std::size_t>(i)] =
-        scenario.coeffs[static_cast<std::size_t>(i)];
+  Polyline poly{};
+  if (scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::PiecewiseBezier) {
+    poly = sample_piecewise_bezier_polyline(scenario.piecewise_bezier, params.segments);
+  } else {
+    std::vector<double> coeff_vec(static_cast<std::size_t>(scenario.coeff_count));
+    for (int i = 0; i < scenario.coeff_count; ++i) {
+      coeff_vec[static_cast<std::size_t>(i)] =
+          scenario.coeffs[static_cast<std::size_t>(i)];
+    }
+    const auto curve = bounce::core::curve::compile_polynomial(coeff_vec);
+    poly = sample_polynomial_polyline(curve, scenario.domain_min, scenario.domain_max,
+                                      params.segments);
   }
-  const auto curve = bounce::core::curve::compile_polynomial(coeff_vec);
-  return simulate_baseline(curve, scenario.domain_min, scenario.domain_max, scenario.balls.data(),
-                           scenario.ball_count, max_events, params, sink);
+  return simulate_baseline(poly, scenario.balls.data(), scenario.ball_count, max_events, params,
+                           sink);
 }
 
 void dump_baseline_trajectory(const bounce::core::scenario::CalibrationScenario& scenario,
