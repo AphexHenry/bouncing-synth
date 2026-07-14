@@ -282,3 +282,45 @@ Steps: as I-003-T3 steps 3–10 with D1–D3 substituted (no step 0). Acceptance
 I-003-T3 criteria 1–12 with criterion 3 replaced by D2's amplification certificates
 (all four quasi-chaotic fixtures: A ≥ 1e6 at ε=1e-30, linearity within 10×) and criterion
 0 removed (remediation closed).
+
+## TASK I-003-T4: Law-1 re-mint of poisoned HO-flat-settle-{1..4}
+depends_on: OUT_46 GATE-P1 BLOCKED (JRN-C001-62); PREREG §6 poisoning rule; corpus 32 locked
+objective: Retire and replace the four held-out flat-settle fixtures touched by ungated
+engine execution during OUT_46's loader survey. Same scenario_ids and registered cell
+coverage; new fixture content and manifest sha256s from a clean refsim/CAS re-derivation.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. LAW-1 HARD RULE: no C++ engine binary (bounce-tests, bounce-run-scenario,
+   bounce-baseline-run, or any target linking bounce-core) is built, linked, or invoked
+   anywhere in this task. Re-mint uses the pinned Python venv + refsim/CAS only.
+2. POISONED SET (retire these sha256s of record):
+   HO-flat-settle-1: 62dbd9b4aaba80f8ebc6052a1ffeafcaefad5a8f2f14eac369a8a71d89e4ed8b
+   HO-flat-settle-2: 6d20903045724424cdb916dd27248c70e8af3c1921c501cc62099c42a3899977
+   HO-flat-settle-3: 6ffb9d396e9e8440aae02e8c0946d67de5b59f7e0b9eeab6ecbdba24638e39aa
+   HO-flat-settle-4: 84450f125a0469fb84cb1d06a0d8156bfca77a33252d2e494e61d09bdda748a7
+3. RE-MINT: reproduce the four Tier-1 flat-settle held-out scenarios (same per-cell counts
+   and naming as I-003-T2-R1: 2 single-ball, 2 multi-ball) at Tier-1 standard; overwrite
+   the four JSON files in place; update MANIFEST.json entries with new sha256s; split-lock
+   state consistent with locked corpus.
+4. TR must affirm LAW-1, list retired sha256s, and state the poisoned mint was never
+   gate-authorized.
+
+Steps:
+3. Paste venv record: `python --version`, `pip show mpmath | head -2`.
+4. Run the re-mint tooling; paste generator output; exit=0.
+5. Paste `sha256sum` (or `shasum -a 256`) of all four new fixtures and the manifest diff
+   showing updated entries only for the four ids.
+6. Run the I-003-T1 store validator; paste output; exit=0 (calibration=2, heldout=32,
+   locked).
+7. Paste byte-verbatim `git status --porcelain --branch`.
+8. TR + OUT per OUT-REQUIREMENTS below (task id I-003-T4; may share OUT with C-001-T13 if
+   both tasks complete in one agent session — two TR sections, one OUT, both task ids in
+   header).
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 pasted: pinned venv, mpmath 1.3.0.
+2. Step 4 pasted: generator exit=0; four fixtures overwritten in place.
+3. Step 5 pasted: four new sha256s ≠ the retired sha256s in spec §2; manifest updated.
+4. Step 6 pasted: validator exit=0; heldout=32, locked=true.
+5. TR affirms LAW-1 (no engine binary) and §2 retired-sha256 list.
+6. Step 7: byte-verbatim git status; task-owned files only pre-commit (L-13).

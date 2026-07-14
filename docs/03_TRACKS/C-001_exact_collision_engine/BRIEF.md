@@ -408,3 +408,68 @@ Acceptance criteria (binary, one artifact each — INDEPENDENT of gate verdicts)
 10. FILE DIGESTS complete per L-15 (checkers, studies, manifests, reports, GATE_SUMMARY,
     TR) with full sha256s; TR pasted verbatim in REPORT (L-16); all journal entries of
     this dispatch verbatim; applied-files directions listed.
+
+## TASK C-001-T13: Held-out scenario harness — loader + piecewise-Bézier exact collision
+depends_on: OUT_46 GATE-P1 BLOCKED (JRN-C001-62); C-001-T12 VERIFIED; C-002-T2 VERIFIED
+(Bézier eval/normal of record); I-003-T4 (step 0 of PACKET 47 — re-mint completes first)
+objective: Make `load_calibration_scenario` + `run_calibration_scenario` (and
+`bounce-run-scenario` / `bounce-baseline-run` load paths) capable of loading and executing
+all 32 held-out fixtures. Unblocks GATE-P1 re-dispatch (PACKET 48). No held-out execution
+in this task — load survey and calibration regression only.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. RATIONAL PARSING (`parse_rational`): accept decimal strings and scientific notation
+   (e.g. `0.7071067811865475`, `1.04e-20`) with correctly-rounded IEEE-754 binary64
+   semantics, in addition to existing integers and `a/b` fractions. Integer/fraction
+   behavior unchanged; doctest covers at least one held-out-style decimal and one
+   scientific value.
+2. EMPTY REFERENCE: `reference_events: []` loads successfully with `ref_event_count = 0`
+   (HO-graze-parabola-1). `agrees_with_tier1_reference` on zero-ref scenarios compares
+   only emitted event count (=0).
+3. SCHEMA-V1 CURVE LOADING: read the nested `curve` object per
+   `config/scenario-fixture-schema-v1.json`:
+   a. `family: "polynomial"` — `coeffs` + `domain` (existing behavior, including
+      calibration FL-1/PB-1).
+   b. `family: "piecewise-bezier"` — `segments[]` with `kind` quadratic|cubic and
+      `control` points; compile via C-002 (`compile_piecewise_bezier`); store in
+      `CalibrationScenario` (extend the struct — zero heap on the sim path after compile
+      if feasible; otherwise document any allocation confined to load time).
+   c. Read `physics.gravity` (held-out format); continue to accept calibration fixtures.
+4. BEZIER EXACT COLLISION (DELIVERABLE_B §1–§3; C-001 THESIS): for piecewise-bezier
+   scenarios, `run_calibration_scenario` finds collisions by reducing each segment to
+   Y(s)−P(X(s))=0 (polynomial in s, deg ≤6 for cubic segments), isolating the smallest
+   admissible root on s∈[0,1] with the existing VCA + fixed refinement schedule, then
+   recovering t from X(s). Traverse segments and C1 joints; G-1/S-1 unchanged; TB-1
+   multi-ball unchanged. Doctest: at least one held-out Bézier fixture's first reference
+   event within ε=1e-12 (load the fixture path from disk in the test — this is a *load* of
+   a committed fixture file for test vector purposes, not a `run_calibration_scenario` gate
+   execution on held-out if you can avoid it by using a committed calibration-style Bézier
+   test vector; if no calibration Bézier exists, a load-only doctest that parses the fixture
+   and checks the first event against reference WITHOUT calling the full gate runner is
+   acceptable).
+5. BASELINE LOAD PATH: `bounce-baseline-run` must load piecewise-bezier scenarios (polyline
+   sampling already evaluates curves — wire the loader extension through).
+6. LAW-1: no `bounce-run-scenario` or `bounce-baseline-run` invocation on any path under
+   `data/scenarios/heldout/` in this task. The 32/32 survey uses
+   `load_calibration_scenario` only (a small survey script or one-shot paste is fine).
+7. REGRESSION: all existing `test_calibration_scenario.cpp` cases pass unchanged in
+   outcome (FL-1 eight events, PB-1 first contact, determinism/interval precursors).
+
+Steps:
+3. Paste environment record: `cmake --version`; `c++ --version`; `python3 --version`;
+   `which python3`.
+4. Implement spec §1–§5; configure + build; paste configure tail, build tail, exit=0.
+5. ctest + doctest summary paste; 100% passed + SUCCESS! + exit=0.
+6. Paste held-out LOAD SURVEY (all 32 ids, `load_calibration_scenario` only):
+   `scenario_id,load_ok` lines + `load_ok <n> / 32` — must be 32/32.
+7. Paste byte-verbatim `git status --porcelain --branch`.
+8. TR + OUT per OUT-REQUIREMENTS below.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 pasted: toolchain versions.
+2. Step 4 pasted: configure + build tails; exit=0; four targets built.
+3. Step 5 pasted: ctest + doctest; 100% + SUCCESS! + exit=0.
+4. Step 6 pasted: 32/32 `load_ok`; survey command shown.
+5. TR affirms LAW-1: no held-out engine execution; load survey only.
+6. Step 7: byte-verbatim git status; L-13 untracked surface.
+7. FILE DIGESTS complete per L-15; TR pasted verbatim in REPORT (L-16).

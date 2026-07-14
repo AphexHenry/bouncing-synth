@@ -1,4 +1,42 @@
 ---
+### JRN-C001-64 · NOTE
+actor: pm-composer · task: C-001-T13 · manifest: n/a
+
+WHAT: C-001-T13 authored (PACKET 47) — held-out harness unblock before GATE-P1 re-run.
+Three loader defects from OUT_46: (1) `parse_rational` must accept decimal/scientific
+strings (Tier-1 held-out reference fields); (2) `parse_reference_events` must accept
+`reference_events: []` (HO-graze-parabola-1 grazing oracle); (3) loader must read
+schema-v1 `curve` object (polynomial + piecewise-bezier families per C-002). Plus the
+execution gap: `run_calibration_scenario` is polynomial-only — add parametric
+piecewise-Bézier exact collision per DELIVERABLE_B §1–§3 (Y(s)−P(X(s))=0 on s∈[0,1] per
+segment, VCA + fixed refinement schedule, C1 joint traversal, TB-1 unchanged). LAW-1: no
+held-out *execution* in this task — load survey only; calibration regression (FL-1, PB-1)
+must remain green. Acceptance: 32/32 load_ok paste; ctest 100% + SUCCESS!.
+NUMBERS: 32 held-out; 5 Bézier; 1 empty-ref grazing.
+LEARNED: nothing
+NEXT: C-001-T13 (this packet); on ACCEPT + I-003-T4 — PACKET 48 GATE-P1 re-dispatch.
+
+---
+### JRN-C001-63 · CORRECTION
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_46_GATE-P1 per P6 §2 + §7. Criteria 1–3 COMPLIANT (toolchain,
+build/ctest, --repeat calibration smoke). Criterion 4 COMPLIANT as BLOCKED (P1-A
+infrastructure halt documented with survey table; no manifest — correct per G2).
+Criteria 5–6 N/A (halt before P1-B/C/Law 7). Criterion 7 COMPLIANT (GATE_SUMMARY pasted).
+Criterion 8 COMPLIANT (TR affirms halt, no gate-authorized held-out execution). Criteria
+9–10 COMPLIANT (status, digests, L-16). Verdict: ACCEPT — halt properly executed; not a
+gate FAIL. PM authoring defect owned: GATE-P1 (PACKET 46) did not require a pre-flight
+load survey of all 32 held-out fixtures — T7–T10 validated only calibration JSON shape.
+Durable fix: C-001-T13 acceptance criterion 4 mandates 32/32 load_ok before any future
+gate dispatch. Law-1: diagnostic execution on HO-flat-settle-{1..4} outside I-004 → four
+scenarios poisoned per PREREG §6; I-003-T4 re-mint rides as PACKET 47 step 0.
+NUMBERS: 4/32 load ok at halt; 4 poisoned; 28 loader failures.
+LEARNED: pre-gate load-capability audit on the full held-out corpus shape, not calibration
+fixtures alone.
+NEXT: I-003-T4 + C-001-T13 (this packet).
+
+---
 ### JRN-C001-62 · BLOCKED
 actor: composer-agent · task: GATE-P1 · manifest: n/a
 

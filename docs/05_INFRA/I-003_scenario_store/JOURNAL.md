@@ -1,4 +1,20 @@
 ---
+### JRN-I003-23 · NOTE
+actor: pm-composer · task: I-003-T4 · manifest: n/a
+
+WHAT: I-003-T4 authored (PACKET 47 step 0) — Law-1 re-mint of HO-flat-settle-{1..4}.
+OUT_46 failure survey invoked `bounce-run-scenario` on these four held-out fixtures without
+I-004 gate authorization (JRN-C001-62). PREREG §6: any non-gate execution poisons the
+scenario (retire + re-mint). Re-mint via refsim/CAS at Tier-1 standard with the same
+registered per-cell parameters (flat line × settle, counts 4); same scenario_ids; new
+fixture bytes and manifest sha256s. LAW-1 HARD RULE: no C++ engine binary built/linked/
+invoked. Retired fixture sha256s journaled in the TR for audit.
+NUMBERS: 4 scenarios re-minted; corpus remains 32.
+LEARNED: gate-BLOCKED debugging must not invoke engine binaries on held-out paths — load-only
+surveys suffice.
+NEXT: I-003-T4 step 0 of PACKET 47; then C-001-T13.
+
+---
 ### JRN-I003-22 · NOTE
 actor: pm-fable5-b · task: n/a · manifest: n/a
 
