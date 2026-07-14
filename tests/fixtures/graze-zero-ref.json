@@ -1,0 +1,38 @@
+{
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1"
+    ],
+    "curve_id": "graze-zero-ref-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "TEST-GRAZE",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "1.0416666666666655586339287419597964523020404474605e-20"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "1.0",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance_tier": 1,
+  "reference_events": [],
+  "scenario_id": "graze-zero-ref",
+  "schema_version": "1"
+}

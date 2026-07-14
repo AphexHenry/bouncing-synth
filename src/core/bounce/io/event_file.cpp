@@ -169,13 +169,14 @@ bool write_event_file(const char* path, const char* scenario_path,
   for (int i = 0; i < result.count; ++i) {
     out << event_line(result.events[static_cast<std::size_t>(i)]) << '\n';
   }
-  out.close();
-  if (!out) {
+  out.flush();
+  if (out.fail()) {
     error = "write failed";
     std::error_code ec;
     std::filesystem::remove(temp_path, ec);
     return false;
   }
+  out.close();
 
   std::error_code ec;
   std::filesystem::rename(temp_path, out_path, ec);
@@ -239,17 +240,29 @@ bool finish_event_stream(EventStreamWriter& writer, std::string& error) {
       "{{\"schema\":\"{}\", \"scenario_sha256\":\"{}\", \"engine_events\":{}}}\n", kSchema,
       writer.scenario_sha256, writer.count);
 
-  std::ifstream body(writer.body_temp_path, std::ios::binary);
-  if (!body) {
-    error = "cannot read event body";
-    return false;
+  if (writer.count > 0) {
+    std::ifstream body(writer.body_temp_path, std::ios::binary);
+    if (!body) {
+      error = "cannot read event body";
+      return false;
+    }
+    out << body.rdbuf();
+    if (out.fail()) {
+      error = "write failed";
+      std::error_code ec;
+      std::filesystem::remove(temp_path, ec);
+      return false;
+    }
   }
-  out << body.rdbuf();
-  out.close();
-  if (!out) {
+
+  out.flush();
+  if (out.fail()) {
     error = "write failed";
+    std::error_code ec;
+    std::filesystem::remove(temp_path, ec);
     return false;
   }
+  out.close();
 
   std::error_code ec;
   std::filesystem::remove(writer.body_temp_path, ec);
