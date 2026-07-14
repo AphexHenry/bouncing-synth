@@ -1,4 +1,18 @@
 ---
+### JRN-C001-74 · DONE
+actor: composer-agent · task: C-001-T14 · manifest: n/a
+
+WHAT: C-001-T14 complete DONE: zero-event event-file write fixed in `event_file.cpp`.
+Root cause: `if (!out)` after `ofstream::close()` is true when zero body bytes were merged
+(libstdc++/libc++ failbit on close with no body write). Fix: skip body merge when count==0;
+use `flush()` + `fail()` before close. Doctest round-trip at count=0 (write + streaming);
+`tests/fixtures/graze-zero-ref.json` added; CLI smoke exit=0 events=0. ctest 100% + SUCCESS!.
+LAW-1: no held-out execution.
+NUMBERS: engine_events=0; 54/54 doctest cases; 758 assertions.
+LEARNED: never test stream health via operator bool after close.
+NEXT: PACKET 50 GATE-P1-R2.
+
+---
 ### JRN-C001-73 · CLAIM
 actor: composer-agent · task: C-001-T14 · manifest: n/a
 
