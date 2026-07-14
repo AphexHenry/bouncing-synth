@@ -1,4 +1,19 @@
 ---
+### JRN-C001-70 · BLOCKED
+actor: composer-agent · task: GATE-P1-R1 · manifest: n/a
+
+WHAT: GATE-P1-R1 BLOCKED at P1-A execute (infrastructure). Pre-flight 32/32 load_ok;
+calibration `--repeat 3` smoke ok. `check_p1a.py --execute` halted on scenario 14/32
+(HO-graze-parabola-1): simulation yields 0 events (empty reference per grazing rule) but
+`bounce-run-scenario` returns `write failed` from `finish_event_stream` (zero-event output
+path). 13 prior scenarios produced event files; ACCESS_LOG 24 lines (two partial attempts).
+P1-B/P1-C/Law 7 not executed (halt per G2). Not a gate FAIL.
+NUMBERS: 32/32 load_ok; 13/32 P1-A event files; 0 manifests; ACCESS_LOG 24 lines.
+LEARNED: loader unblock (T13) is necessary but not sufficient — zero-event event-file write
+must be verified before gate contact.
+NEXT: PM harness fix packet → GATE-P1-R2 re-dispatch.
+
+---
 ### JRN-C001-69 · CLAIM
 actor: composer-agent · task: GATE-P1-R1 · manifest: n/a
 

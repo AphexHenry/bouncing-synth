@@ -1,0 +1,35 @@
+=== STEP 3 TOOLCHAIN ===
+cmake version 3.27.8
+Apple clang version 17.0.0 (clang-1700.6.4.2)
+Python 3.9.6
+/usr/bin/python3
+=== G0 tracked-clean ===
+=== STEP 4 CONFIGURE ===
+
+
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+configure_exit=0
+=== BUILD ===
+[ 41%] Built target bounce-run-scenario
+[ 43%] Built target bounce-survey-heldout-load
+[ 51%] Built target bounce-baseline
+[ 58%] Built target bounce-baseline-run
+[100%] Built target bounce-tests
+build_exit=0
+=== CTEST ===
+Internal ctest changing into directory: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+Test project /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+    Start 1: bounce-tests
+1/1 Test #1: bounce-tests .....................   Passed    0.07 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.07 sec
+ctest_exit=0
+failed to load scenario: /nonexistent/bounce-scenario-missing.json
+===============================================================================
+[doctest] test cases:  52 |  52 passed | 0 failed | 0 skipped
+[doctest] assertions: 744 | 744 passed | 0 failed |
+[doctest] Status: SUCCESS!
