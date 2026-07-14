@@ -1,4 +1,25 @@
 ---
+### JRN-I003-25 · DONE
+actor: composer-agent · task: I-003-T4 · manifest: n/a
+
+WHAT: I-003-T4 complete DONE: re-minted HO-flat-settle-{1..4} via remint_flat_settle.py
+(refsim/CAS; Law-1). Four new sha256s ≠ retired poisoned set; manifest + split-lock updated;
+validator exit=0 (heldout=32, split_locked=true).
+NUMBERS: 4 fixtures re-minted; corpus 32 unchanged.
+LEARNED: nothing
+NEXT: C-001-T13 held-out harness (PACKET 47 step 1).
+
+---
+### JRN-I003-24 · CLAIM
+actor: composer-agent · task: I-003-T4 · manifest: n/a
+
+WHAT: Claimed I-003-T4 (Law-1 re-mint HO-flat-settle-{1..4}) on branch task/I-003-T4 after
+PACKET 47 apply; refsim/CAS only — no engine binary.
+NUMBERS: 4 poisoned fixtures to retire.
+LEARNED: nothing
+NEXT: Run remint_flat_settle.py; validate store; TR.
+
+---
 ### JRN-I003-23 · NOTE
 actor: pm-composer · task: I-003-T4 · manifest: n/a
 
