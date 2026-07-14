@@ -1,4 +1,14 @@
 ---
+### JRN-I003-26 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: OUT_47 review — I-003-T4 ACCEPT (JRN-C001-67). Law-1 re-mint of HO-flat-settle-{1..4}
+complete; four retired sha256s superseded; corpus remains 32 locked. I-003-T4 VERIFIED.
+NUMBERS: 4 fixtures re-minted.
+LEARNED: nothing
+NEXT: GATE-P1-R1 (PACKET 48).
+
+---
 ### JRN-I003-25 · DONE
 actor: composer-agent · task: I-003-T4 · manifest: n/a
 

@@ -473,3 +473,46 @@ Acceptance criteria (binary, one artifact each):
 5. TR affirms LAW-1: no held-out engine execution; load survey only.
 6. Step 7: byte-verbatim git status; L-13 untracked surface.
 7. FILE DIGESTS complete per L-15; TR pasted verbatim in REPORT (L-16).
+
+## TASK GATE-P1-R1: Phase-1 confirmatory gate runs — execution-only re-dispatch
+depends_on: C-001-T13 VERIFIED (JRN-C001-66); I-003-T4 VERIFIED (JRN-I003-25); GATE-P1
+construction delivered (OUT_46 commit 3451533 — checkers, studies, --repeat); PREREG v1.3;
+TUNE-LAW7.json (frozen); I-003 corpus (32, locked, post-T4 sha256s); I-004 (VERIFIED)
+objective: Execute the registered Phase-1 gates in order with halt-on-failure and produce
+verdict-bearing evidence. IDENTICAL gate rules to TASK GATE-P1 in this brief; deltas below
+only. TASK COMPLIANCE ≠ GATE VERDICTS.
+
+DELTAS FROM GATE-P1 (binding):
+D0. CONSTRUCTION SCOPE: **none.** Do not modify src/, tools/gaterunner checkers (except
+    manifest output paths if required by runner), study specs, data/fixtures, or tune files.
+    If checkers/studies/--repeat are absent at branch tip, merge from task/GATE-P1 (OUT_46
+    lineage) — do not reauthor.
+D1. PRE-FLIGHT (before step 6 / first held-out gate run): run
+    `./build/default/bounce-survey-heldout-load` (or equivalent); paste full output showing
+    `load_ok 32 / 32`. If load_ok < 32, STOP → BLOCKED.
+D2. CORPUS: MANIFEST.json includes I-003-T4 re-mint sha256s for HO-flat-settle-{1..4}
+    (JRN-I003-25). Runner must resolve current manifest sha256s — no hardcoded pre-T4
+    digests.
+D3. STEP 5: re-run `--repeat 3` calibration smoke only (construction already committed);
+    paste `repeat-identity ok N=3`. No new construction commits before G0 clean tree.
+
+All other GATE-P1 text applies verbatim: G0–G2, P1-A through Law 7 definitions, steps 3–12,
+acceptance criteria 1–10, halt-on-failure, gate-authorized logging, dirty=false manifests.
+
+Steps (replace GATE-P1 steps 3–12 numbering for this dispatch):
+3. Toolchain record; G0 tracked-clean status paste.
+4. Configure + build; ctest; pastes; exit=0; 100% + SUCCESS!.
+5. D1 pre-flight load survey paste (32/32).
+6. D3 `--repeat 3` calibration smoke paste.
+7. Execute P1-A per GATE-P1 rules; paste checker report (tables + verdict).
+8. If P1-A PASS: execute P1-B; paste (i)(ii)(iii) evidence + verdict. Else halt per G2.
+9. If P1-B PASS: execute P1-C; paste per-fixture table + verdict. Else halt.
+10. If P1-C PASS: execute Law 7; paste comparison table, shortfall list, drift table,
+    both primary arms, verdict. Else halt.
+11. G1 access-log reconciliation paste. GATE_SUMMARY.md pasted verbatim.
+12. Byte-verbatim `git status --porcelain --branch`.
+13. TR + OUT per OUT-REQUIREMENTS below.
+
+Acceptance criteria: identical to TASK GATE-P1 criteria 1–10 with step numbers shifted by
+the D1/D3 insertions above (criterion 3 = D1 survey; criterion 4 = D3 smoke; criterion 5
+= P1-A report; etc.).

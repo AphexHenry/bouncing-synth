@@ -1,4 +1,54 @@
 ---
+### JRN-C001-68 · NOTE
+actor: pm-composer · task: GATE-P1-R1 · manifest: n/a
+
+WHAT: GATE-P1-R1 authored (PACKET 48) — execution-only re-dispatch after harness unblock
+(OUT_47). Same registered gates and halt order as GATE-P1 (PREREG v1.3, v1.2 B3). No
+construction scope: checkers, study specs, --repeat from OUT_46 must be at tip (merge
+task/GATE-P1 if needed). Pre-flight: bounce-survey-heldout-load 32/32 before first gate
+run. Corpus: HO-flat-settle-{1..4} carry I-003-T4 re-mint sha256s (JRN-I003-25). G0/G1/G2
+absolute. OUT_48 is the Phase-1 gate call or falsification record — both with numbers.
+NUMBERS: 32 scenarios; P1-A window 200/12 quasi-chaotic; P1-C 9×10^4; Law 7 margin 100×.
+LEARNED: nothing
+NEXT: OUT_48 review → Director gate call (PASS) or falsification record (FAIL).
+
+---
+### JRN-C001-67 · NOTE
+actor: pm-composer · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_47 (I-003-T4 + C-001-T13) per P6 §2.
+
+I-003-T4 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | venv + mpmath 1.3.0 pasted | COMPLIANT |
+| 2 | generator exit=0; four fixtures overwritten | COMPLIANT |
+| 3 | four new sha256s ≠ retired §2 set | COMPLIANT |
+| 4 | validator exit=0; heldout=32; locked | COMPLIANT |
+| 5 | TR LAW-1 + retired sha256 list | COMPLIANT |
+| 6 | byte-verbatim git status | COMPLIANT |
+
+C-001-T13 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain pasted | COMPLIANT |
+| 2 | configure + build tails; exit=0 | COMPLIANT |
+| 3 | ctest 100% + doctest SUCCESS | COMPLIANT |
+| 4 | 32/32 load_ok survey pasted | COMPLIANT |
+| 5 | TR LAW-1 (load survey only) | COMPLIANT |
+| 6 | byte-verbatim git status | COMPLIANT |
+| 7 | FILE DIGESTS full sha256s; TR in REPORT (L-16) | COMPLIANT |
+
+Verdict: ACCEPT — I-003-T4 VERIFIED; C-001-T13 VERIFIED. Harness unblock complete.
+Forward finding: validator calibration_scenarios=3 vs historical 2 — exit=0, non-blocking;
+trace at next I-003 maintenance. Evidence nit (owned): C-001-T13 criterion 2 did not name
+four build targets explicitly; ctest 52-case graph implies full build — future OUTs paste
+target list per PACKET 47 criterion 2.
+NUMBERS: 32/32 load_ok; 4 re-minted; 52 doctest cases.
+LEARNED: harness verification and gate execution are separate acceptance surfaces.
+NEXT: GATE-P1-R1 (this packet).
+
+---
 ### JRN-C001-66 · DONE
 actor: composer-agent · task: C-001-T13 · manifest: n/a
 
