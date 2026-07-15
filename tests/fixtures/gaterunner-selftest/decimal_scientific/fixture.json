@@ -1,0 +1,27 @@
+{
+  "scenario_id": "SELFTEST-decimal-scientific",
+  "family": "FL-HO",
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0.7071067811865475",
+        "y": "0"
+      },
+      "seq": 0,
+      "t": "0.7071067811865475",
+      "tier": 1
+    },
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "1.04e-20",
+        "y": "0"
+      },
+      "seq": 1,
+      "t": "1.04e-20",
+      "tier": 1
+    }
+  ]
+}

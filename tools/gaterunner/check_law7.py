@@ -7,12 +7,14 @@ import hashlib
 import json
 import os
 import sys
+from fractions import Fraction
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(REPO_ROOT, "tools", "gaterunner"))
 
 from check_p1a import execute_study, parse_family_regime, read_engine_events  # noqa: E402
 from check_p1c import interval_vector, period_event_count  # noqa: E402
+from ref_parse import compare_event_deltas  # noqa: E402
 
 MANIFESTS_DIR = os.path.join(REPO_ROOT, "tools", "gaterunner", "manifests")
 EVENTS_EXACT = os.path.join(REPO_ROOT, "tools", "gaterunner", "events", "LAW7-EXACT")
@@ -40,13 +42,6 @@ def load_json(path: str):
         return json.load(handle)
 
 
-def hex_or_decimal(value: str) -> float:
-    text = value.strip()
-    if "x" in text.lower() and text.lower().startswith(("0x", "-0x", "+0x")):
-        return float.fromhex(text)
-    return float(text)
-
-
 def exact_count_from_p1a(scenario_id: str) -> int:
     path = os.path.join(REPO_ROOT, "tools", "gaterunner", "events", "P1-A", scenario_id + ".jsonl")
     return len(read_engine_events(path))
@@ -54,12 +49,11 @@ def exact_count_from_p1a(scenario_id: str) -> int:
 
 def worst_abs_dt(events: list[dict], refs: list[dict], k: int) -> float:
     n = min(k, len(events), len(refs))
-    worst = 0.0
+    worst = Fraction(0)
     for i in range(n):
-        rt = hex_or_decimal(refs[i]["t"])
-        et = float(events[i]["t"])
-        worst = max(worst, abs(et - rt))
-    return worst
+        dt, _ = compare_event_deltas(refs[i], events[i])
+        worst = max(worst, dt)
+    return float(worst)
 
 
 def first_drift_period(path: str, period_events: int) -> int:

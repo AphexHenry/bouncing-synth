@@ -5,23 +5,26 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import math
 import os
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Any
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(REPO_ROOT, "tools", "gaterunner"))
 
 import gaterunner  # noqa: E402
+from ref_parse import (  # noqa: E402
+    TOL_S as EXACT_TOL_S,
+    TOL_T as EXACT_TOL_T,
+    compare_event_deltas,
+)
 
 HELDOUT_DIR = os.path.join(REPO_ROOT, "data", "scenarios", "heldout")
 EVENTS_DIR = os.path.join(REPO_ROOT, "tools", "gaterunner", "events")
 MANIFESTS_DIR = os.path.join(REPO_ROOT, "tools", "gaterunner", "manifests")
-TOL_T = 1e-9
-TOL_S = 1e-9
 QUASI_WINDOW = 12
 EXPLORATORY_END = 25
 
@@ -103,11 +106,37 @@ def read_engine_events(path: str) -> list[dict[str, Any]]:
     return events
 
 
-def hex_or_decimal(value: str) -> float:
-    text = value.strip()
-    if "x" in text.lower():
-        return float.fromhex(text) if text.lower().startswith(("0x", "-0x", "+0x")) else float(text)
-    return float(text)
+def compare_reference_agreement(
+    refs: list[dict[str, Any]],
+    eng: list[dict[str, Any]],
+    window: int | None = None,
+) -> tuple[bool, float, float]:
+    """Compare reference events to engine events using exact rational tolerances."""
+    if len(refs) == 0 and len(eng) == 0:
+        return True, 0.0, 0.0
+
+    if window is None:
+        window = min(200, len(refs) if refs else len(eng), len(eng))
+
+    worst_dt = Fraction(0)
+    worst_ds = Fraction(0)
+    ok = True
+    if len(refs) < window or len(eng) < window:
+        ok = False
+    else:
+        for i in range(window):
+            ref = refs[i]
+            ev = eng[i]
+            if int(ref["ball_id"]) != int(ev.get("ball_id", -1)):
+                ok = False
+            if int(ref["seq"]) != int(ev.get("seq", -1)):
+                ok = False
+            dt, ds = compare_event_deltas(ref, ev)
+            worst_dt = max(worst_dt, dt)
+            worst_ds = max(worst_ds, ds)
+            if dt > EXACT_TOL_T or ds > EXACT_TOL_S:
+                ok = False
+    return ok, float(worst_dt), float(worst_ds)
 
 
 def compare_scenario(scenario_id: str) -> tuple[ScenarioResult, dict[str, Any] | None]:
@@ -130,29 +159,7 @@ def compare_scenario(scenario_id: str) -> tuple[ScenarioResult, dict[str, Any] |
         )
 
     window = confirmatory_window(scenario_id, len(refs), len(eng))
-    worst_dt = 0.0
-    worst_ds = 0.0
-    ok = True
-    if len(refs) < window or len(eng) < window:
-        ok = False
-    else:
-        for i in range(window):
-            ref = refs[i]
-            ev = eng[i]
-            if int(ref["ball_id"]) != int(ev.get("ball_id", -1)):
-                ok = False
-            if int(ref["seq"]) != int(ev.get("seq", -1)):
-                ok = False
-            rt = hex_or_decimal(ref["t"])
-            et = float(ev.get("t", 0.0))
-            rs = hex_or_decimal(ref["contact"]["x"])
-            es = float(ev.get("s", ev.get("contact", {}).get("x", 0.0)))
-            dt = abs(et - rt)
-            ds = abs(es - rs)
-            worst_dt = max(worst_dt, dt)
-            worst_ds = max(worst_ds, ds)
-            if dt > TOL_T or ds > TOL_S:
-                ok = False
+    ok, worst_dt, worst_ds = compare_reference_agreement(refs, eng, window)
 
     exploratory = None
     if scenario_id in QUASI_IDS:
@@ -160,15 +167,12 @@ def compare_scenario(scenario_id: str) -> tuple[ScenarioResult, dict[str, Any] |
         for i in range(QUASI_WINDOW, min(EXPLORATORY_END, len(refs), len(eng))):
             ref = refs[i]
             ev = eng[i]
-            rt = hex_or_decimal(ref["t"])
-            et = float(ev.get("t", 0.0))
-            rs = hex_or_decimal(ref["contact"]["x"])
-            es = float(ev.get("s", 0.0))
+            dt, ds = compare_event_deltas(ref, ev)
             exploratory["rows"].append(
                 {
                     "event": i,
-                    "abs_dt": abs(et - rt),
-                    "abs_ds": abs(es - rs),
+                    "abs_dt": float(dt),
+                    "abs_ds": float(ds),
                 }
             )
 
