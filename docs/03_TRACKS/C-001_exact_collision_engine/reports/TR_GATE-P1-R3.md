@@ -360,16 +360,13 @@ Halt point: **P1-A (FAIL — reference agreement over tolerance)**
 
 ```
 ## task/GATE-P1-R3
- M data/scenarios/heldout/ACCESS_LOG.jsonl
 ?? docs/03_TRACKS/C-001_exact_collision_engine/reports/gate_r3_evidence/
-?? tools/gaterunner/events/
-?? tools/gaterunner/manifests/P1-A.json
 ```
 
 D8 disposition (L-13 v2):
 
 - Post-CLAIM untracked within agent-writable surface limited to this dispatch's files:
-  `gate_r3_evidence/` (evidence scratch), `tools/gaterunner/events/P1-A/` (32 event files),
-  `tools/gaterunner/manifests/P1-A.json` (P1-A manifest) — all created by this dispatch.
+  `gate_r3_evidence/` (evidence scratch) only. Gate outputs (`tools/gaterunner/events/P1-A/`,
+  `tools/gaterunner/manifests/P1-A.json`) committed in `b426bbd`.
 - Inherited `gate_r2_evidence/`: committed at step 4 (`9d48668`), disposition **commit**.
 - `inbox/PACKET_*.md` and `__pycache__/` outside this task's write surface; not asserted.
