@@ -1,0 +1,17 @@
+=== STEP 9: P1-A execute (retry after D5 commit) ===
+gate-exec-ok study=P1-A manifest=/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/manifests/P1-A.json
+p1a execute exit=0
+=== STEP 9: P1-A check report ===
+Traceback (most recent call last):
+  File "/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/check_p1a.py", line 369, in <module>
+    sys.exit(main())
+  File "/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/check_p1a.py", line 363, in main
+    return print_report(args.manifest)
+  File "/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/check_p1a.py", line 292, in print_report
+    row, exploratory = compare_scenario(entry["scenario_id"])
+  File "/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/check_p1a.py", line 146, in compare_scenario
+    rt = hex_or_decimal(ref["t"])
+  File "/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/check_p1a.py", line 110, in hex_or_decimal
+    return float(text)
+ValueError: could not convert string to float: '5/2'
+p1a check exit=1

@@ -1,0 +1,2 @@
+=== STEP 9: D6 pre-run ACCESS_LOG line count ===
+      24 data/scenarios/heldout/ACCESS_LOG.jsonl

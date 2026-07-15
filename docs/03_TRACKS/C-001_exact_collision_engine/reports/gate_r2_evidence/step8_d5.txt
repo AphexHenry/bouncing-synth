@@ -1,0 +1,6 @@
+=== STEP 8: D5 stale-artifact removal ===
+Command: rm -rf tools/gaterunner/events/*
+=== post-removal listing ===
+total 0
+drwxr-xr-x@  2 baptistebohelay  staff   64 Jul 15 11:00 .
+drwxr-xr-x@ 14 baptistebohelay  staff  448 Jul 13 22:54 ..

@@ -1,0 +1,60 @@
+=== STEP 3 (re-paste): G0 tracked-clean ===
+=== STEP 4: configure ===
+CMake Deprecation Warning at build/default/_deps/doctest-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Release"
+
+
+-- Configuring done (0.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+configure exit=0
+=== STEP 4: build ===
+[ 51%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_bezier_curve.cpp.o
+[ 53%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_double_double.cpp.o
+[ 56%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_ballistic.cpp.o
+[ 58%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_vca.cpp.o
+[ 61%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_collision_sim.cpp.o
+[ 64%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_calibration_scenario.cpp.o
+[ 66%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_event_file.cpp.o
+[ 69%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_capacity.cpp.o
+[ 71%] Building CXX object CMakeFiles/bounce-tests.dir/tests/test_baseline_sim.cpp.o
+[ 74%] Building CXX object CMakeFiles/bounce-tests.dir/src/tools/run_scenario/run_scenario.cpp.o
+[ 76%] Building CXX object CMakeFiles/bounce-tests.dir/src/tools/run_baseline/run_baseline.cpp.o
+[ 79%] Linking CXX executable bounce-tests
+ld: warning: ignoring duplicate libraries: 'libbounce-core.a'
+[ 79%] Built target bounce-tests
+[ 82%] Building CXX object CMakeFiles/bounce-run-scenario.dir/src/tools/run_scenario/main.cpp.o
+[ 84%] Building CXX object CMakeFiles/bounce-run-scenario.dir/src/tools/run_scenario/run_scenario.cpp.o
+[ 87%] Linking CXX executable bounce-run-scenario
+[ 87%] Built target bounce-run-scenario
+[ 89%] Building CXX object CMakeFiles/bounce-baseline-run.dir/src/tools/run_baseline/main.cpp.o
+[ 92%] Building CXX object CMakeFiles/bounce-baseline-run.dir/src/tools/run_baseline/run_baseline.cpp.o
+[ 94%] Linking CXX executable bounce-baseline-run
+[ 94%] Built target bounce-baseline-run
+[ 97%] Building CXX object CMakeFiles/bounce-survey-heldout-load.dir/src/tools/survey_load/survey_heldout_load.cpp.o
+[100%] Linking CXX executable bounce-survey-heldout-load
+[100%] Built target bounce-survey-heldout-load
+build exit=0
+=== STEP 4: ctest ===
+Internal ctest changing into directory: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+Test project /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+    Start 1: bounce-tests
+1/1 Test #1: bounce-tests .....................   Passed    0.42 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.43 sec
+ctest exit=0
+failed to load scenario: /nonexistent/bounce-scenario-missing.json
+===============================================================================
+[doctest] test cases:  54 |  54 passed | 0 failed | 0 skipped
+[doctest] assertions: 758 | 758 passed | 0 failed |
+[doctest] Status: SUCCESS!
