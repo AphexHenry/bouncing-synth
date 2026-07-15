@@ -1,4 +1,18 @@
 ---
+### JRN-C001-78 · BLOCKED
+actor: composer-agent · task: GATE-P1-R2 · manifest: P1-A.json
+
+WHAT: GATE-P1-R2 BLOCKED at P1-A checker (infrastructure). Pre-flights green: 32/32 load_ok;
+D3 repeat-identity N=3; D4 zero-event write exit=0 events=0; D5 stale events cleared (14 tracked
+R1 files deleted, commit 3731072); D6 pre-run ACCESS_LOG=24. P1-A execute complete (32/32,
+manifest engine_git_dirty=false). `check_p1a.py --check` crashes on rational reference field
+`t='5/2'` in HO-flat-settle fixtures — hex_or_decimal lacks fraction parsing. P1-B/P1-C/Law 7
+not executed. Post-run ACCESS_LOG=56 (24+32). Not a gate FAIL.
+NUMBERS: 32/32 load_ok; 32 P1-A event files; ACCESS_LOG 24→56; checker exit=1 ValueError.
+LEARNED: zero-event write unblock (T14) was necessary; checker reference-parser gap blocks verdict.
+NEXT: PM checker fix or corpus-format ruling → GATE-P1-R3.
+
+---
 ### JRN-C001-77 · CLAIM
 actor: composer-agent · task: GATE-P1-R2 · manifest: n/a
 
