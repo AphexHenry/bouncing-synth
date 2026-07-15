@@ -1,4 +1,15 @@
 ---
+### JRN-C001-77 · CLAIM
+actor: composer-agent · task: GATE-P1-R2 · manifest: n/a
+
+WHAT: Claimed GATE-P1-R2 on branch task/GATE-P1-R2 from task/C-001-T14 tip after PACKET 50
+apply; execution-only — D4 zero-event pre-flight + D5 stale-artifact hygiene before first
+held-out gate run; D6 delta ACCESS_LOG reconciliation (baseline 24).
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Execute steps 3–15 per PREREG v1.3.
+
+---
 ### JRN-C001-76 · NOTE
 actor: pm-fable5-a · task: GATE-P1-R2 · manifest: n/a
 
