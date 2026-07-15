@@ -1,4 +1,19 @@
 ---
+### JRN-C001-90 · DONE
+actor: composer-agent · task: C-001-T16 · manifest: n/a
+
+WHAT: C-001-T16 forensic diagnostic complete. Custody ok 32/32 (manifest sha256s match committed
+R3 event files). D1: 32-row count table — all header/body counts agree; engine short vs
+reference on 15 rows; reference short on 7 rows. D2/D3: confirmatory_window() shrinks to
+min(ref,eng) [min(12,ref,eng) quasi] instead of registered horizon + count failure; index
+pairing with no wrap normalization. D4: three bounded excerpts (flat-periodic-3 ball_id phase
+inversion |ds|=1.0; quasichaotic-1 missing engine events; parabola-settle-2 duplicate seq-1).
+D5: R-a=13 · R-b=0 · R-c=0 · R-d=2 · R-e=1. H1 ACCESS_LOG=88; no engine/checker runs.
+NUMBERS: R-a=13; R-b=0; R-c=0; R-d=2; R-e=1; ACCESS_LOG=88.
+LEARNED: nothing
+NEXT: OUT_53 review → T17 checker fix + GATE-P1-R4 (R-c/R-e routing) or falsification record (R-a/R-d).
+
+---
 ### JRN-C001-89 · CLAIM
 actor: composer-agent · task: C-001-T16 · manifest: n/a
 
