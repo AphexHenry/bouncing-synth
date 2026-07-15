@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-a | trigger: OUT_50 BLOCKED processed (ACCEPT halt); C-001-T15 dispatched; PACKET 51
+last_updated_by: pm-fable5-a | trigger: OUT_51 AMEND+RETURN (criterion 7, PM-owned; repair rides R3 step 4); GATE-P1-R3 dispatched; PACKET 52
 
 ```
 doc_id:   STATE
@@ -10,19 +10,19 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core, AT THE GATE (third infrastructure halt, checker-side).
-GATE-P1-R2 halted at P1-A --check: `check_p1a.py` cannot parse exact rational reference
-fields (`"t": "5/2"`, Tier-1 by design) — execute itself completed 32/32 gate-authorized,
-engine_git_dirty=false, no verdict produced. Ruling: locked corpus stays exact; the judge
-is extended (C-001-T15: shared exact reference parser + checker shape self-test, L-17).
-GATE-P1-R3 pre-staged as PACKET 52 with new pre-flight D7 (checker self-test) and the D1
-full-survey remediation (L-15 v2, JRN-C001-79). On eventual gate PASS: Phase-1 gate call;
-Phase 2 opens. On FAIL: falsification record.
+Phase 1 — Falsifiable core, AT THE GATE (third execution re-dispatch in flight). Checker
+reference parsing FIXED and self-tested (C-001-T15: exact Fraction comparison path, 6-vector
+shape self-test incl. fail-loudness proof; VERIFIED attaches at R3 step-4 repair,
+JRN-C001-83). Pre-flight now covers every failure mode to date: held-out load 32/32 (D1,
+full-table remediation), zero-event write (D4), repeat-identity (D3), and the judge itself
+(D7 self-test, L-17). GATE-P1-R3 (PACKET 52) executes P1-A → P1-B → P1-C → Law 7 per PREREG
+v1.3 with halt-on-failure. OUT_52 is the Phase-1 gate call input (PASS → Director gate call,
+Phase 2 opens) or the falsification record — both with numbers.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | PREREGISTERED (v1.3) — GATE BLOCKED (checker reference parse) | T15 → GATE-P1-R3 | OUT_51 |
+| C-001 Exact collision engine | PREREGISTERED (v1.3) — GATE-P1-R3 IN FLIGHT | gate verdicts → Phase-1 gate call | OUT_52 |
 | C-002 Curve library | BRIEFED | T3 prereg | Phase-1 gate call |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -40,26 +40,27 @@ C-000 Phase-0 scoping: CLOSED.
 
 ## Open decisions (Director)
 1. GitHub hosting + CI for I-007 — ESCALATED.
-2. Protocol amendment bundle (P6 §4.6, §7.4, §7.5; P5 §2 ledger/courier; NEW: P6 §4
-   judge-side pre-flight shape coverage, per L-17/JRN-C001-79) — non-blocking.
+2. Protocol amendment bundle (P6 §4.6, §7.4, §7.5; P5 §2 ledger/courier; P6 §4 judge-side
+   pre-flight shape coverage per L-17; P6 §4 delta-scoped workspace criteria per L-13 v2)
+   — non-blocking.
 3. GPLv3 -only vs -or-later — Phase 3.
 
 ## Known issues
-Checker rational-reference parse defect (OUT_50) — fix in flight (C-001-T15). Baseline CLI
-write failure at N≥512 (outside gate path; tune of record N=128; OUT_45). Validator
-calibration_scenarios=3 vs historical 2 (OUT_47 forward finding; trace at next I-003
-maintenance). Zero-event write (OUT_48): RESOLVED (C-001-T14).
+Baseline CLI write failure at N≥512 (outside gate path; tune of record N=128; OUT_45).
+Validator calibration_scenarios=3 vs historical 2 (OUT_47 forward finding; trace at next
+I-003 maintenance). Checker rational-parse defect (OUT_50): RESOLVED (C-001-T15).
+Zero-event write (OUT_48): RESOLVED (C-001-T14).
 
 ## Recent review verdicts
-OUT_50/GATE-P1-R2: ACCEPT halt — infrastructure BLOCKED at checker (JRN-C001-79); criterion
-3 to L-15 v2 remediation (full D1 survey re-derived in R3).
+OUT_51/C-001-T15: AMEND + RETURN scoped to criterion 7 (PM-owned defective criterion;
+L-13 v2; repair = R3 step 4); capability evidence complete (JRN-C001-83).
+OUT_50/GATE-P1-R2: ACCEPT halt — infrastructure BLOCKED at checker (JRN-C001-79).
 OUT_49/C-001-T14: ACCEPT — VERIFIED (JRN-C001-75).
-OUT_48/GATE-P1-R1: ACCEPT halt — infrastructure BLOCKED (JRN-C001-71).
 
 ## Pointers
-Branch rule: task/C-001-T15 from task/GATE-P1-R2 tip (stacked, JRN-I002-6); Director merges
+Branch rule: task/GATE-P1-R3 from task/C-001-T15 tip (stacked, JRN-I002-6); Director merges
 to main remain batched non-blocking housekeeping. Gate governance: PREREGISTRATION.md v1.3;
-TUNE-LAW7.json by sha256. ACCESS_LOG baseline: 56 lines (24 R1 + 32 R2, all gate-authorized).
-R2 P1-A artifacts (32 event files + manifest) are valid but verdict-free; R3 re-executes
-fresh at its own tip. GATE-P1-R3: PACKET 52 (pre-staged: D7 checker self-test pre-flight;
-D1 full-table paste, elision forbidden; D6 baseline 56).
+TUNE-LAW7.json by sha256. ACCESS_LOG baseline: 56 (24 R1 + 32 R2, all gate-authorized). R2
+gate outputs (events + P1-A manifest) removed at R3 step 4; gate_r2_evidence/ committed as
+R2 evidence of record at R3 step 4 (OUT_51 criterion-7 repair). Workspace-state criteria:
+L-13 v2 delta-scoped text of record (JRN-C001-83).

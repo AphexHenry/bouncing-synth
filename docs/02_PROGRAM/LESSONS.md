@@ -121,3 +121,16 @@ same-class halts — OUT_46 (loader vs held-out fixture shapes, JRN-C001-63), OU
 (zero-event write shape, JRN-C001-71), OUT_50 (checker vs rational reference fields,
 JRN-C001-79); the third occurrence triggered this entry per P6 §6.3, with a P6 §4 amendment
 proposal riding the open-decision-2 bundle.
+
+L-13 v2 (refines L-13; origin OUT_51/JRN-C001-83): workspace-cleanliness criteria assert
+only the untracked DELTA a dispatch introduces — entries within the agent-writable surface
+that first appear after the dispatch's CLAIM commit must be limited to files the task
+creates pre-commit. The absolute untracked state is pasted byte-verbatim for the record but
+never asserted: inter-dispatch residue (a prior dispatch's post-status scratch, evidence
+directories, caches) makes absolute assertions over the surface unattainable by the current
+agent, exactly as courier artifacts did outside it (L-13). Pre-existing untracked entries
+within the surface are identified as inherited with a stated disposition (commit or delete)
+executed in this or the next packet — never silently tolerated, so residue cannot
+accumulate. Origin: OUT_51, where inherited docs/.../reports/gate_r2_evidence/ (created by
+the R2 dispatch after its own status paste) rendered T15's criterion 7 unsatisfiable;
+fourth instance of the workspace-state authoring class (L-09 → L-11 → L-13 → this).

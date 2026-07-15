@@ -1,4 +1,62 @@
 ---
+### JRN-C001-84 · NOTE
+actor: pm-fable5-a · task: GATE-P1-R3 · manifest: n/a
+
+WHAT: GATE-P1-R3 authored (PACKET 52) — third execution-only re-dispatch after checker
+unblock (C-001-T15, OUT_51). Registered gates, order, halt rules unchanged (PREREG v1.3;
+v1.2 B3). Deltas over GATE-P1-R2: D7 checker shape self-test as pre-flight (L-17 — full
+per-vector table incl. expected-fail ok, exit=0, before first held-out contact); step 4
+carries the OUT_51 criterion-7 repair (gate_r2_evidence/ listed, identified as inherited,
+committed as R2 evidence of record mirroring gate_r1_evidence/) plus D5 stale-output
+hygiene with mechanics determined by observed tracked/untracked state (JRN-C001-79 durable
+fix — the packet asserts no unverifiable workspace facts); D1 remediation binding (full
+32-line survey paste, elision forbidden, per JRN-C001-79 L-15 v2 ruling); D6 baseline 56
+with BLOCK-on-mismatch; status criterion per L-13 v2 (assert the untracked delta introduced
+after CLAIM; paste absolute state; identify inherited entries with disposition). Branch
+task/GATE-P1-R3 from task/C-001-T15 tip.
+NUMBERS: 32 scenarios; P1-A window min(200, settle) / 12 quasi-chaotic; P1-B nuisance
+100+10+2; P1-C 9 fixtures × 10^4 periods; Law 7 margin 100×, tune dt=5e-4 N=128; ACCESS_LOG
+baseline 56; 6 self-test vectors.
+LEARNED: nothing
+NEXT: OUT_52 review → Director Phase-1 gate call (PASS) or falsification record (FAIL).
+
+---
+### JRN-C001-83 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_51_C-001-T15 per P6 §2.
+
+C-001-T15 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain + python path pasted | COMPLIANT |
+| 2 | diff-stat confined to tools/gaterunner/ + tests/fixtures/gaterunner-selftest/ | COMPLIANT (16 files, +314/−49, confined) |
+| 3 | configure/build/ctest/doctest; 100% + SUCCESS!; exit=0 | COMPLIANT |
+| 4 | self-test table: 5/2 vector, zero-event vector, expected-fail ok, exit=0 | COMPLIANT (6 vectors; over-tolerance 2e-9 correctly failed; within-tolerance 1e-10 passed; decimal/scientific representation gap 3.8e-17, 7+ orders inside tolerance) |
+| 5 | sibling audit grep + four dispositions | COMPLIANT (p1a/law7 routed; p1b/p1c no reference reads) |
+| 6 | TR affirms spec §5 (no held-out execution; no P1-A --check; surface confined) | COMPLIANT |
+| 7 | byte-verbatim status; untracked within surface limited to this task's files (L-13) | DEFECTIVE CRITERION — status shows inherited untracked docs/.../reports/gate_r2_evidence/ (R2 evidence scratch created after OUT_50's step-14 status, invisible to that review by construction); the T15 agent could neither prevent nor remove it (outside write scope); a criterion sound work cannot satisfy is defective (P6 §4.3/§2.4) |
+| 8 | FILE DIGESTS incl. applied brain files; TR verbatim (L-16) | COMPLIANT (21 rows, full sha256s) |
+
+Verdict: AMEND + RETURN per P6 §2.4, scoped to criterion 7. Corrected criterion text (of
+record, applies to this repair and all future dispatches): "Byte-verbatim git status pasted
+in full. Untracked entries within the agent-writable surface that FIRST APPEAR after this
+dispatch's CLAIM commit are limited to files this task creates pre-commit. Pre-existing
+untracked entries within the surface are identified as inherited, with a stated disposition
+(commit or delete) executed in this or the next packet — never silently tolerated." Repair
+(near-zero, folded as GATE-P1-R3 step 4): list gate_r2_evidence/, affirm it predates the
+T15 CLAIM, and commit it under reports/ as R2 evidence of record (mirroring committed
+gate_r1_evidence/). PM error owned: fourth program instance of the workspace-state
+authoring class (L-09, L-11, L-13 lineage) — L-13 v2 minted this packet (delta-scoped
+assertion replaces absolute assertion); the P6 §4 amendment already riding open decision 2
+extends to cover it. C-001-T15 status: capability evidence complete and compliant; VERIFIED
+attaches on step-4 repair; D7 additionally re-proves the checkers at the gate tip.
+NUMBERS: 7/8 criteria compliant; 1 defective (PM-owned); 6 self-test vectors green.
+LEARNED: absolute workspace-state assertions fail on inter-dispatch residue by construction;
+assert the delta a dispatch introduces, paste the absolute state for the record.
+NEXT: GATE-P1-R3 (this packet) — repair at step 4.
+
+---
 ### JRN-C001-82 · DONE
 actor: composer-agent · task: C-001-T15 · manifest: n/a
 

@@ -749,3 +749,121 @@ Acceptance criteria (binary, one artifact each):
    changed checkers, self-test script, every self-test fixture) plus every applied brain
    file of this packet and the TR — full untruncated sha256s; TR pasted verbatim in REPORT
    (L-16).
+
+## TASK GATE-P1-R3: Phase-1 confirmatory gate runs — third execution-only re-dispatch
+depends_on: C-001-T15 delivered (OUT_51; VERIFIED attaches at step 4 repair, JRN-C001-83);
+C-001-T14 VERIFIED (JRN-C001-75); GATE-P1 construction (OUT_46 lineage); PREREG v1.3;
+TUNE-LAW7.json (frozen); I-003 corpus (32, locked, post-T4 sha256s); I-004 (VERIFIED)
+objective: Execute the registered Phase-1 gates in order with halt-on-failure and produce
+verdict-bearing evidence. IDENTICAL gate rules to TASK GATE-P1 in this brief; the R1/R2
+deltas carry over as restated below; new deltas D7/D8 and the step-4 repair. TASK
+COMPLIANCE ≠ GATE VERDICTS: the task is DONE if the gates are executed per the rules and
+fully evidenced, whatever they show. Do not soften, re-run, or reinterpret a failing gate —
+a clean FAIL is a valid deliverable.
+
+DELTAS (binding):
+D0. CONSTRUCTION SCOPE: none. Do not modify src/, checkers, ref_parse.py, selftest tooling,
+    study specs, data/fixtures, or tune files. If T15's checker changes are absent at
+    branch tip, merge from task/C-001-T15 — do not reauthor.
+D1. PRE-FLIGHT LOAD (remediation of record, JRN-C001-79): run
+    `./build/default/bounce-survey-heldout-load`; paste the COMPLETE output — all 32
+    per-scenario lines plus `load_ok 32 / 32`. Elision of any line is a criterion failure.
+    If load_ok < 32, STOP → BLOCKED.
+D2. CORPUS: MANIFEST.json includes the I-003-T4 re-mint sha256s for HO-flat-settle-{1..4}
+    (JRN-I003-25). Runner resolves current manifest sha256s — no hardcoded digests.
+D3. `--repeat 3` calibration smoke only; paste `repeat-identity ok N=3`. No new
+    construction commits at any point; housekeeping commits only at step 4, before the G0
+    paste.
+D4. PRE-FLIGHT ZERO-EVENT WRITE: run
+    `./build/default/bounce-run-scenario --scenario tests/fixtures/graze-zero-ref.json
+     --out <tmp> --max-events 200`
+    and paste: exit=0, stdout `events=0`, output file's first line showing
+    `"engine_events":0`. Any failure: STOP → BLOCKED.
+D5. STALE-GATE-OUTPUT HYGIENE (mechanics per observed state — the packet asserts no
+    tracked/untracked facts): before the first gate run, remove the R2 gate outputs so this
+    dispatch's checkers can only read this dispatch's files: the contents of
+    `tools/gaterunner/events/` and `tools/gaterunner/manifests/P1-A.json`. For each path,
+    paste its `git status` line first; if tracked, remove via `git rm` and fold into the
+    step-4 housekeeping commit; if untracked, `rm` and paste the removal. Paste a
+    post-removal listing. Do NOT touch `data/scenarios/heldout/ACCESS_LOG.jsonl`
+    (append-only history).
+D6. ACCESS_LOG DELTA RECONCILIATION: paste the line count BEFORE the first gate run —
+    expected 56 (24 R1 + 32 R2, gate-authorized per JRN-C001-71/-79); if it differs, STOP →
+    BLOCKED and paste the full log. Paste the count AFTER all runs plus a 5-line excerpt of
+    this dispatch's entries. Expected final = pre-run count + sum of this dispatch's
+    per-manifest held-out invocations; state the arithmetic per gate.
+D7. PRE-FLIGHT CHECKER SHAPE SELF-TEST (L-17): run
+    `python3 tools/gaterunner/selftest_checkers.py` before the first held-out contact;
+    paste the full per-vector table (6 vectors, `rational_5_2` and `zero_event` rows
+    visible, `expected-fail ok` line visible) and exit=0. Any other outcome: STOP → BLOCKED.
+D8. WORKSPACE-STATE CRITERION (L-13 v2, corrected text of record): byte-verbatim git status
+    pasted in full; untracked entries within the agent-writable surface that first appear
+    after this dispatch's CLAIM commit are limited to files this task creates pre-commit;
+    pre-existing untracked entries within the surface are identified as inherited with a
+    stated disposition.
+
+All other GATE-P1 text applies verbatim: G0–G2, P1-A through Law 7 definitions and checkers,
+gate-authorized logging (I-004, gate_id set, every execution appended to ACCESS_LOG.jsonl),
+manifests engine_git_dirty=false (tracked-file dirty; untracked courier surface exempt,
+PREREG v1.3 C2), halt order P1-A → P1-B → P1-C → Law 7 with halt-on-failure (v1.2 B3).
+This dispatch overwrites `reports/GATE_SUMMARY.md` (R2's halt record is preserved in
+TR_GATE-P1-R2.md and JRN-C001-78/-79). TR filename: `reports/TR_GATE-P1-R3.md`.
+Branch: `task/GATE-P1-R3` from `task/C-001-T15` tip.
+
+Steps:
+3. Toolchain record paste.
+4. REPAIR + HOUSEKEEPING (single commit, before G0):
+   a. OUT_51 criterion-7 repair: paste a listing (`ls -laR`) of
+      `docs/03_TRACKS/C-001_exact_collision_engine/reports/gate_r2_evidence/`, affirm it
+      predates this branch's CLAIM (inherited R2 evidence scratch), and commit it in place
+      as R2 evidence of record (mirroring committed gate_r1_evidence/).
+   b. D5 stale-gate-output removals (mechanics per observed status lines, pasted).
+5. G0 tracked-clean status paste (`git status --porcelain --untracked-files=no`) — after
+   the step-4 commit, before any gate run.
+6. Configure + build + ctest + doctest; pastes; exit=0; 100% + SUCCESS!.
+7. D1 pre-flight load survey paste — complete, all 32 lines.
+8. D3 `--repeat 3` calibration smoke paste.
+9. D4 zero-event write pre-flight paste.
+10. D7 checker shape self-test paste.
+11. D6 pre-run ACCESS_LOG count paste (=56 or BLOCKED). Execute P1-A per GATE-P1 rules —
+    execute AND check; paste the checker report in full (per-scenario worst |Δt| and |Δs|
+    table, per-family and per-regime distributions, quasi-chaotic events 13–25 exploratory
+    table, both red-team tables, verdict line); all 32 manifests engine_git_dirty=false.
+12. If P1-A PASS: execute P1-B; paste (i)(ii)(iii) evidence + verdict. Else halt per G2.
+13. If P1-B PASS: execute P1-C; paste per-fixture table (first-divergence index,
+    interval-sequence hash) + verdict. Else halt.
+14. If P1-C PASS: execute Law 7; paste comparison table, shortfall list, drift table, both
+    primary arms, verdict. Else halt.
+15. D6 post-run count + excerpt + per-gate reconciliation arithmetic paste.
+    GATE_SUMMARY.md pasted verbatim (four verdict lines with governing numbers, halt point
+    if any, manifests' sha256s).
+16. Byte-verbatim `git status --porcelain --branch` (D8).
+17. TR + OUT per OUT-REQUIREMENTS in the dispatching packet.
+
+Acceptance criteria (binary, one artifact each — INDEPENDENT of gate verdicts):
+1. Step 3: toolchain pasted.
+2. Step 4a: gate_r2_evidence/ listing + inherited affirmation + committed-in-place (the
+   step-4 commit visible in BRANCH/COMMITS) — the OUT_51 criterion-7 repair.
+3. Step 4b: per-path status line + removal evidence + post-removal listing for the R2 gate
+   outputs.
+4. Step 5: G0 tracked-clean paste after the step-4 commit, before first gate run.
+5. Step 6: configure/build/ctest/doctest pastes; exit=0; 100% + SUCCESS!.
+6. Step 7: COMPLETE 32-line survey + `load_ok 32 / 32`; no elision.
+7. Step 8: `repeat-identity ok N=3`; no held-out contact before step 11.
+8. Step 9: zero-event smoke — exit=0, `events=0`, `"engine_events":0` header.
+9. Step 10: full self-test table (6 vectors; `expected-fail ok` visible); exit=0.
+10. Step 11: pre-run ACCESS_LOG count (=56 or BLOCKED); P1-A checker report pasted in full
+    (all named tables + verdict line); all 32 manifests engine_git_dirty=false.
+11. Steps 12–14 (as reached per G2): full evidence + verdict line per executed gate; any
+    halt documented with the failing numbers.
+12. Step 15: post-run count, excerpt, and per-gate reconciliation arithmetic matching the
+    manifests; GATE_SUMMARY.md pasted verbatim.
+13. TR affirms: no fixture/tune/physics/checker modification; all held-out execution
+    gate-authorized via I-004 with gate_id set; halt order honored; ACCESS_LOG untouched
+    except by runner appends.
+14. Step 16: D8 satisfied — full byte-verbatim status; post-CLAIM untracked delta limited
+    to this dispatch's files; any inherited entries identified with disposition.
+15. FILE DIGESTS complete per L-15 (checkers + ref_parse + selftest of record — unmodified,
+    digests prove D0 — every manifest of this dispatch, GATE_SUMMARY, TR, every applied
+    brain file of this packet) with full untruncated sha256s; TR pasted verbatim in REPORT
+    (L-16); every journal entry of this dispatch verbatim; applied-files directions listed.
