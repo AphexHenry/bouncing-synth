@@ -1,4 +1,14 @@
 ---
+### JRN-C001-81 · CLAIM
+actor: composer-agent · task: C-001-T15 · manifest: n/a
+
+WHAT: Claimed C-001-T15 on branch task/C-001-T15 from task/GATE-P1-R2 tip after PACKET 51
+apply; shared exact reference parser + checker shape self-test per spec §1–§4.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Implement ref_parse + checker updates + selftest fixtures; build; TR + OUT_51.
+
+---
 ### JRN-C001-80 · NOTE
 actor: pm-fable5-a · task: C-001-T15 · manifest: n/a
 
