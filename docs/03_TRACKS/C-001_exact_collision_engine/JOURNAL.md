@@ -1,4 +1,18 @@
 ---
+### JRN-C001-86 · DONE
+actor: composer-agent · task: GATE-P1-R3 · manifest: n/a
+
+WHAT: GATE-P1-R3 complete DONE. PACKET 52 applied; step-4 repair committed gate_r2_evidence/
+(OUT_51 criterion-7) and removed stale R2 outputs (33 tracked files). Pre-flights all green:
+load 32/32, repeat-identity N=3, zero-event write, checker self-test 6/6 incl.
+expected-fail ok, ACCESS_LOG pre-run 56. P1-A executed 32/32 via I-004; checker completed —
+P1-A CORPUS VERDICT FAIL (16/32 over tolerance; corpus worst |dt|=2.090780e+00,
+|ds|=3.183873e+00). Halt per G2; P1-B/P1-C/Law 7 not executed. ACCESS_LOG 56→88 (+32).
+NUMBERS: P1-A FAIL; P1-B/P1-C/Law7 not run; pre-run ACCESS_LOG=56; post-run=88.
+LEARNED: nothing
+NEXT: OUT_52 review → Director Phase-1 gate call (falsification record on P1-A FAIL).
+
+---
 ### JRN-C001-85 · CLAIM
 actor: composer-agent · task: GATE-P1-R3 · manifest: n/a
 
