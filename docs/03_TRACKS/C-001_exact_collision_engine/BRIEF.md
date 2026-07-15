@@ -867,3 +867,95 @@ Acceptance criteria (binary, one artifact each — INDEPENDENT of gate verdicts)
     digests prove D0 — every manifest of this dispatch, GATE_SUMMARY, TR, every applied
     brain file of this packet) with full untruncated sha256s; TR pasted verbatim in REPORT
     (L-16); every journal entry of this dispatch verbatim; applied-files directions listed.
+
+## TASK C-001-T16: Forensic diagnostic of the executed P1-A check (read-only; no verdict)
+depends_on: OUT_52 GATE-P1-R3 (task ACCEPT; P1-A verdict SUB JUDICE, JRN-C001-87); R3 gate
+artifacts committed (b426bbd: 32 event files + manifests/P1-A.json); PREREG v1.3 (§1, v1.2
+B2, v1.3 C1); C-001-T15 VERIFIED
+objective: Determine, from committed artifacts and source only, why the executed P1-A
+comparison windows (0–9) differ from the registered windows (12 quasi-chaotic /
+min(200, settle) otherwise), and classify the mechanism per the pre-registered rules below
+(v1.2 B2: harness defect is fixed before gates; a physics shortfall stands). This task
+produces a DIAG report — counts, verbatim code quotes, bounded excerpts, per-scenario rule
+classification. It produces NO gate verdict and modifies NOTHING.
+
+HARD RULES:
+H1. ZERO engine invocations — no bounce-run-scenario, no bounce-baseline-run, on any
+    scenario class whatsoever. Nothing needs to run; everything needed is on disk.
+H2. No checker corpus run: no `check_p1a.py --check` (or equivalent verdict-producing
+    invocation) against the R3 manifest. Reading checker SOURCE is required; running it is
+    forbidden.
+H3. No modifications outside `reports/`, journal, `outbox/`. Checkers, fixtures, engine,
+    manifests, event files: read-only.
+H4. Held-out exposure bounded: reference COUNTS for all 32; reference VALUES only within
+    the three D4 excerpts (≤8 events per side per scenario). No full reference dumps.
+H5. The DIAG report's final section states which rule (R-a..R-e) fires per anomalous
+    scenario and stops there — no "P1-A would PASS/FAIL" statements anywhere.
+
+PRE-REGISTERED CLASSIFICATION RULES (PM; applied in D5, not reinterpreted):
+R-a. engine_events < registered_window AND reference_events ≥ registered_window →
+     engine stream shortfall: candidate PHYSICS (missed/absent contacts under the engine's
+     own dynamics; stands per v1.2 B2), subject to D4 confirming the short side at the
+     event level.
+R-b. reference_events < registered_window → corpus defect vs registration (I-003
+     escalation; reference streams must cover the registered horizon).
+R-c. engine_events ≥ registered_window AND reference_events ≥ registered_window AND
+     executed_window < registered_window → harness defect (checker window/pairing logic).
+R-d. Properly paired events (same seq/ball_id, both streams covering the window) with
+     value disagreement over tolerance → PHYSICS; stands.
+R-e. |ds| discrepancy consistent with s-parameter endpoint wrap (values differing by the
+     parameter-domain length at a domain endpoint) while |dt| is at rounding scale →
+     harness comparison-semantics candidate; PM rules on the D4 evidence.
+Registered_window per scenario: 12 for the four quasi-chaotic cells (v1.3 C1); otherwise
+min(200, reference_events), reference streams embodying the S-1 settle horizon by
+construction (I-002-T2/T3a). If a fixture's own horizon metadata contradicts its reference
+stream length, flag it in D1 (feeds R-b).
+
+Steps:
+3. Chain of custody: verify the manifest's per-scenario event-file sha256s against the
+   committed R3 event files; paste the verification command + `custody ok 32/32` style
+   output (any mismatch: STOP → BLOCKED).
+4. D1 COUNT TABLE (all 32 rows): scenario_id | engine_events per the event-file HEADER |
+   engine event body line count (must equal header; flag any mismatch) | reference_events
+   count from fixture JSON | registered_window | executed_window (from the R3 report,
+   transcribed) | short side (engine / reference / neither).
+5. D2 WINDOW AUDIT: quote verbatim (with line numbers) the check_p1a.py code that derives
+   the per-scenario comparison window; state its formula; state the deviation from §1 +
+   v1.3 C1 explicitly.
+6. D3 PAIRING AUDIT: quote verbatim the event-pairing/comparison loop; state whether
+   "ball_id and seq exactly equal per event" and count-mismatch failure are enforced or
+   whether streams are zip-truncated silently; quote how s is compared, including any
+   normalization/wrap handling at parameter-domain endpoints.
+7. D4 EXCERPTS (exactly three scenarios; ≤8 events per side each; verbatim from committed
+   files, seq and ball_id visible): HO-flat-periodic-3 around the first |ds|-anomalous
+   event; HO-poly-quasichaotic-1 around the first divergence; HO-parabola-settle-2 around
+   the first divergence. For each: the aligned reference and engine events, and one
+   sentence naming what the excerpt shows (desynchronization / genuine value divergence /
+   wrap artifact / missing event on <side>).
+8. D5 CLASSIFICATION: per scenario with any anomaly (short window, FAIL row, or vacuous
+   window-0 PASS), the rule R-a..R-e that fires, from D1+D4 evidence only. One summary
+   line: counts of scenarios per rule. No verdict language (H5).
+9. Paste byte-verbatim `git status --porcelain --branch`; D8/L-13 v2 disposition
+   (post-CLAIM delta = DIAG report + evidence scratch only; inherited entries identified).
+10. DIAG report (`reports/DIAG_C-001-T16.md`) + OUT per OUT-REQUIREMENTS in the dispatching
+    packet.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3: custody verification paste — 32/32 event-file sha256s match the manifest.
+2. Step 4: D1 table complete, 32 rows, both engine count sources shown (header + body) and
+   agreeing or flagged, short-side column filled.
+3. Step 5: D2 verbatim window-derivation quote with line numbers + formula + stated
+   deviation from §1/C1.
+4. Step 6: D3 verbatim pairing quote with line numbers + seq/count enforcement disposition
+   + s-comparison wrap disposition.
+5. Step 7: three D4 excerpts, bounded per H4, seq/ball_id visible, one-sentence finding
+   each.
+6. Step 8: D5 classification per anomalous scenario under R-a..R-e + per-rule summary
+   counts; no verdict language anywhere in the report (H5).
+7. TR-level affirmations in the DIAG report: H1 (zero engine invocations — and ACCESS_LOG
+   line count pasted, must still be 88), H2, H3, H4 honored.
+8. Step 9: byte-verbatim status; L-13 v2 delta assertion + inherited dispositions.
+9. FILE DIGESTS complete per L-15 (DIAG report, every applied brain file of this packet;
+   checker + manifest digests restated to prove read-only — must match OUT_52's) with full
+   untruncated sha256s; DIAG report pasted verbatim in the OUT's REPORT section (L-16);
+   every journal entry of this dispatch verbatim.

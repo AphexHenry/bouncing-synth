@@ -1,4 +1,86 @@
 ---
+### JRN-C001-88 · NOTE
+actor: pm-fable5-a · task: C-001-T16 · manifest: n/a
+
+WHAT: C-001-T16 authored (PACKET 53) — read-only forensic diagnostic of the executed P1-A
+check (C-001-T12 F3 diagnostic pattern; classification rule v1.2 B2). Inputs: committed R3
+gate artifacts (events + manifest, commit b426bbd), held-out fixture reference METADATA
+(counts; bounded excerpts), check_p1a.py source. Deliverable: DIAG report with (D1) 32-row
+count table engine_events vs reference_events vs registered window vs executed window,
+(D2) verbatim window-derivation code audit vs PREREG §1 + v1.3 C1, (D3) verbatim
+pairing/seq audit vs the registered "ball_id and seq exactly equal per event" + s-comparison
+wrap handling, (D4) three bounded event-level excerpts (HO-flat-periodic-3 |ds|=1.000000e+00
+exact; HO-poly-quasichaotic-1 |dt|=2.090780; HO-parabola-settle-2), (D5) per-scenario
+mechanism classification under the PRE-REGISTERED rules R-a..R-e in the packet — no P1-A
+verdict emitted. Hard rules: zero engine invocations; no checker --check corpus run; no
+modifications outside reports/journal/outbox. Routing pre-declared: R-c/R-e only → T17
+checker fix + L-17 v2 + GATE-P1-R4; any R-a/R-d → physics shortfall stands, falsification
+record proceeds (harness still fixed for admissibility); R-b → I-003 escalation.
+NUMBERS: 32 scenarios; 16 void FAIL rows + 16 void PASS rows; registered windows 12
+(quasi-chaotic ×4) / min(200, settle) (others); executed windows 0–9; ACCESS_LOG 88.
+LEARNED: nothing
+NEXT: OUT_53 review → classification → T17+GATE-P1-R4 or falsification record (Director).
+
+---
+### JRN-C001-87 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_52_GATE-P1-R3 per P6 §2, and admissibility ruling on the P1-A verdict.
+
+GATE-P1-R3 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain pasted | COMPLIANT |
+| 2 | step 4a gate_r2_evidence listing + inherited affirmation + commit 9d48668 | COMPLIANT — OUT_51 criterion-7 repair complete; C-001-T15 VERIFIED |
+| 3 | step 4b D5 per-path status + removals + post-removal listing | COMPLIANT (33 tracked files git rm, folded into 9d48668) |
+| 4 | G0 tracked-clean after step-4 commit | COMPLIANT |
+| 5 | build/ctest/doctest; exit=0; 100% + SUCCESS! | COMPLIANT |
+| 6 | D1 COMPLETE 32-line survey, no elision | COMPLIANT (remediation of JRN-C001-79 discharged) |
+| 7 | D3 repeat-identity ok N=3 | COMPLIANT |
+| 8 | D4 zero-event smoke | COMPLIANT |
+| 9 | D7 self-test full table + expected-fail ok; exit=0 | COMPLIANT |
+| 10 | pre-run count 56; P1-A checker report in full; manifests dirty=false | COMPLIANT as pasted — the tool's own output (windows 0–9; empty 13–25 exploratory tables) is the primary evidence of harness deviation; the agent pasted what the tool produced |
+| 11 | steps 12–14 as reached | COMPLIANT (G2 halt at P1-A; none executed) |
+| 12 | D6 post-run 88 = 56+32; excerpt; arithmetic | COMPLIANT |
+| 13 | TR affirmations (D0, gate-authorized, halt order, log append-only) | COMPLIANT |
+| 14 | D8 status per L-13 v2 (delta asserted; inherited dispositioned) | COMPLIANT — first clean application of L-13 v2 |
+| 15 | FILE DIGESTS (checker digests match OUT_51 = D0 proven); TR verbatim (L-16) | COMPLIANT |
+
+Verdict: ACCEPT — task compliance. The agent halted per G2, softened nothing, pasted
+everything.
+
+ADMISSIBILITY RULING (separate, per TASK COMPLIANCE ≠ GATE VERDICTS): the P1-A verdict is
+INADMISSIBLE AS REGISTERED — SUB JUDICE pending C-001-T16 classification. Objective basis,
+internal to the checker's own report: (a) v1.3 C1 registers the quasi-chaotic confirmatory
+window at the FIRST 12 EVENTS with events 13–25 "computed and reported as exploratory" —
+executed windows were 2–3 and all four exploratory tables are empty; (b) §1 registers
+H = min(200, settle) for all other cells — periodic scenarios (which do not settle) were
+compared over windows of 0–1 events, yielding vacuous PASSes at window=0; (c) §1 requires
+"ball_id and seq exactly equal per event" — a stream-length mismatch must surface as a
+count/seq failure, not silent truncation. The executed procedure therefore differs from the
+registered procedure for at least 6 scenarios by inspection and plausibly all 32. Under the
+registered classification rule (v1.2 B2: "a harness defect is fixed before gates, a physics
+shortfall stands"), the entire check is void SYMMETRICALLY — the 16 PASS rows fall with the
+16 FAIL rows. The physics question remains fully OPEN: if C-001-T16's count table shows
+short or divergent ENGINE streams, the shortfall is physics and STANDS; the harness fix
+would then only make the FAIL admissible. Structured anomalies routed to T16 D4 for
+mechanism evidence: |ds|=1.000000e+00 exact at |dt|=4.4e-15 (HO-flat-periodic-3 — candidate
+s-parameter endpoint wrap, rule R-e); near-identical worst |dt| across two independent
+quasi-chaotic scenarios (2.090780 vs 2.090777 — candidate index desynchronization following
+a count mismatch, whose CAUSE side determines R-a physics vs R-c harness). PM-owned forward
+item: the GATE-P1 construction acceptance (OUT_46 lineage) verified the checkers ran, not
+that they implement the registered windows/count semantics — L-17 covered judge-side data
+SHAPES; window/count/pairing SEMANTICS is the next level; L-17 v2 to be minted with the fix
+packet once T16 confirms mechanism.
+NUMBERS: 15/15 criteria compliant; registered quasi-chaotic window 12 vs executed 2–3;
+periodic registered min(200, settle) vs executed 0–1; 4/4 exploratory tables empty;
+ACCESS_LOG 88.
+LEARNED: a verdict is admissible only if the procedure that produced it is the registered
+procedure — checked against the registration, not against whether the tool ran to
+completion; and the voiding must be symmetric or it is motivated reasoning.
+NEXT: C-001-T16 (this packet).
+
+---
 ### JRN-C001-86 · DONE
 actor: composer-agent · task: GATE-P1-R3 · manifest: n/a
 
