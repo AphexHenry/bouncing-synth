@@ -1,4 +1,65 @@
 ---
+### JRN-C001-80 · NOTE
+actor: pm-fable5-a · task: C-001-T15 · manifest: n/a
+
+WHAT: C-001-T15 authored (PACKET 51) — checker reference-number parsing + checker shape
+self-test. OUT_50 root cause: `check_p1a.py hex_or_decimal()` parses hexfloat/decimal only;
+held-out Tier-1 reference fields carry exact rationals (`"t": "5/2"`) by design → ValueError
+at first rational, no verdict table. Ruling: the corpus is locked and correct — the oracle
+stays exact; the judge is extended. Spec: shared reference parser accepting rational `a/b`,
+decimal, scientific, and hexfloat, with |Δ| comparisons computed EXACTLY (fractions.Fraction;
+registered tolerance 1e-9 read as exact 10^-9); sibling audit across all four checkers;
+committed shape self-test (every reference shape + zero-event empty-reference + one
+deliberate over-tolerance vector proving fail-loudness) runnable as GATE-P1-R3 pre-flight
+D7. Forbidden in this task: any engine execution on held-out paths, and any `--check`
+against the R2 P1-A manifest — verdict production is reserved to the gate dispatch.
+Unblocks GATE-P1-R3 (PACKET 52). ACCESS_LOG baseline carried for R3: 56.
+NUMBERS: 1 parse defect; 4 checkers to audit; ACCESS_LOG 56; 32 R2 P1-A event files
+quarantined from checking until R3.
+LEARNED: nothing
+NEXT: C-001-T15 (this packet); on ACCEPT — PACKET 52 GATE-P1-R3.
+
+---
+### JRN-C001-79 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_50_GATE-P1-R2 per P6 §2 + §7.
+
+GATE-P1-R2 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain + G0 tracked-clean before first gate run | COMPLIANT |
+| 2 | configure/build/ctest/doctest; exit=0; 100% + SUCCESS! | COMPLIANT |
+| 3 | D1 full survey; load_ok 32/32 | NON-COMPLIANT as pasted (per-item lines elided) — L-15 v2 remediation branch: aggregate byte-verbatim + exit=0 + fail-loud tool; per-item re-derivable from committed artifacts; remediation = R3 D1 full 32-line paste, elision forbidden |
+| 4 | D3 repeat-identity ok N=3; no prior held-out contact | COMPLIANT |
+| 5 | D4 zero-event smoke: exit=0, events=0, engine_events:0 | COMPLIANT |
+| 6 | D5 removal command + post-removal listing | COMPLIANT — deviation documented and correct: residue was TRACKED (R1 committed it); deletion committed (3731072) before first gate run to hold G0 |
+| 7 | P1-A checker report / as-reached evidence | COMPLIANT as BLOCKED (execute complete 32/32, manifest dirty=false, exact traceback pasted; no verdict table producible) |
+| 8 | steps 10–12 as reached per G2 | COMPLIANT (halt documented; none executed) |
+| 9 | D6 pre/post counts + excerpt + arithmetic | COMPLIANT (24 → 56 = 24+32; matches manifest) |
+| 10 | GATE_SUMMARY.md verbatim | COMPLIANT |
+| 11 | TR affirmations (D0, gate-authorized, halt order, log append-only) | COMPLIANT |
+| 12 | byte-verbatim git status (L-13) | COMPLIANT |
+| 13 | FILE DIGESTS incl. applied brain files; TR verbatim (L-16) | COMPLIANT |
+
+Verdict: ACCEPT — halt properly executed; BLOCKED (infrastructure), not a gate FAIL.
+PM-owned defects: (a) THIRD occurrence of the pre-flight-shape class (JRN-C001-63 load
+shapes; JRN-C001-71 zero-event write; now judge-side reference formats never pre-flighted)
+— per P6 §6.3 a LESSONS entry is minted this packet (L-17) and a P6 §4 amendment (gate
+pre-flight must enumerate judge-side shape coverage) is folded into the open-decision-2
+amendment bundle; (b) PACKET 50 asserted the R1 residue was untracked — it was tracked;
+the agent's committed deletion was correct under G0; durable fix: hygiene steps state the
+operation and let observed tracked/untracked state determine mechanics — packets assert no
+workspace facts the PM cannot verify; (c) criterion 3 elision handled per L-15 v2 as
+recorded above. Law-1 assessment: 32 new ACCESS_LOG entries gate-authorized (I-004,
+gate_id=P1-A) — no poisoning; R2 P1-A event files + manifest are valid artifacts but carry
+no verdict; R3 re-executes fresh at its own tip.
+NUMBERS: 32/32 P1-A execute; ACCESS_LOG 24→56; checker exit=1 at reference value 5/2.
+LEARNED: the judge is infrastructure too — pre-flight that stops at engine outputs has not
+covered the gate pipeline.
+NEXT: C-001-T15 (this packet); GATE-P1-R3 (PACKET 52).
+
+---
 ### JRN-C001-78 · BLOCKED
 actor: composer-agent · task: GATE-P1-R2 · manifest: P1-A.json
 

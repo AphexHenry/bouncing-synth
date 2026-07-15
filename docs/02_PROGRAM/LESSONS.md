@@ -108,3 +108,16 @@ decays across fresh agent instances. Review ladder for the record: substantive c
 miss → REJECT (OUT_38); partial completeness with the aggregate byte-verbatim in the OUT →
 ACCEPT + remediation (OUT_39, OUT_41, L-15/v2); wholesale evidence absence or repo-pointer
 evidence → REJECT (OUT_44). Origin: OUT_44.
+
+L-17: A gate dispatch's pre-flight must exercise the full verdict pipeline — execution AND
+checking — end-to-end on non-held-out data that mirrors every registered data shape of the
+held-out corpus (reference numeric formats, empty/zero-event shapes, every curve family the
+checkers must read). Engine-side smoke alone is insufficient: the judge is part of the gate
+infrastructure, and a judge that has never read the corpus's data shapes fails at first
+contact exactly like an engine that hasn't. Enforcement: every gate packet's pre-flight
+criteria include a committed checker shape self-test (fail-loud, with at least one
+deliberate over-tolerance vector) run before the first held-out contact. Origin: three
+same-class halts — OUT_46 (loader vs held-out fixture shapes, JRN-C001-63), OUT_48
+(zero-event write shape, JRN-C001-71), OUT_50 (checker vs rational reference fields,
+JRN-C001-79); the third occurrence triggered this entry per P6 §6.3, with a P6 §4 amendment
+proposal riding the open-decision-2 bundle.

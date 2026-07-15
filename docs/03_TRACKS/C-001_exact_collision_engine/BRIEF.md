@@ -659,3 +659,93 @@ Acceptance criteria (binary, one artifact each — INDEPENDENT of gate verdicts)
     record, GATE_SUMMARY, TR, and every applied brain file of this packet) with full
     untruncated sha256s; TR pasted verbatim in REPORT (L-16); every journal entry of this
     dispatch verbatim; applied-files directions listed.
+
+## TASK C-001-T15: Checker reference-number parsing + checker shape self-test
+depends_on: OUT_50 GATE-P1-R2 BLOCKED (JRN-C001-78/-79); GATE-P1 construction (OUT_46
+lineage — checkers, studies); C-001-T14 VERIFIED (JRN-C001-75); I-003 corpus (32, locked)
+objective: Make the gate checkers able to read every registered reference numeric shape of
+the held-out corpus — including exact rationals (`a/b`) — with comparisons computed exactly,
+and deliver a committed checker shape self-test that GATE-P1-R3 runs as pre-flight (L-17).
+Unblocks GATE-P1-R3 (PACKET 52). No held-out engine execution and no gate verdict
+production in this task.
+
+SPEC (binding; BLOCK on any ambiguity):
+1. REFERENCE PARSER: a single shared parsing function (new module under `tools/gaterunner/`,
+   imported by the checkers — no per-checker copies) accepting, as strings, all of:
+   a. rational `a/b` (optionally signed integers a, b; e.g. `5/2`, `-3/4`);
+   b. decimal (e.g. `0.7071067811865475`) and scientific (e.g. `1.04e-20`);
+   c. plain integers;
+   d. hexfloat (e.g. `0x1.4p+1`) where any checker reads engine hexfloat output through the
+      same path.
+   Parsing is EXACT: the parser returns an exact rational value (Python
+   `fractions.Fraction` is the natural carrier — decimals, scientific, integers, and `a/b`
+   convert exactly; a hexfloat converts exactly via the binary64 value it denotes). No value
+   passes through a lossy float conversion before comparison.
+2. EXACT COMPARISON: in `check_p1a.py` (and `check_law7.py` where it compares against
+   reference fields), |Δt| and |Δs| are computed exactly on the parsed rationals; the
+   registered tolerance `1e-9` (PREREG §1) is applied as the exact rational 10^-9. Engine
+   event values enter the comparison from their hexfloat (exact binary64) representation.
+   Printed tables may render deltas as shortest-round-trip floats; the pass/fail decision is
+   taken on the exact values. Per-scenario/per-family table output format unchanged
+   otherwise (L-15 v2 standing tooling rule: per-item tables by default).
+3. SIBLING AUDIT: audit all four checkers (`check_p1a.py`, `check_p1b.py`, `check_p1c.py`,
+   `check_law7.py`) for reference-field or numeric-string reads (`hex_or_decimal` call
+   sites and any equivalent); route every reference-field read through the shared parser.
+   Checkers that compare engine output to engine output only (no fixture reference reads)
+   are left functionally unchanged — state that disposition per checker.
+4. CHECKER SHAPE SELF-TEST: `tools/gaterunner/selftest_checkers.py`, exit=0 on success,
+   nonzero + named failing vector otherwise, printing a per-vector result table. Vectors are
+   committed under `tests/fixtures/gaterunner-selftest/` (NOT under `data/scenarios/`) and
+   must cover at least:
+   a. a reference event stream using rational values including `5/2`;
+   b. decimal and scientific reference values;
+   c. a zero-event scenario (empty `reference_events` + engine file with
+      `"engine_events":0`) passing the count-only comparison;
+   d. an agreement vector within 10^-9 that must PASS;
+   e. a DELIBERATE over-tolerance vector (|Δt| > 10^-9) that the compare path must FAIL —
+      the self-test asserts the failure occurs and reports it as `expected-fail ok`
+      (fail-loudness proof, L-15 v2 / L-17);
+   f. a rational-vs-hexfloat mixed comparison exercising the exact path end-to-end.
+   The self-test drives the checkers' actual compare functions (import or subprocess on the
+   synthetic vectors) — not a reimplementation of them.
+5. FORBIDDEN IN THIS TASK (LAW-1 + verdict hygiene):
+   a. no `bounce-run-scenario` / `bounce-baseline-run` invocation with `--scenario` under
+      `data/scenarios/heldout/`;
+   b. no `check_*.py --check` (or equivalent) invocation against
+      `tools/gaterunner/manifests/P1-A.json` or any held-out event file from the R2 run —
+      the first post-fix verdict is produced inside GATE-P1-R3, nowhere else;
+   c. no edits to `src/`, `data/`, study specs, tune files, or fixtures outside
+      `tests/fixtures/gaterunner-selftest/`.
+6. REGRESSION: configure + build + ctest + doctest all green (engine untouched — this is
+   the guard that proves it).
+
+Steps:
+3. Paste environment record: `cmake --version`; `c++ --version`; `python3 --version`;
+   `which python3`.
+4. Implement spec §1–§4; paste `git diff --stat` over the working changes (must be confined
+   to `tools/gaterunner/` and `tests/fixtures/gaterunner-selftest/`).
+5. Configure + build + ctest + doctest paste; exit=0; 100% + SUCCESS!.
+6. Self-test run paste: full per-vector table, `5/2` vector visible, `expected-fail ok`
+   line visible, exit=0.
+7. Sibling audit paste: the grep over all four checkers for reference-parse call sites,
+   plus a one-line disposition per checker (routed through shared parser / no reference
+   reads — unchanged).
+8. Paste byte-verbatim `git status --porcelain --branch`.
+9. TR (`reports/TR_C-001-T15.md`) + OUT per OUT-REQUIREMENTS in the dispatching packet.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 pasted: toolchain versions + python path.
+2. Step 4 pasted: `git diff --stat` confined to `tools/gaterunner/` +
+   `tests/fixtures/gaterunner-selftest/`.
+3. Step 5 pasted: configure/build/ctest/doctest; exit=0; 100% + SUCCESS!.
+4. Step 6 pasted: self-test per-vector table with the `5/2` vector, the zero-event vector,
+   and the `expected-fail ok` line; exit=0.
+5. Step 7 pasted: sibling audit grep + per-checker disposition (all four named).
+6. TR affirms spec §5 in full: no held-out engine execution; no check against the R2 P1-A
+   manifest or its event files; no edits outside the §5c surface.
+7. Step 8: byte-verbatim git status; untracked within the agent-writable surface limited to
+   files this task creates pre-commit (L-13).
+8. FILE DIGESTS complete per L-15 — every changed/created file (shared parser module,
+   changed checkers, self-test script, every self-test fixture) plus every applied brain
+   file of this packet and the TR — full untruncated sha256s; TR pasted verbatim in REPORT
+   (L-16).
