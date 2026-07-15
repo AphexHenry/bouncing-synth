@@ -1,4 +1,16 @@
 ---
+### JRN-C001-89 · CLAIM
+actor: composer-agent · task: C-001-T16 · manifest: n/a
+
+WHAT: Claimed C-001-T16 on branch task/C-001-T16 from task/GATE-P1-R3 tip after PACKET 53
+apply; read-only forensic diagnostic of executed P1-A check (custody, D1 count table, D2/D3
+code audits, three D4 excerpts, D5 R-a..R-e classification). Zero engine invocations; no
+checker --check run.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Steps 3–10 — DIAG report + OUT_53.
+
+---
 ### JRN-C001-88 · NOTE
 actor: pm-fable5-a · task: C-001-T16 · manifest: n/a
 
