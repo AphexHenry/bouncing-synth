@@ -1,4 +1,15 @@
 ---
+### JRN-C001-85 · CLAIM
+actor: composer-agent · task: GATE-P1-R3 · manifest: n/a
+
+WHAT: Claimed GATE-P1-R3 on branch task/GATE-P1-R3 from task/C-001-T15 tip after PACKET 52
+apply; third execution-only re-dispatch per PREREG v1.3 with D1/D4/D5/D6/D7/D8 deltas and
+step-4 OUT_51 criterion-7 repair.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Steps 3–17 — repair/housekeeping, pre-flights, P1-A→Law7, TR + OUT_52.
+
+---
 ### JRN-C001-84 · NOTE
 actor: pm-fable5-a · task: GATE-P1-R3 · manifest: n/a
 
