@@ -1,4 +1,55 @@
 ---
+### JRN-C001-76 · NOTE
+actor: pm-fable5-a · task: GATE-P1-R2 · manifest: n/a
+
+WHAT: GATE-P1-R2 authored (PACKET 50) — second execution-only re-dispatch after zero-event
+write unblock (C-001-T14 VERIFIED, JRN-C001-75). Registered gates, order, and halt rules
+unchanged (PREREG v1.3; v1.2 B3). Deltas over GATE-P1-R1: D4 zero-event write pre-flight on
+the committed tests/fixtures/graze-zero-ref.json (durable fix of JRN-C001-71 — pre-flight
+now covers every registered output shape: load 32/32 + zero-event write); D5 stale-artifact
+hygiene (R1's 13 partial P1-A event files + graze temp debris under tools/gaterunner/events/
+cleared and evidenced before first gate run, so checkers can only read this dispatch's
+outputs); D6 ACCESS_LOG reconciliation is delta-based (24 lines carried from R1's two
+partial attempts, ruled gate-authorized in JRN-C001-71; expected final = 24 + this
+dispatch's per-manifest held-out invocations, arithmetic stated). Branch task/GATE-P1-R2
+from task/C-001-T14 tip. OUT-REQUIREMENTS extended: apply-file digests now explicit
+(authoring tightening owned by PM — OUT_49 omitted STATE/BRIEF digests because the T14
+criterion text did not demand them).
+NUMBERS: 32 scenarios; P1-A window min(200, settle) / 12 quasi-chaotic; P1-B nuisance
+100+10+2; P1-C 9 fixtures × 10^4 periods; Law 7 margin 100×, tune dt=5e-4 N=128; prior
+ACCESS_LOG 24.
+LEARNED: nothing
+NEXT: OUT_50 review → Director Phase-1 gate call (PASS) or falsification record (FAIL).
+
+---
+### JRN-C001-75 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_49_C-001-T14 per P6 §2.
+
+C-001-T14 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain versions pasted | COMPLIANT |
+| 2 | configure + build tails; exit=0 | COMPLIANT |
+| 3 | ctest 100% + doctest SUCCESS! + exit=0 | COMPLIANT |
+| 4 | zero-event CLI smoke: exit=0; events=0; header engine_events:0 | COMPLIANT |
+| 5 | TR affirms LAW-1: no held-out path execution; fixture under tests/ | COMPLIANT |
+| 6 | byte-verbatim git status; L-13 untracked surface | COMPLIANT |
+| 7 | FILE DIGESTS full sha256s incl. TR; TR verbatim in REPORT (L-16) | COMPLIANT |
+
+Verdict: ACCEPT — C-001-T14 VERIFIED. Root cause (failbit on ofstream close after zero body
+bytes merged) evidenced; fix covers streaming, offline, and round-trip surfaces per spec §1;
+regression green (54/54 cases, 758 assertions). Forward authoring tightening (PM-owned, not
+an OUT defect): applied brain files (00_STATE.md, BRIEF.md) absent from FILE DIGESTS —
+PACKET 50 OUT-REQUIREMENTS names apply-file digests explicitly from now on. Untracked
+tools/gaterunner debris in the status paste is R1 halt residue documented in OUT_48's
+artifacts list; cleared as GATE-P1-R2 step D5 rather than asserted here.
+NUMBERS: 54/54 doctest cases; 758 assertions; engine_events=0 smoke.
+LEARNED: nothing
+NEXT: GATE-P1-R2 (this packet).
+
+---
 ### JRN-C001-74 · DONE
 actor: composer-agent · task: C-001-T14 · manifest: n/a
 

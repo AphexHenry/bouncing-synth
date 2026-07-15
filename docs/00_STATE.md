@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-composer | trigger: OUT_48 BLOCKED processed; C-001-T14 dispatched; PACKET 49
+last_updated_by: pm-fable5-a | trigger: OUT_49 ACCEPT (C-001-T14 VERIFIED); GATE-P1-R2 dispatched; PACKET 50
 
 ```
 doc_id:   STATE
@@ -10,17 +10,18 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core, AT THE GATE (blocked on zero-event write). Harness load VERIFIED
-(C-001-T13: 32/32). GATE-P1-R1 halted at P1-A scenario 14/32: `finish_event_stream` fails
-when `engine_events=0` on HO-graze-parabola-1 (grazing rule requires zero events — correct
-simulation, broken write path). C-001-T14 dispatched: shared io fix + zero-event smoke.
-GATE-P1-R2 pre-staged as PACKET 50. Partial P1-A (13 scenarios, gate-authorized ACCESS_LOG)
-is not Law-1 poisoning. On eventual gate PASS: Phase-1 gate call; Phase 2 opens.
+Phase 1 — Falsifiable core, AT THE GATE (second execution re-dispatch in flight).
+Zero-event write path FIXED and smoke-evidenced (C-001-T14 VERIFIED, JRN-C001-75).
+Pre-flight now covers both known output-shape classes: held-out load 32/32 (D1) and
+zero-event write (D4, durable fix of JRN-C001-71). GATE-P1-R2 (PACKET 50) executes
+P1-A → P1-B → P1-C → Law 7 per PREREG v1.3 with halt-on-failure. OUT_50 is the Phase-1
+gate call input (PASS → Director gate call, Phase 2 opens) or the falsification record —
+both with numbers.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | PREREGISTERED (v1.3) — GATE BLOCKED (zero-event write) | T14 → GATE-P1-R2 | OUT_49 |
+| C-001 Exact collision engine | PREREGISTERED (v1.3) — GATE-P1-R2 IN FLIGHT | gate verdicts → Phase-1 gate call | OUT_50 |
 | C-002 Curve library | BRIEFED | T3 prereg | Phase-1 gate call |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -42,14 +43,16 @@ C-000 Phase-0 scoping: CLOSED.
 3. GPLv3 -only vs -or-later — Phase 3.
 
 ## Known issues
-Zero-event `finish_event_stream` write failure (OUT_48). Baseline CLI write failure at N≥512
-(outside gate path; OUT_45). Validator calibration_scenarios=3 (OUT_47 forward finding).
+Baseline CLI write failure at N≥512 (outside gate path; tune of record N=128; OUT_45).
+Validator calibration_scenarios=3 vs historical 2 (OUT_47 forward finding; trace at next
+I-003 maintenance). Zero-event write failure (OUT_48): RESOLVED by C-001-T14.
 
 ## Recent review verdicts
+OUT_49/C-001-T14: ACCEPT — VERIFIED (JRN-C001-75).
 OUT_48/GATE-P1-R1: ACCEPT halt — infrastructure BLOCKED (JRN-C001-71).
 OUT_47/I-003-T4+C-001-T13: ACCEPT — T4 + T13 VERIFIED (JRN-C001-67).
-OUT_46/GATE-P1: ACCEPT halt — infrastructure BLOCKED (JRN-C001-63).
 
 ## Pointers
-Branch rule: task/C-001-T14 from task/GATE-P1-R1 tip. GATE-P1-R2: PACKET 50 (pre-staged).
-Gate governance: PREREGISTRATION.md v1.3; TUNE-LAW7.json by sha256.
+Branch rule: task/GATE-P1-R2 from task/C-001-T14 tip (stacked, JRN-I002-6); Director merges
+to main remain batched non-blocking housekeeping. Gate governance: PREREGISTRATION.md v1.3;
+TUNE-LAW7.json by sha256. Prior ACCESS_LOG baseline: 24 lines (gate-authorized, JRN-C001-71).
