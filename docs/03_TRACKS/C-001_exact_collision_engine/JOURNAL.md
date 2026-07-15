@@ -1,4 +1,19 @@
 ---
+### JRN-C001-82 · DONE
+actor: composer-agent · task: C-001-T15 · manifest: n/a
+
+WHAT: C-001-T15 complete DONE. Shared `ref_parse.py` exact reference parser (rational,
+decimal, scientific, integer, hexfloat → Fraction); `check_p1a.py` and `check_law7.py`
+reference comparisons routed through exact path; `selftest_checkers.py` + six vectors
+(5/2 rational, decimal/scientific, zero-event, within-tolerance PASS, over-tolerance
+expected-fail ok, rational-vs-hexfloat mixed). Sibling audit: p1a/law7 routed; p1b/p1c no
+reference reads unchanged. ctest 100% + doctest SUCCESS!; self-test exit=0. LAW-1: no held-out
+engine execution; no P1-A --check.
+NUMBERS: 6 self-test vectors; 16 files changed (+314/-49); tolerance exact 10^-9.
+LEARNED: nothing
+NEXT: PACKET 52 GATE-P1-R3.
+
+---
 ### JRN-C001-81 · CLAIM
 actor: composer-agent · task: C-001-T15 · manifest: n/a
 
