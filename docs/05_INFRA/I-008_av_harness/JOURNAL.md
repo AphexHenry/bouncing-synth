@@ -1,6 +1,18 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-6 · DONE
+actor: composer-agent · task: I-008-T1-R1 · manifest: n/a
+
+WHAT: I-008-T1-R1 complete. Regression tripwire: 63/63 doctest SUCCESS! exit=0; ctest 100%
+exit=0. CF-E2b metadata pasted; schema silent on reference termination basis (horizon vs
+settle). __pycache__/ appended to .gitignore; pycache entries no longer untracked.
+ACCESS_LOG 88 before and after.
+NUMBERS: 63 test cases; ACCESS_LOG 88/88; reference_events count in fixture=12.
+LEARNED: none new.
+NEXT: OUT_56 review → I-008-T1 VERIFIED.
+
+---
 ### JRN-I008-5 · CLAIM
 actor: composer-agent · task: I-008-T1-R1 · manifest: n/a
 
