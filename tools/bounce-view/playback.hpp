@@ -4,6 +4,7 @@
 #include "bounce/engine/ballistic.hpp"
 #include "bounce/engine/collision_sim.hpp"
 #include "bounce/scenario/calibration_loader.hpp"
+#include "restitution_config.hpp"
 
 #include <array>
 #include <vector>
@@ -29,6 +30,9 @@ struct Playback {
 };
 
 bool load_and_simulate(const char* scenario_path, Playback& out, int max_events,
+                       const RunConfig& cfg, std::string& error);
+
+void roll_event_stream(const char* scenario_path, Playback& pb, const RunConfig& cfg,
                        std::string& error);
 
 void reset_playback(Playback& pb);

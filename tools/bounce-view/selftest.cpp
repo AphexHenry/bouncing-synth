@@ -3,6 +3,7 @@
 
 #include "av_mapping.hpp"
 #include "ppm_writer.hpp"
+#include "restitution_config.hpp"
 #include "scene.hpp"
 
 #include <SDL.h>
@@ -19,7 +20,7 @@ namespace bounce_view {
 
 namespace {
 
-constexpr int kSelftestMaxEvents = 200;
+constexpr int kDefaultSelftestMaxEvents = 200;
 constexpr int kFrameWidth = 800;
 constexpr int kFrameHeight = 600;
 
@@ -120,9 +121,13 @@ int run_selftest(const SelftestOptions& opts) {
     return 1;
   }
 
+  print_restitution_line(opts.run_cfg);
+
   Playback pb{};
   std::string error;
-  if (!load_and_simulate(opts.scenario_path, pb, kSelftestMaxEvents, error)) {
+  const int max_events =
+      opts.run_cfg.max_events > 0 ? opts.run_cfg.max_events : kDefaultSelftestMaxEvents;
+  if (!load_and_simulate(opts.scenario_path, pb, max_events, opts.run_cfg, error)) {
     std::cerr << error << '\n';
     SDL_Quit();
     return 1;

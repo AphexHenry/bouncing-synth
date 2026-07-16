@@ -1,6 +1,92 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-13 · DONE
+actor: composer-agent · task: I-008-T3 · manifest: n/a
+
+WHAT: I-008-T3 complete on branch task/I-008-T3. S10 restitution override: interactive
+default e=1 with rolling event extension; evidence modes scenario-faithful; flag exclusivity;
+--print-config paired proof; --max-events for selftest. S8 v2 perf measurand (present
+interval, first frame excluded): FL-1 p95=9.314 ms ≤ 16.667 ms @120 Hz. CF-E2a override
+selftest events=500 blip count match; determinism diff 0. Suite 63/63 ctest 100%.
+Isolation 0 vs f9bf7bf base. ACCESS_LOG 88.
+NUMBERS: p95=9.313905 ms; frames=1145 mean=8.407328 ms duration=10.016 s; events=500;
+diff=0; isolation=0.
+LEARNED: evidence and interactive paths need separate default proof artifacts when
+--perf-seconds is classified as evidence mode.
+NEXT: OUT_59 review → Director re-assessment.
+
+---
+### JRN-I008-12 · CLAIM
+actor: composer-agent · task: I-008-T3 · manifest: n/a
+
+WHAT: Claimed I-008-T3 on branch task/I-008-T3 from task/I-008-T2 tip f9bf7bf6fe1eb8743e7716f4f37d7618a1ec545f
+(chain through serial 59 apply; main merge deferred to Director). Scope: PACKET 59 — S10
+restitution override (interactive default e=1; evidence modes scenario-faithful), S8 v2 perf
+measurand (present-interval), S9 language rule; zero changes under src/ tests/ config/ data/.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Steps 3–13 per PACKET 59 TASK I-008-T3.
+
+---
+### JRN-I008-11 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_58_I-008-T2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | environment + ACCESS_LOG 88 (before) | COMPLIANT |
+| 2 | instrumentation-only commit line | COMPLIANT — 080167c |
+| 3 | RED perf paste + dominant-subsystem paragraph from pasted numbers | COMPLIANT as written — but see MEASURAND FINDING below |
+| 4 | GREEN p95 ≤ 2×(1000/refresh_Hz), both values in paste | COMPLIANT — 16.381 ≤ 16.667 @120 Hz |
+| 5 | frames + t_frame > t_last from same run | COMPLIANT — 3.5 > 3.0701041642833404 |
+| 6 | CF-E2a v2 log + diff 0; FL-1 diff 0 | COMPLIANT |
+| 7 | suite 63/63 + zero-count diff main..HEAD on frozen paths | NON-COMPLIANT as written (count 100) — criterion DEFECTIVE; amended c7-v2 below; satisfied on the OUT's packet/57..HEAD = 0 paste |
+| 8 | ACCESS_LOG 88 (after) | COMPLIANT |
+| 9 | TR verbatim, RUN section, S7 line | COMPLIANT |
+| 10 | status + L-13 v2 | COMPLIANT — branch base disclosed in CLAIM |
+| 11 | FILE DIGESTS complete | COMPLIANT |
+
+Verdict: ACCEPT. I-008-T2 is VERIFIED (OUT_58 under c7-v2).
+
+C7 ROOT CAUSE — PM authoring defect, owned per P6 §2.4/§6.1: the zero-count was bound to
+the range main..HEAD, deriving 0 from an ASSUMED Director merge state (the PACKET 58
+precondition), i.e. from courier state that L-13 v2 says is pasted, never asserted — and
+with no derivation from the run's own semantics. This violates standing rule L-18, the
+first violation since its issuance (third defect of the authoring-precision family in four
+packets: JRN-C001-95, JRN-C001-97, here). The agent disclosed its branch base
+(packet/57 tip) at CLAIM and supplied the correct isolation proof unprompted.
+CORRECTED CRITERION c7-v2 (standing form for all future isolation criteria): "task
+isolation is proven by `git diff --name-only <base>..HEAD -- <frozen paths> | wc -l` = 0,
+where <base> is the branch-point commit stated in the task's CLAIM entry; ranges anchored
+on main or any Director-courier ref are inadmissible as assertions." Satisfied on OUT_58's
+existing paste; no return needed (L-15 economics). The pending P6 §4 derivation-rule
+amendment (open decision 2) gains urgency from this recurrence.
+
+MEASURAND FINDING (S8): RED reports mean=1.2735 ms over 552 frames in 10 s — a real
+frame interval of ~18.1 ms — while GREEN's mean=9.1653 ms matches 10000/1092 exactly. The
+pre-fix instrument measured per-frame work; the post-fix instrument measures frame
+interval. Consequence, stated plainly: the RED paste does not quantify the Director's felt
+~10 fps, and RED→GREEN is not a like-for-like delta; F1's fix is validated by the GREEN
+bound plus the Director's live re-assessment only. S8 v2 (BRIEF amendment this packet)
+pins the measurand: frame_ms = interval between successive returns from present, monotonic
+clock, first frame excluded, identical definition in every mode. T3 re-pastes perf under
+S8 v2. Classified with the attribute-precision family; recurrence tracking continues.
+
+D-5 DIRECTOR PRODUCT DIRECTION (recorded verbatim in substance): the tool aims at INFINITE
+bounces; damping logic stays but is strictly opt-in; default is none. This confirms the
+registered physics default (v1.2 B4: e=1, no imposed damping) and now governs harness
+presentation (S10) and, later, product-layer defaults (C-003+). Also noted for open
+decision 5: CF-E2a settle run = 28 events vs its 4-event reference window — third
+calibration-side sighting of the reference-termination schema gap.
+NUMBERS: 10/11 COMPLIANT; c7-v2 satisfied on file; GREEN p95 16.381 ms @120 Hz; RED
+interval ≈18.1 ms vs reported 1.27 ms (measurand shift); CF-E2a 28 vs 4.
+LEARNED: an isolation criterion anchored on main asserts the Director's housekeeping;
+anchor on the CLAIM-stated base, always.
+NEXT: T3 (this packet) → Director live re-assessment (fluidity + AV-2 + infinite default);
+decision 4 still gates D-4 step 3.
+
+---
 ### JRN-I008-8 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

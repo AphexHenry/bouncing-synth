@@ -5,6 +5,7 @@
 #include "av_mapping.hpp"
 #include "perf.hpp"
 #include "playback.hpp"
+#include "restitution_config.hpp"
 #include "scene.hpp"
 #include "selftest.hpp"
 
@@ -219,10 +220,15 @@ void draw_optimized(SDL_Renderer* renderer, SceneCache& cache, Playback& render_
   }
 }
 
-int run_loop(const char* scenario_path, int perf_seconds) {
+int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) {
+  print_restitution_line(cfg);
+
   Playback pb{};
   std::string error;
-  if (!load_and_simulate(scenario_path, pb, 200, error)) {
+  const int max_events = effective_lossless(cfg)
+                             ? static_cast<int>(bounce::core::engine::kMaxSimEvents)
+                             : 200;
+  if (!load_and_simulate(scenario_path, pb, max_events, cfg, error)) {
     std::cerr << error << '\n';
     return 1;
   }
@@ -279,8 +285,9 @@ int run_loop(const char* scenario_path, int perf_seconds) {
   Uint32 start_ticks = SDL_GetTicks();
   const Uint32 end_ticks = perf_seconds > 0 ? start_ticks + static_cast<Uint32>(perf_seconds * 1000) : 0;
   bool running = true;
+  bool have_present_anchor = false;
+  Clock::time_point last_present_time{};
   while (running) {
-    const auto frame_start = Clock::now();
     SDL_Event event{};
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -321,6 +328,10 @@ int run_loop(const char* scenario_path, int perf_seconds) {
       ++next_event;
     }
 
+    if (perf_seconds == 0 && effective_lossless(cfg) && next_event + 8 >= pb.events.size()) {
+      roll_event_stream(scenario_path, pb, cfg, error);
+    }
+
     if (g_render_optimized) {
       draw_optimized(renderer, cache, render_pb, t, perf_seconds > 0 ? &perf : nullptr);
     } else {
@@ -333,7 +344,13 @@ int run_loop(const char* scenario_path, int perf_seconds) {
       record_subsystem(perf.present, elapsed_ms(present_start));
       const auto audio_start = Clock::now();
       record_subsystem(perf.audio, elapsed_ms(audio_start));
-      perf.frame_times_ms.push_back(elapsed_ms(frame_start));
+      if (have_present_anchor) {
+        perf.frame_times_ms.push_back(
+            std::chrono::duration<double, std::milli>(present_start - last_present_time).count());
+      } else {
+        have_present_anchor = true;
+      }
+      last_present_time = present_start;
       ++perf.frame_count;
     }
 
@@ -343,6 +360,7 @@ int run_loop(const char* scenario_path, int perf_seconds) {
   }
 
   if (perf_seconds > 0) {
+    perf.measured_duration_s = static_cast<double>(SDL_GetTicks() - start_ticks) / 1000.0;
     print_perf_report(perf);
   }
 
@@ -359,10 +377,12 @@ int run_loop(const char* scenario_path, int perf_seconds) {
 
 void set_render_optimized(bool enabled) { g_render_optimized = enabled; }
 
-int run_interactive(const char* scenario_path) { return run_loop(scenario_path, 0); }
+int run_interactive(const char* scenario_path, const RunConfig& cfg) {
+  return run_loop(scenario_path, 0, cfg);
+}
 
-int run_perf_seconds(const char* scenario_path, int seconds) {
-  return run_loop(scenario_path, seconds);
+int run_perf_seconds(const char* scenario_path, int seconds, const RunConfig& cfg) {
+  return run_loop(scenario_path, seconds, cfg);
 }
 
 } // namespace bounce_view

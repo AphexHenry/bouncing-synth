@@ -17,6 +17,7 @@ struct PerfStats {
   int display_h = 0;
   int refresh_hz = 0;
   std::size_t frame_count = 0;
+  double measured_duration_s = 0.0;
   std::vector<double> frame_times_ms{};
   SubsystemTiming engine_query{};
   SubsystemTiming curve_draw{};

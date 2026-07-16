@@ -10,6 +10,7 @@ struct SelftestOptions {
   const char* outdir = nullptr;
   const char* frame_times = nullptr;
   int frames = 0;
+  RunConfig run_cfg{};
 };
 
 int run_selftest(const SelftestOptions& opts);

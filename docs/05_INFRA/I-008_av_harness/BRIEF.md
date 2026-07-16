@@ -90,3 +90,31 @@ display mode (resolution + refresh Hz), total frames, and frame-time mean / p50 
 max in ms, plus one line per render-loop subsystem (engine query, curve draw, ball draw,
 present, audio) with its mean ms/frame — and exits 0. The measurement is part of the
 committed harness, not scaffolding.
+
+## Amendments (PACKET 59) — D-5 default-lossless playback + measurand fix
+
+S8 v2 — MEASURAND DEFINITION (amends S8): frame_ms is the interval between successive
+returns from the present call, measured on a monotonic clock, first frame excluded. The
+same definition applies in every mode and code path, so any two perf pastes are
+comparable. Per-subsystem lines remain mean ms/frame of work time, labeled as such.
+
+S9 — LANGUAGE RULE (loop stability): no loop-stability, drift, or long-horizon claim is
+made or implied by any harness run or log (P1-C pending). Harness logs are presentation
+evidence only. This joins S7 (no real-time claims) as a standing affirmation in every
+I-008 TR.
+
+S10 — RESTITUTION OVERRIDE (D-5, Director direction of record): the engine and scenario
+files are never modified; the override applies where the harness constructs its run.
+- INTERACTIVE playback default: effective restitution forced to 1 for all balls (infinite
+  bounce). On scenario load, stdout prints one line naming the effective restitution and
+  its source, e.g. `restitution: override=1 (scenario values ignored; use
+  --scenario-restitution to respect file)`.
+- Flags (mutually exclusive; both modes accept them): `--scenario-restitution` respects
+  the scenario file; `--restitution <r>` with r in (0,1] applies a uniform override.
+  Conflicting flags: error message + nonzero exit.
+- EVIDENCE modes (--selftest, --perf-seconds) default SCENARIO-FAITHFUL so logs remain
+  comparable across tasks; the same flags opt in explicitly, and the effective-restitution
+  line is always printed.
+- Open-ended streams: interactive playback sustains e=1 streams indefinitely (rolling
+  event consumption); selftest keeps its 200-event default cap with `--max-events <n>`
+  available.

@@ -61,6 +61,7 @@ void print_perf_report(const PerfStats& stats) {
   std::cout << "display: " << stats.display_w << 'x' << stats.display_h << " @ "
             << stats.refresh_hz << " Hz\n";
   std::cout << "frames: " << stats.frame_count << '\n';
+  std::cout << "duration_s: " << stats.measured_duration_s << '\n';
   std::cout << std::setprecision(6) << std::fixed;
   std::cout << "frame_ms mean=" << mean << " p50=" << p50 << " p95=" << p95 << " max=" << max
             << '\n';

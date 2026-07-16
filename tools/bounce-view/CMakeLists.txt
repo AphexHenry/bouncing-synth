@@ -30,6 +30,7 @@ add_executable(bounce-view
   perf.cpp
   scene.cpp
   ppm_writer.cpp
+  restitution_config.cpp
 )
 target_link_libraries(bounce-view PRIVATE bounce-core ${SDL2_LIBS_LIST})
 target_include_directories(bounce-view PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

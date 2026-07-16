@@ -67,12 +67,13 @@ void apply_event(Playback& pb, const bounce::core::events::CollisionEvent& event
 } // namespace
 
 bool load_and_simulate(const char* scenario_path, Playback& out, int max_events,
-                       std::string& error) {
+                       const RunConfig& cfg, std::string& error) {
   out = Playback{};
   if (!bounce::core::scenario::load_calibration_scenario(scenario_path, out.scenario)) {
     error = "failed to load scenario";
     return false;
   }
+  apply_restitution_override(out.scenario, cfg);
   for (int i = 0; i < out.scenario.ball_count; ++i) {
     out.inits[static_cast<std::size_t>(i)] = out.scenario.balls[static_cast<std::size_t>(i)].init;
     out.current[static_cast<std::size_t>(i)] = out.inits[static_cast<std::size_t>(i)];
@@ -140,6 +141,26 @@ BallRenderState ball_state_at(const Playback& pb, int ball_id, double t) {
   }
   out.pos = bounce::core::engine::position_at_time(scratch.current[idx], dt);
   return out;
+}
+
+void roll_event_stream(const char* scenario_path, Playback& pb, const RunConfig& cfg,
+                       std::string& error) {
+  if (pb.events.empty()) {
+    return;
+  }
+  const double t0 = pb.events.back().t;
+  Playback batch{};
+  const int max_events = static_cast<int>(bounce::core::engine::kMaxSimEvents);
+  if (!load_and_simulate(scenario_path, batch, max_events, cfg, error)) {
+    return;
+  }
+  for (const auto& ev : batch.events) {
+    auto shifted = ev;
+    shifted.t += t0;
+    shifted.seq = static_cast<int>(pb.events.size());
+    pb.events.push_back(shifted);
+  }
+  pb.end_time = pb.events.back().t;
 }
 
 } // namespace bounce_view
