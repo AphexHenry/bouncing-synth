@@ -959,3 +959,86 @@ Acceptance criteria (binary, one artifact each):
    checker + manifest digests restated to prove read-only — must match OUT_52's) with full
    untruncated sha256s; DIAG report pasted verbatim in the OUT's REPORT section (L-16);
    every journal entry of this dispatch verbatim.
+
+## TASK C-001-T17: Contact-loop correctness — fix defect classes E1/E2/E3 (repro-first)
+depends_on: OUT_53 C-001-T16 ACCEPT + falsification record (JRN-C001-91); Director
+direction D-4; I-002-T2 Tier-1 fixture generator (VERIFIED); C-001-T13/T14/T15 lineage
+objective: Make the engine emit the CORRECT event stream — first contact found, departed
+roots never re-detected, per-ball time strictly monotonic, values within 1e-9 of Tier-1
+references over full streams — demonstrated repro-first on fresh non-held-out fixtures.
+Long-horizon loop stability (P1-C territory) is OUT of scope per D-4. This is an engine
+construction task: no checker, tune, prereg, or held-out changes.
+
+DEFECT CLASSES (from T16, binding targets):
+E1. Missed first contact: zero events emitted on scenarios of the periodic-parabola class
+    where contacts exist.
+E2. Departure-root re-collision: after an impact at t0, the next root search re-detects the
+    just-departed contact (duplicate event at t == t0 or t0 ± ulp; non-monotonic per-ball
+    t; energy bleed under e<1; premature stream termination). Fix must guarantee the next
+    root is strictly after departure with the departure tangency excluded analytically
+    (deflation or strict open-interval semantics — design is the agent's), not by an
+    epsilon fudge that trades this bug for missed genuine near-immediate contacts
+    (grazing/double-root regression suite must stay green).
+E3. Value divergence over 1e-9 at fully paired windows (bezier-settle / parabola-settle
+    classes). Investigate after E1/E2 land; if a genuine precision defect remains on the
+    fresh fixtures, fix it; if the divergence traces to reference generation instead,
+    BLOCKED with the evidence (do not touch the generator in this task).
+
+CONTAMINATION HYGIENE (LAW-1 extension, binding): zero executions under
+data/scenarios/heldout/ (ACCESS_LOG must read 88 before and after this task — paste both).
+New fixtures are minted via the COMMITTED I-002-T2 generator with FRESH parameters; no
+fixture may replicate any held-out fixture's parameter tuple. TR carries an explicit
+affirmation of both.
+
+Steps:
+3. Toolchain paste.
+4. Housekeeping (single commit, before any src/ change): commit
+   docs/03_TRACKS/C-001_exact_collision_engine/reports/gate_r3_evidence/ in place as R3
+   evidence of record (L-13 v2 disposition inherited from OUT_52/53). Paste the commit
+   line + G0 tracked-clean status.
+5. REPRO FIXTURES (RED): mint ≥4 fresh Tier-1 calibration fixtures under
+   data/scenarios/calibration/t17/ — CF-E1 (periodic parabola, reference ≥6 events),
+   CF-E2a (parabola settle, e<1, reference ≥4 events), CF-E2b (poly deg≥3, reference ≥12
+   events), CF-E3 (bezier settle, full-stream class). Paste generator invocations + fixture
+   digests. Run the PRE-FIX engine on each (calibration execution — permitted) and paste
+   the RED evidence per class: E1 zero events; E2 duplicate/ulp-earlier t at the departure
+   contact; E3 divergence if it reproduces (if CF-E3 is green pre-fix, say so — E3 then
+   rides the post-fix investigation of step 8).
+6. FIX: implement the contact-loop corrections in src/core (agent's design; event schema
+   unchanged; FP-determinism flags untouched).
+7. GREEN: re-run every CF fixture; paste per-fixture: exact event-COUNT equality engine vs
+   reference, and per-event |Δt| ≤ 1e-9 AND |Δs| ≤ 1e-9 over the FULL reference stream
+   (worst per fixture shown), seq and ball_id equal per event.
+8. E3 disposition: with E1/E2 fixed, state CF-E3's status with numbers; if divergence >
+   1e-9 persists, fix and re-paste green, or BLOCKED with mechanism evidence per the E3
+   rule above.
+9. INVARIANTS (doctest, permanent): per-ball strictly increasing t across every emitted
+   stream; no consecutive duplicate (t_hex, s_hex) per ball; CF fixtures wired into the
+   suite. Paste full ctest + doctest (existing 54 cases + new; 100% + SUCCESS!).
+10. REGRESSION: FL-1 and PB-1 calibration comparisons still exact (paste); grazing /
+    double-root / zero-event suites green (contained in step 9's run — call out the graze
+    cases explicitly); `--repeat 3` smoke on one CF fixture: `repeat-identity ok N=3`
+    (determinism not regressed).
+11. Byte-verbatim `git status --porcelain --branch`; L-13 v2 delta assertion + inherited
+    dispositions.
+12. TR (`reports/TR_C-001-T17.md`) + OUT per OUT-REQUIREMENTS in the dispatching packet.
+
+Acceptance criteria (binary, one artifact each):
+1. Step 3 toolchain pasted.
+2. Step 4: gate_r3_evidence commit line + G0 tracked-clean paste.
+3. Step 5: ≥4 fixture mints (generator invocations + digests) + RED paste per class as
+   specified (E1 zero events; E2 duplicate/non-monotonic t; CF-E3 status stated).
+4. Step 7: GREEN paste per fixture — event-count equality + worst |Δt|,|Δs| ≤ 1e-9 over the
+   full reference stream + seq/ball_id equality.
+5. Step 8: E3 disposition with numbers (green, or BLOCKED with mechanism).
+6. Step 9: invariant tests present and named in the doctest output; full suite 100% +
+   SUCCESS!; exit=0.
+7. Step 10: FL-1/PB-1 exact; graze cases called out green; repeat-identity ok N=3.
+8. TR affirms: ACCESS_LOG 88 before AND after (both pastes); zero held-out executions; no
+   CF fixture replicates a held-out parameter tuple; no changes to checkers, tune, prereg,
+   or data/scenarios/heldout/.
+9. Step 11: byte-verbatim status; L-13 v2 post-CLAIM delta limited to this task's files;
+   inherited entries identified with disposition.
+10. FILE DIGESTS complete per L-15 (every changed src/ file, every CF fixture, tests,
+    TR, every applied brain file of this packet) with full untruncated sha256s; TR pasted
+    verbatim in REPORT (L-16); every journal entry of this dispatch verbatim.

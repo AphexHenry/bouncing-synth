@@ -1,4 +1,91 @@
 ---
+### JRN-C001-92 · NOTE
+actor: pm-fable5-a · task: C-001-T17 · manifest: n/a
+
+WHAT: C-001-T17 authored (PACKET 54) — engine contact-loop correctness, repro-first.
+Defect classes from T16 D4/D5: E1 missed first contact (zero-event periodic parabola
+class); E2 departure-root re-collision — solver re-finds the contact it just departed
+(duplicate events at identical/ulp-earlier t, non-monotonic per-ball time, energy bleed,
+premature termination; 11/13 R-a rows); E3 value divergence over tolerance at full paired
+windows (2 R-d rows; mechanism unknown, investigate after E1/E2). Discipline: mint FRESH
+Tier-1 calibration fixtures per class via the committed I-002-T2 generator (parameters must
+not replicate any held-out tuple — corpus-A is development-exposed, JRN-C001-91); paste RED
+comparisons before touching src/, GREEN after; add engine invariants to doctest (per-ball
+strictly increasing t; no consecutive duplicate (t_hex, s_hex) per ball); exact event-count
+equality on the new fixtures. Long-horizon loop stability explicitly OUT of scope per D-4.
+Zero held-out execution; ACCESS_LOG must remain 88. Next after ACCEPT: I-008 AV harness
+brief (PACKET 55).
+NUMBERS: ≥4 repro fixtures; E1 ×2 / E2 ×11 / E3 ×2 source rows; tolerance 1e-9 on
+calibration comparisons; ACCESS_LOG 88.
+LEARNED: nothing
+NEXT: OUT_54 review → I-008 (PACKET 55).
+
+---
+### JRN-C001-91 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_53_C-001-T16 per P6 §2; classification ratification; falsification
+record; Director direction D-4.
+
+C-001-T16 criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | custody 32/32 vs manifest | COMPLIANT |
+| 2 | D1 table 32 rows, hdr=body agreement, short side | COMPLIANT |
+| 3 | D2 verbatim window code + formula + deviation | COMPLIANT |
+| 4 | D3 verbatim pairing + seq/count + s-wrap disposition | COMPLIANT |
+| 5 | three bounded D4 excerpts with findings | COMPLIANT |
+| 6 | D5 per-rule classification + summary; no verdict language | COMPLIANT |
+| 7 | H1–H4 affirmations; ACCESS_LOG=88 | COMPLIANT |
+| 8 | status + L-13 v2 disposition | COMPLIANT — inherited gate_r3_evidence/ identified; disposition (commit) routed to T17 step 4 per L-13 v2's "this or next packet" branch (T16's H3 read-only rule created the tension; PM-owned authoring note) |
+| 9 | digests incl. read-only proofs matching OUT_52 | COMPLIANT |
+
+Verdict: ACCEPT.
+
+CLASSIFICATION RATIFIED (pre-registered rules, PACKET 53): R-a=13 · R-b=0 · R-c=0 ·
+R-d=2 · R-e=1. Per v1.2 B2, R-a + R-d are physics: THE SHORTFALL STANDS.
+
+FALSIFICATION RECORD: the C-001 exact collision engine AS BUILT fails the registered P1-A
+intent on 15/32 held-out scenarios. Defect classes, from committed artifacts: E1 — missed
+first contact (HO-parabola-periodic-1/2: engine 0 events vs reference 6); E2 —
+departure-root re-collision: the solver re-detects the contact it just departed, emitting
+duplicate events at identical or ulp-EARLIER t (non-monotonic per-ball time), bleeding
+energy and terminating streams at 2–3 events vs references of 4–25 (11 scenarios across
+parabola-settle, poly-settle, poly-quasichaotic, poly-periodic); E3 — value divergence over
+1e-9 at fully paired windows (HO-bezier-settle-3, HO-parabola-settle-4). The analytic
+paradigm itself is not refuted — E1/E2 are contact-loop implementation defects with
+in-paradigm fixes (departure-root exclusion / strict open-interval search) — but the claim
+"this engine meets P1-A" is falsified in its current build. The FORMAL registered verdict
+is deferred until a harness-admissible gate run exists (v1.2 B2: harness fixed before
+gates); the deferral is procedural, not a softening.
+
+RULINGS AND OWNED DEFECTS: (a) R-e / HO-flat-periodic-3: two balls contact at analytically
+IDENTICAL times; engine computes them one ulp apart and orders accordingly; no binary64
+engine can recover the reference's ordering convention — registration degeneracy, NOT
+physics; quarantined; any criterion amendment (pair-by-ball_id under simultaneity, or
+corpus-admission rule excluding exact ties) must be PRE-registered before any future gate
+execution. (b) PM-owned: PACKET 53's R-b operationalization (registered_window =
+min(200, reference_events) for non-quasi cells) defined reference shortfall away — periodic
+references carry 1–8 events against §1's H = min(200, settle) = 200 for non-settling
+orbits; corpus-vs-registration gap flagged for the resumption bundle. (c) Related §1 blind
+spot flagged: engine events BEYOND a settled reference horizon are untested by the executed
+criterion (e.g. HO-bezier-settle-1 engine 6 vs reference 1) — S-1 semantics to be reviewed
+in the same bundle. (d) Corpus-A ruled DEVELOPMENT-EXPOSED at defect-class level as of T16
+D4; confirmatory reuse vs fresh corpus-B mint = Director open decision 4. (e) Checker
+harness defects confirmed by D2/D3 (window shrinkage to min(ref,eng); silent zip-truncate;
+index pairing; no wrap/tie handling) — fix + L-17 v2 deferred to gate resumption per D-4.
+
+DIRECTOR DIRECTION D-4 (2026-07-16): make the engine functional first (T17), then a
+minimalist visual/audio assessment harness (I-008), then return to determinism and loop
+stability (P1-B/P1-C) with the resumption governance bundle. Recorded; roadmap restated in
+STATE.
+NUMBERS: 9/9 criteria; R-a=13, R-d=2, R-e=1; 15/32 physics-shortfall scenarios; 2 E1, 11
+E2, 2 E3; ACCESS_LOG 88.
+LEARNED: pre-registered decision rules held under pressure in both directions — they voided
+a spurious FAIL's procedure without rescuing the engine from a genuine one.
+NEXT: C-001-T17 (this packet).
+
+---
 ### JRN-C001-90 · DONE
 actor: composer-agent · task: C-001-T16 · manifest: n/a
 

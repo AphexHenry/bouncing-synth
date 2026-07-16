@@ -1,5 +1,5 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-a | trigger: OUT_52 task ACCEPT; P1-A verdict SUB JUDICE (harness deviation from registered windows); C-001-T16 forensic diagnostic dispatched; PACKET 53
+last_updated_by: pm-fable5-a | trigger: OUT_53 ACCEPT; classification ratified — physics shortfall STANDS (falsification record JRN-C001-91); Director direction D-4; C-001-T17 dispatched; PACKET 54
 
 ```
 doc_id:   STATE
@@ -10,66 +10,72 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core, AT THE GATE — P1-A verdict SUB JUDICE. GATE-P1-R3 executed
-cleanly (all pre-flights green; 32/32 gate-authorized; halt per G2) and its checker printed
-"P1-A CORPUS VERDICT: FAIL" (16/32 over tolerance; corpus worst |Δt|=2.09, |Δs|=3.18) — but
-the check's own report shows it compared 0–9 events per scenario against registered windows
-of 12 (quasi-chaotic, v1.3 C1) and min(200, settle) (§1), with the mandatory 13–25
-exploratory tables empty. The executed procedure ≠ the registered procedure, so the ENTIRE
-check is void SYMMETRICALLY — its 16 FAILs and its 16 PASSes (incl. window-0 vacuous
-passes) alike (JRN-C001-87). The registered rule v1.2 B2 governs: "a harness defect is
-fixed before gates, a physics shortfall stands." C-001-T16 (in flight) is the read-only
-forensic diagnostic — count table, checker code audit, bounded event excerpts — with the
-harness-vs-physics decision rules PRE-REGISTERED in PACKET 53 (R-a..R-e). THE PHYSICS
-QUESTION IS OPEN: if engine streams are genuinely short or genuinely divergent, the
-shortfall stands and the falsification record proceeds; a harness fix would only make that
-FAIL admissible.
+Phase 1 — FALSIFICATION RECORDED; engineering pivot under Director direction D-4.
+T16 forensics classified the P1-A anomalies under the pre-registered rules: R-a=13 ·
+R-d=2 · R-e=1 · R-b=0 · R-c=0 — per v1.2 B2 the physics shortfall STANDS. The engine as
+built fails the registered P1-A intent on 15/32 held-out scenarios: E1 missed first
+contact (×2 zero-event periodic parabola); E2 departure-root re-collision — duplicate
+events at identical/ulp-earlier t, non-monotonic per-ball time, premature termination
+(×11); E3 value divergence at full windows (×2). The analytic paradigm is not refuted;
+the contact loop is. Formal registered verdict deferred until a harness-admissible gate
+run exists (checker window/pairing defects confirmed by T16 D2/D3); deferral is
+procedural, not softening.
+
+DIRECTOR DIRECTION D-4 (2026-07-16): (1) make the engine functional — C-001-T17 (IN
+FLIGHT); (2) minimalist visual/audio assessment harness — I-008 (next brief, PACKET 55;
+default spec: native C++/SDL2 linked against bounce-core; live curve+ball render from
+closed-form arcs; audio blip per collision, pitch from contact position, velocity from
+impact speed); (3) return to determinism (P1-B) and loop stability (P1-C) afterwards with
+the gate-resumption governance bundle.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | PREREGISTERED (v1.3) — P1-A SUB JUDICE; T16 forensics IN FLIGHT | classification → T17 fix + GATE-P1-R4, or falsification record | OUT_53 |
-| C-002 Curve library | BRIEFED | T3 prereg | Phase-1 gate call |
+| C-001 Exact collision engine | FALSIFIED AS BUILT (P1-A intent, JRN-C001-91) — T17 contact-loop fixes IN FLIGHT | functional engine → I-008 | OUT_54 |
+| C-002 Curve library | BRIEFED | T3 prereg | gate resumption |
 
 C-000 Phase-0 scoping: CLOSED.
 
 ## Infra workstreams
 | id | state | next transition | waiting on |
 |---|---|---|---|
-| I-001 | VERIFIED | — | — |
-| I-002 | VERIFIED | — | — |
-| I-003 | VERIFIED — corpus 32 locked | possible escalation if T16 fires R-b (short references) | OUT_53 |
-| I-004 | VERIFIED | — | — |
+| I-001..I-004 | VERIFIED | — | — |
 | I-005 | SPECCED | brief | P1-D addendum timing basis |
-| I-006 JUCE scaffold | SPECCED | brief | Phase-1 gate call |
-| I-007 CI | SPECCED | brief | Director hosting (open decision 1 — escalated) |
+| I-006 JUCE scaffold | SPECCED | brief | gate resumption / Director call |
+| I-007 CI | SPECCED | brief | Director hosting (open decision 1) |
+| I-008 AV assessment harness (bounce-view) | DIRECTED (D-4) — to be registered at its brief | PACKET 55 after T17 ACCEPT | OUT_54 |
 
 ## Open decisions (Director)
 1. GitHub hosting + CI for I-007 — ESCALATED.
 2. Protocol amendment bundle (P6 §4.6, §7.4, §7.5; P5 §2 ledger/courier; P6 §4 judge-side
-   pre-flight shape coverage per L-17; P6 §4 delta-scoped workspace criteria per L-13 v2)
-   — non-blocking. L-17 v2 (judge-side window/count/pairing SEMANTICS in self-test) to be
-   minted with the fix packet after T16.
+   shape coverage per L-17; P6 §4 delta-scoped workspace criteria per L-13 v2) —
+   non-blocking.
 3. GPLv3 -only vs -or-later — Phase 3.
+4. Corpus governance at gate resumption: corpus-A is DEVELOPMENT-EXPOSED at defect-class
+   level (T16 D4); confirmatory reuse vs fresh corpus-B mint (I-003 scope).
+5. Gate-resumption registration bundle (all to be PRE-registered before any future gate
+   execution): simultaneous-contact ordering rule (R-e / HO-flat-periodic-3); periodic
+   reference horizons (refs 1–8 events vs §1's H=200 for non-settling orbits); S-1
+   post-settle semantics (engine events beyond a settled reference untested by §1);
+   checker fix + L-17 v2 (window/count/pairing semantics in the self-test).
 
 ## Known issues
-P1-A check harness deviation (OUT_52): executed windows 0–9 vs registered 12/min(200,
-settle); empty mandatory exploratory tables; suspected silent min-length truncation and
-possible s-parameter endpoint-wrap comparison defect — under T16 forensics; verdict SUB
-JUDICE. Baseline CLI write failure at N≥512 (outside gate path; tune N=128; OUT_45).
-Validator calibration_scenarios=3 (OUT_47 forward finding). Resolved: zero-event write
-(T14); checker rational parse (T15).
+Engine contact loop (T16): E1 missed first contact; E2 departure-root re-collision /
+non-monotonic t / premature termination; E3 value divergence ×2 — UNDER FIX (T17).
+Checker harness (T16 D2/D3): window shrinkage to min(ref,eng); silent zip-truncation;
+positional pairing; no simultaneity/wrap handling — deferred to gate resumption (decision
+5). Baseline CLI write failure at N≥512 (outside current path; OUT_45). Validator
+calibration_scenarios=3 (OUT_47). Resolved: zero-event write (T14); checker rational parse
+(T15).
 
 ## Recent review verdicts
-OUT_52/GATE-P1-R3: task ACCEPT; P1-A verdict INADMISSIBLE AS REGISTERED — SUB JUDICE
-(JRN-C001-87); C-001-T15 VERIFIED via step-4 repair.
-OUT_51/C-001-T15: AMEND + RETURN scoped to criterion 7 — repair discharged at R3 step 4.
-OUT_50/GATE-P1-R2: ACCEPT halt — infrastructure BLOCKED at checker (JRN-C001-79).
+OUT_53/C-001-T16: ACCEPT — classification ratified; falsification record (JRN-C001-91).
+OUT_52/GATE-P1-R3: task ACCEPT; P1-A verdict inadmissible as registered (JRN-C001-87).
+OUT_51/C-001-T15: AMEND + RETURN scoped to criterion 7 — repaired at R3 step 4; VERIFIED.
 
 ## Pointers
-Branch rule: task/C-001-T16 from task/GATE-P1-R3 tip (stacked, JRN-I002-6). Gate
-governance: PREREGISTRATION.md v1.3; classification rule of record v1.2 B2; T16 decision
-rules R-a..R-e pre-registered in PACKET 53. ACCESS_LOG: 88 (all gate-authorized); T16 must
-leave it at 88. R3 gate artifacts committed at b426bbd (custody-verified in T16 step 3).
-GATE_SUMMARY.md stands as R3's record; the sub-judice ruling lives in JRN-C001-87 + this
-STATE.
+Branch rule: task/C-001-T17 from task/C-001-T16 tip (stacked, JRN-I002-6). ACCESS_LOG: 88 —
+must remain 88 through T17 and I-008 (no held-out execution until gate resumption).
+Contamination rule of record: new fixtures never replicate held-out parameter tuples
+(JRN-C001-91/92). Falsification record: JRN-C001-91. Direction of record: D-4.
+Gate-resumption bundle: open decisions 4 + 5.
