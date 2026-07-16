@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 namespace bounce::core::engine {
@@ -43,6 +44,31 @@ CompiledPolynomial poly_derivative(const CompiledPolynomial& p) {
                                           static_cast<double>(k);
   }
   return compile_polynomial(dc);
+}
+
+CompiledPolynomial deflate_linear_root(const CompiledPolynomial& q, double root) {
+  if (q.degree < 1) {
+    return compile_polynomial({0.0});
+  }
+  const int n = q.degree;
+  std::vector<double> out(static_cast<std::size_t>(n));
+  double carry = q.coeffs[static_cast<std::size_t>(n)];
+  out[static_cast<std::size_t>(n - 1)] = carry;
+  for (int k = n - 1; k >= 1; --k) {
+    carry = q.coeffs[static_cast<std::size_t>(k)] + root * carry;
+    out[static_cast<std::size_t>(k - 1)] = carry;
+  }
+  return compile_polynomial(out);
+}
+
+double strict_departure_x_min(double x_dep, double vx, double x_max) {
+  if (vx > 0.0) {
+    return std::nextafter(x_dep, std::numeric_limits<double>::infinity());
+  }
+  if (vx < 0.0) {
+    return std::nextafter(x_dep, -std::numeric_limits<double>::infinity());
+  }
+  return x_dep;
 }
 
 DoubleDouble eval_dd(const CompiledPolynomial& p, const DoubleDouble& x) {
@@ -101,10 +127,15 @@ RootBracket vca_isolate_smallest_root(const CompiledPolynomial& q, double x_min,
     const double x = x_min + step * static_cast<double>(i);
     const double v = eval(q, x);
     if (prev_v == 0.0) {
-      out.found = true;
-      out.lo = prev_x;
-      out.hi = prev_x;
-      return out;
+      if (x > prev_x) {
+        out.found = true;
+        out.lo = prev_x;
+        out.hi = prev_x;
+        return out;
+      }
+      prev_x = x;
+      prev_v = v;
+      continue;
     }
     if (v == 0.0) {
       out.found = true;
@@ -116,6 +147,47 @@ RootBracket vca_isolate_smallest_root(const CompiledPolynomial& q, double x_min,
       out.found = true;
       out.lo = prev_x;
       out.hi = x;
+      return out;
+    }
+    prev_x = x;
+    prev_v = v;
+  }
+  return out;
+}
+
+RootBracket vca_isolate_largest_root(const CompiledPolynomial& q, double x_min, double x_max) {
+  RootBracket out{};
+  if (q.degree < 1 || x_max <= x_min) {
+    return out;
+  }
+  const int nseg = std::max(16, q.degree * 8);
+  const double step = (x_max - x_min) / static_cast<double>(nseg);
+  double prev_x = x_max;
+  double prev_v = eval(q, prev_x);
+  for (int i = 1; i <= nseg; ++i) {
+    const double x = x_max - step * static_cast<double>(i);
+    const double v = eval(q, x);
+    if (prev_v == 0.0) {
+      if (prev_x > x) {
+        out.found = true;
+        out.lo = prev_x;
+        out.hi = prev_x;
+        return out;
+      }
+      prev_x = x;
+      prev_v = v;
+      continue;
+    }
+    if (v == 0.0) {
+      out.found = true;
+      out.lo = x;
+      out.hi = x;
+      return out;
+    }
+    if (prev_v * v < 0.0 && has_root_in_interval(q, x, prev_x)) {
+      out.found = true;
+      out.lo = x;
+      out.hi = prev_x;
       return out;
     }
     prev_x = x;
@@ -180,7 +252,135 @@ double normal_impact_speed(const CompiledPolynomial& curve_y, double x, double v
   return std::abs(vn);
 }
 
-BallCollisionStep step_ball_next_collision(const CompiledPolynomial& curve_y,
+std::vector<double> poly_trim_vec(const std::vector<double>& p) {
+  int deg = static_cast<int>(p.size()) - 1;
+  while (deg > 0 && p[static_cast<std::size_t>(deg)] == 0.0) {
+    --deg;
+  }
+  return std::vector<double>(p.begin(), p.begin() + deg + 1);
+}
+
+std::vector<double> poly_add_vec(const std::vector<double>& a, const std::vector<double>& b) {
+  const int deg = std::max(static_cast<int>(a.size()), static_cast<int>(b.size())) - 1;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int k = 0; k <= deg; ++k) {
+    const double av = k < static_cast<int>(a.size()) ? a[static_cast<std::size_t>(k)] : 0.0;
+    const double bv = k < static_cast<int>(b.size()) ? b[static_cast<std::size_t>(k)] : 0.0;
+    out[static_cast<std::size_t>(k)] = av + bv;
+  }
+  return poly_trim_vec(out);
+}
+
+std::vector<double> poly_sub_vec(const std::vector<double>& a, const std::vector<double>& b) {
+  const int deg = std::max(static_cast<int>(a.size()), static_cast<int>(b.size())) - 1;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int k = 0; k <= deg; ++k) {
+    const double av = k < static_cast<int>(a.size()) ? a[static_cast<std::size_t>(k)] : 0.0;
+    const double bv = k < static_cast<int>(b.size()) ? b[static_cast<std::size_t>(k)] : 0.0;
+    out[static_cast<std::size_t>(k)] = av - bv;
+  }
+  return poly_trim_vec(out);
+}
+
+std::vector<double> poly_mul_vec(const std::vector<double>& a, const std::vector<double>& b) {
+  if (a.empty() || b.empty()) {
+    return {0.0};
+  }
+  const int deg = static_cast<int>(a.size()) + static_cast<int>(b.size()) - 2;
+  std::vector<double> out(static_cast<std::size_t>(deg) + 1, 0.0);
+  for (int i = 0; i < static_cast<int>(a.size()); ++i) {
+    for (int j = 0; j < static_cast<int>(b.size()); ++j) {
+      out[static_cast<std::size_t>(i + j)] +=
+          a[static_cast<std::size_t>(i)] * b[static_cast<std::size_t>(j)];
+    }
+  }
+  return poly_trim_vec(out);
+}
+
+std::vector<double> poly_compose_vec(const std::vector<double>& outer,
+                                     const std::vector<double>& inner) {
+  if (outer.empty()) {
+    return {0.0};
+  }
+  std::vector<double> out{0.0};
+  std::vector<double> power{1.0};
+  for (int k = 0; k < static_cast<int>(outer.size()); ++k) {
+    if (outer[static_cast<std::size_t>(k)] != 0.0) {
+      std::vector<double> scaled(power.size());
+      for (std::size_t i = 0; i < power.size(); ++i) {
+        scaled[i] = power[i] * outer[static_cast<std::size_t>(k)];
+      }
+      out = poly_add_vec(out, scaled);
+    }
+    power = poly_mul_vec(power, inner);
+  }
+  return poly_trim_vec(out);
+}
+
+CompiledPolynomial collision_difference_t(const CompiledPolynomial& curve_y,
+                                          const BallisticInit& init) {
+  const std::vector<double> x_of_t = {init.x0, init.vx};
+  std::vector<double> curve_vec(static_cast<std::size_t>(curve_y.degree) + 1);
+  for (int k = 0; k <= curve_y.degree; ++k) {
+    curve_vec[static_cast<std::size_t>(k)] = curve_y.coeffs[static_cast<std::size_t>(k)];
+  }
+  const std::vector<double> y_curve_t = poly_compose_vec(curve_vec, x_of_t);
+  const std::vector<double> y_ball_t = {init.y0, init.vy, -0.5 * init.g};
+  return compile_polynomial(poly_sub_vec(y_curve_t, y_ball_t));
+}
+
+BallCollisionStep step_ball_next_collision_time(const CompiledPolynomial& curve_y,
+                                                const BallisticInit& init, double x_max) {
+  BallCollisionStep out{};
+  if (init.vx == 0.0) {
+    return out;
+  }
+  CompiledPolynomial diff = collision_difference_t(curve_y, init);
+  const double t_depart = std::nextafter(0.0, std::numeric_limits<double>::infinity());
+  double t_lo = 0.0;
+  if (eval(diff, 0.0) == 0.0) {
+    diff = deflate_linear_root(diff, 0.0);
+    t_lo = t_depart;
+  }
+  const double t_hi = 1000.0;
+  for (int attempt = 0; attempt < 8; ++attempt) {
+    if (t_hi <= t_lo) {
+      return out;
+    }
+    const RootBracket bracket = vca_isolate_smallest_root(diff, t_lo, t_hi);
+    if (!bracket.found) {
+      return out;
+    }
+    const double t_hit = vca_refine_root_x(diff, bracket.lo, bracket.hi);
+    if (t_hit <= t_lo) {
+      if (eval(diff, t_hit) == 0.0) {
+        diff = deflate_linear_root(diff, t_hit);
+        t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
+        continue;
+      }
+      return out;
+    }
+    const double x_hit = init.x0 + init.vx * t_hit;
+    if (x_hit > x_max + 1e-12 || x_hit < -x_max - 1e-12) {
+      if (eval(diff, t_hit) == 0.0) {
+        diff = deflate_linear_root(diff, t_hit);
+      }
+      t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
+      continue;
+    }
+    out.found = true;
+    out.t = t_hit;
+    out.x = x_hit;
+    out.y = eval(curve_y, out.x);
+    const double vy_contact = init.vy - init.g * out.t;
+    out.impact_speed = normal_impact_speed(curve_y, out.x, init.vx, vy_contact);
+    out.accepted = out.impact_speed >= kVGraze;
+    return out;
+  }
+  return out;
+}
+
+BallCollisionStep step_ball_next_collision_x(const CompiledPolynomial& curve_y,
                                              const BallisticInit& init, double x_min,
                                              double x_max) {
   BallCollisionStep out{};
@@ -188,18 +388,69 @@ BallCollisionStep step_ball_next_collision(const CompiledPolynomial& curve_y,
     return out;
   }
   const BallisticParabola arc = ballistic_parabola_px(init);
-  const CompiledPolynomial diff = collision_difference_x(curve_y, arc);
-  const RootBracket bracket = vca_isolate_smallest_root(diff, x_min, x_max);
-  if (!bracket.found) {
+  CompiledPolynomial diff = collision_difference_x(curve_y, arc);
+  if (eval(diff, init.x0) == 0.0) {
+    diff = deflate_linear_root(diff, init.x0);
+  }
+  const double depart_x = strict_departure_x_min(init.x0, init.vx, x_max);
+  double search_lo = 0.0;
+  double search_hi = 0.0;
+  if (init.vx > 0.0) {
+    search_lo = std::max(x_min, depart_x);
+    search_hi = x_max;
+  } else {
+    search_lo = -x_max;
+    search_hi = std::min(x_min, depart_x);
+  }
+  for (int attempt = 0; attempt < 8; ++attempt) {
+    if (search_hi <= search_lo) {
+      return out;
+    }
+    const RootBracket bracket =
+        init.vx > 0.0 ? vca_isolate_smallest_root(diff, search_lo, search_hi)
+                      : vca_isolate_largest_root(diff, search_lo, search_hi);
+    if (!bracket.found) {
+      return out;
+    }
+    out.found = true;
+    out.x = vca_refine_root_x(diff, bracket.lo, bracket.hi);
+    out.t = (out.x - init.x0) / init.vx;
+    const bool depart_rehit =
+        init.vx > 0.0 ? out.x <= depart_x : out.x >= depart_x;
+    if (out.t <= 0.0 || depart_rehit) {
+      if (eval(diff, out.x) == 0.0) {
+        diff = deflate_linear_root(diff, out.x);
+        if (init.vx > 0.0) {
+          search_lo = strict_departure_x_min(out.x, init.vx, x_max);
+        } else {
+          search_hi = strict_departure_x_min(out.x, init.vx, x_max);
+        }
+        out = BallCollisionStep{};
+        continue;
+      }
+      out.found = false;
+      return out;
+    }
+    break;
+  }
+  if (!out.found) {
     return out;
   }
-  out.found = true;
-  out.x = vca_refine_root_x(diff, bracket.lo, bracket.hi);
-  out.t = (out.x - init.x0) / init.vx;
   out.y = eval(curve_y, out.x);
   const double vy_contact = init.vy - init.g * out.t;
   out.impact_speed = normal_impact_speed(curve_y, out.x, init.vx, vy_contact);
   out.accepted = out.impact_speed >= kVGraze;
+  return out;
+}
+
+BallCollisionStep step_ball_next_collision(const CompiledPolynomial& curve_y,
+                                             const BallisticInit& init, double x_min,
+                                             double x_max) {
+  BallCollisionStep out =
+      step_ball_next_collision_x(curve_y, init, x_min, x_max);
+  if (!out.found) {
+    out = step_ball_next_collision_time(curve_y, init, x_max);
+  }
   return out;
 }
 
@@ -385,7 +636,11 @@ BallCollisionStep step_ball_next_collision_segment(const CompiledBezierSegment& 
       continue;
     }
     const double t = (pos.x - init.x0) / init.vx;
-    if (t < 0.0) {
+    if (t <= 0.0) {
+      continue;
+    }
+    const double depart_x = strict_departure_x_min(init.x0, init.vx, x_hi);
+    if ((init.vx > 0.0 && pos.x <= depart_x) || (init.vx < 0.0 && pos.x >= depart_x)) {
       continue;
     }
     const double vy_contact = init.vy - init.g * t;

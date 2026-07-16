@@ -4,19 +4,18 @@
 #include "bounce/engine/vca.hpp"
 
 #include <cmath>
+#include <limits>
 
 namespace bounce::core::engine {
 
 namespace {
 
-constexpr double kDomainEps = 1e-12;
-
 double next_x_min(double x_contact, double vx) {
   if (vx > 0.0) {
-    return x_contact + kDomainEps;
+    return std::nextafter(x_contact, std::numeric_limits<double>::infinity());
   }
   if (vx < 0.0) {
-    return x_contact - kDomainEps;
+    return std::nextafter(x_contact, -std::numeric_limits<double>::infinity());
   }
   return x_contact;
 }
@@ -50,7 +49,7 @@ BallSimResult simulate_ball_collisions(const curve::CompiledPolynomial& curve_y,
   }
   double abs_time = 0.0;
   double x_min = init.x0;
-  for (int i = 0; i < max_events; ++i) {
+  for (int i = 0; i < max_events;) {
     if (out.settled) {
       break;
     }
@@ -92,6 +91,7 @@ BallSimResult simulate_ball_collisions(const curve::CompiledPolynomial& curve_y,
     init.vy = reflected.vy;
     abs_time = t_abs;
     x_min = next_x_min(step.x, init.vx);
+    ++i;
   }
   return out;
 }
@@ -113,7 +113,7 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
     active[static_cast<std::size_t>(i)].abs_time = 0.0;
     active[static_cast<std::size_t>(i)].settled = balls[i].init.vx == 0.0;
   }
-  for (int emitted = 0; emitted < max_events; ++emitted) {
+  for (int emitted = 0; emitted < max_events;) {
     int chosen = -1;
     BallCollisionStep chosen_step{};
     double chosen_t_abs = 0.0;
@@ -181,6 +181,7 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
       ball.abs_time = chosen_t_abs;
       ball.x_min = next_x_min(chosen_step.x, ball.init.vx);
     }
+    ++emitted;
   }
   return out;
 }
@@ -227,7 +228,7 @@ MultiBallSimResult simulate_multi_ball_collisions_bezier(
     active[static_cast<std::size_t>(i)].settled = balls[i].init.vx == 0.0;
   }
   const double domain_min = curve.segments.empty() ? 0.0 : curve.segments.front().control[0].x;
-  for (int emitted = 0; emitted < max_events; ++emitted) {
+  for (int emitted = 0; emitted < max_events;) {
     int chosen = -1;
     BallCollisionStep chosen_step{};
     double chosen_t_abs = 0.0;
@@ -299,6 +300,7 @@ MultiBallSimResult simulate_multi_ball_collisions_bezier(
       ball.abs_time = chosen_t_abs;
       ball.x_min = next_x_min(chosen_step.x, ball.init.vx);
     }
+    ++emitted;
   }
   return out;
 }

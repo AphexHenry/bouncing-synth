@@ -59,6 +59,7 @@ add_executable(bounce-tests
   tests/test_event_file.cpp
   tests/test_capacity.cpp
   tests/test_baseline_sim.cpp
+  tests/test_t17_invariants.cpp
   src/tools/run_scenario/run_scenario.cpp
   src/tools/run_baseline/run_baseline.cpp
 )

@@ -1,4 +1,18 @@
 ---
+### JRN-C001-94 · DONE
+actor: composer-agent · task: C-001-T17 · manifest: n/a
+
+WHAT: C-001-T17 contact-loop correctness complete. Departure-root deflation + strict
+nextafter bounds + vx<0 largest-root search + time-domain fallback; graze retry budget fix.
+CF-E1/E2a/E2b/E3 GREEN (6/4/12/3 events; worst |Δt|≤1.44e-14, |Δs|≤1.60e-14). Invariants
+doctest added (63/63 PASS). E3 GREEN post-fix. FL-1/PB-1 exact; repeat-identity N=3.
+ACCESS_LOG=88 unchanged.
+NUMBERS: 4 CF fixtures; E1/E2/E3 GREEN; 63 doctest cases; ACCESS_LOG 88.
+LEARNED: x-only search fails small-|vx| periodic legs; time fallback required without
+epsilon fudge.
+NEXT: OUT_54 review → I-008 (PACKET 55).
+
+---
 ### JRN-C001-93 · CLAIM
 actor: composer-agent · task: C-001-T17 · manifest: n/a
 
