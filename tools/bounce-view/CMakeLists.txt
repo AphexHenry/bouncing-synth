@@ -29,7 +29,7 @@ add_executable(bounce-view
   interactive.cpp
   perf.cpp
   scene.cpp
-  bezier_contact.cpp
+  bezier_display_geometry.cpp
   ppm_writer.cpp
   restitution_config.cpp
 )

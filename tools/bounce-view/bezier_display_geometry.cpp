@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-#include "bezier_contact.hpp"
+#include "bezier_display_geometry.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -43,9 +43,9 @@ double invert_segment_x(const bounce::core::curve::CompiledBezierSegment& segmen
 
 } // namespace
 
-BezierContact locate_bezier_contact(
+BezierDisplayPoint locate_bezier_display_point(
     const bounce::core::curve::CompiledPiecewiseBezier& curve, double contact_x) {
-  BezierContact out{};
+  BezierDisplayPoint out{};
   for (std::size_t i = 0; i < curve.segments.size(); ++i) {
     const auto& segment = curve.segments[i];
     const double xmin = segment_x_min(segment) - kEps;

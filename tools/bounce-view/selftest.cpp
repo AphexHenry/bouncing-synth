@@ -190,6 +190,24 @@ int run_selftest(const SelftestOptions& opts) {
               << blip.k << '\n';
   }
   const double t_last = pb.events.empty() ? 0.0 : pb.events.back().t;
+  if (static_cast<int>(pb.events.size()) < max_events) {
+    std::cout << "diagnostic stream_ended_early=true events=" << pb.events.size()
+              << " cap=" << max_events << '\n';
+    if (!pb.events.empty()) {
+      const auto& last = pb.events.back();
+      std::cout << "diagnostic last_event ball_id=" << last.ball_id << " t=" << std::setprecision(17)
+                << last.t << " s=" << last.s << " |vn|=" << last.impact_speed << '\n';
+      Playback diag = pb;
+      advance_playback_to(diag, last.t);
+      for (int b = 0; b < pb.scenario.ball_count; ++b) {
+        const auto state = ball_state_at(diag, b, last.t);
+        std::cout << "diagnostic ball_id=" << b << " pos=(" << std::setprecision(17) << state.pos.x
+                  << ',' << state.pos.y << ") domain=[" << pb.scenario.domain_min << ','
+                  << pb.scenario.domain_max << "] settled="
+                  << (diag.settled[static_cast<std::size_t>(b)] ? "true" : "false") << '\n';
+      }
+    }
+  }
   std::cout << "selftest ok events=" << pb.events.size() << " t_last=" << std::setprecision(17)
             << t_last << '\n';
 

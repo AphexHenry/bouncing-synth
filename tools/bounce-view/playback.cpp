@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "playback.hpp"
 
-#include "bezier_contact.hpp"
-
 #include <cmath>
 #include <string>
 #include <vector>
@@ -45,24 +43,22 @@ void apply_event(Playback& pb, const bounce::core::events::CollisionEvent& event
   auto& state = pb.current[static_cast<std::size_t>(idx)];
   const double dt = event.t - pb.arc_start_t[static_cast<std::size_t>(idx)];
   const double vy_contact = state.vy - state.g * dt;
-  const auto& curve = pb.scenario.piecewise_bezier;
-  const auto contact = locate_bezier_contact(curve, event.s);
-  const auto& segment = curve.segments[contact.segment_index];
-  const auto pos = bounce::core::curve::eval(segment, contact.segment_s);
-  const auto n = bounce::core::curve::normal(segment, contact.segment_s);
-  const double vn = state.vx * n.nx + vy_contact * n.ny;
+  const double nx = event.normal_x;
+  const double ny = event.normal_y;
+  const double vn = state.vx * nx + vy_contact * ny;
   const double restitution = pb.scenario.balls[static_cast<std::size_t>(idx)].restitution;
   bounce::core::engine::ReflectedVelocity reflected{};
-  reflected.vx = state.vx - (1.0 + restitution) * vn * n.nx;
-  reflected.vy = vy_contact - (1.0 + restitution) * vn * n.ny;
+  reflected.vx = state.vx - (1.0 + restitution) * vn * nx;
+  reflected.vy = vy_contact - (1.0 + restitution) * vn * ny;
   reflected.normal_speed_out = std::abs(vn);
   if (reflected.normal_speed_out < bounce::core::engine::kVSettle) {
     pb.settled[static_cast<std::size_t>(idx)] = true;
     pb.settle_pos[static_cast<std::size_t>(idx)] = bounce::core::engine::position_at_time(state, dt);
     return;
   }
-  state.x0 = pos.x;
-  state.y0 = pos.y;
+  const auto contact_pos = bounce::core::engine::position_at_time(state, dt);
+  state.x0 = contact_pos.x;
+  state.y0 = contact_pos.y;
   state.vx = reflected.vx;
   state.vy = reflected.vy;
   pb.arc_start_t[static_cast<std::size_t>(idx)] = event.t;
