@@ -134,3 +134,18 @@ executed in this or the next packet — never silently tolerated, so residue can
 accumulate. Origin: OUT_51, where inherited docs/.../reports/gate_r2_evidence/ (created by
 the R2 dispatch after its own status paste) rendered T15's criterion 7 unsatisfiable;
 fourth instance of the workspace-state authoring class (L-09 → L-11 → L-13 → this).
+
+L-18: An acceptance criterion may bind a numeric expectation only when the number is
+derived from the semantics of the run that criterion governs, with the derivation stated
+in the criterion or brief. Numbers imported from a different measurement context — a
+reference comparison window, a prior task's horizon, an expected failure signature on
+parameters not yet chosen — are guesses wearing thresholds' clothes: when they fire they
+block sound work, and when they don't they certify nothing. Where no derivation exists,
+the criterion asserts internal consistency and honest reporting of the measured value, and
+routes any cross-context comparison through the instrument registered for it (checker,
+test suite). Enforcement: at authoring, every numeric expectation carries a one-line
+derivation; at review, a numeric criterion without one is a PM authoring defect. Origin:
+PACKET 54 c3 ("E1 zero events" — expected failure signature on fresh parameters,
+JRN-C001-95) and PACKET 55 c6 ("events=12" — reference-window count bound to a
+settle-semantics run, JRN-I008-4); second occurrence per P6 §6.3, with the companion P6 §4
+amendment proposal riding open decision 2.

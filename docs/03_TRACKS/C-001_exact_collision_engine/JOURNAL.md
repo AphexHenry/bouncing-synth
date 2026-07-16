@@ -1,3 +1,32 @@
+### JRN-C001-96 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: C-001-T17 repairs disposition (OUT_55). Repair-A (c3-v2): COMPLIANT — byte-verbatim
+CF-E1 quote from the committed TR with the exact assertion line; all 6 reference contacts
+absent, spurious t=0 reported as observed. Repair-B (c6/L-15): the remediation's mismatch
+guard fired as designed — the committed suite registers NINE per-fixture TEST_CASEs, while
+TR_C-001-T17 §Step 9 listed three backticked aggregate names. ADJUDICATION: the TR's list
+was compressed notation ("CF-E1/E2a/E2b/E3" standing for four cases each) presented in
+literal formatting; corroboration: OUT_54's own case arithmetic (54 prior + 9 new = 63
+reported). The substantive criterion — invariants present, named in doctest output, suite
+green — is satisfied by OUT_55's verbatim listing. The invariant set OF RECORD is the nine
+names as listed in OUT_55 step 5 (per-fixture "per-ball times strictly increasing" ×4,
+"no consecutive duplicate t_hex s_hex per ball" ×4, plus "T17 CF fixtures agree with
+tier-1 references within 1e-9"). Standing reporting note to agents: TR test-name listings
+are byte-literal TEST_CASE strings, never notation — first occurrence of this reporting
+class; recurs → LESSONS per P6 §6.3.
+
+VERDICT: with both repairs landed in OUT_55, C-001-T17 is VERIFIED. The contact-loop fix
+(E1/E2/E3), its four CF fixtures, and the nine invariant cases are evidence of record. The
+falsification record JRN-C001-91 continues to describe the PRE-T17 build; the registered
+P1-A verdict on the fixed build remains deferred to gate resumption (nothing here executes
+held-out scenarios; ACCESS_LOG 88 throughout OUT_55).
+NUMBERS: repairs 2/2 landed; 9 invariant TEST_CASEs of record; ACCESS_LOG 88/88.
+LEARNED: an L-15 mismatch BLOCK is the mechanism succeeding — it converted a silent
+TR-notation imprecision into an adjudicated record.
+NEXT: main merge of task/C-001-T17 batched with the I-008 branches after OUT_56 ACCEPT;
+gate-resumption bundle (open decisions 4+5) after D-4 steps 2–3.
+
 ---
 ### JRN-C001-95 · CORRECTION
 actor: pm-fable5-a · task: n/a · manifest: n/a
