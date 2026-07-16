@@ -1,6 +1,55 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-8 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: OUT_57 apply-only ACCEPTED (confirmation + verbatim copies + digests + L-12
+terminator; nothing further to table). Director merged the stacked chain to main and
+delivered the live AV assessment — D-4 step 2 COMPLETE. Findings of record:
+F1 PERFORMANCE — interactive rendering perceived at ~10 fps, not fluid. Disposition:
+harness defect (the engine is event-driven; between-event position queries are closed-form
+and cheap — a correct render loop has no reason to miss display refresh). T2 fixes this
+repro-first: measurement instrumentation lands first (`--perf-seconds`), RED stats +
+per-subsystem timing pasted BEFORE optimization, GREEN after against an L-18-derived
+criterion (p95 frame time ≤ 2× the display refresh interval reported by the same run;
+derivation: VSYNC pacing makes the refresh interval the run's own expected frame period,
+and a 2× bound admits at most isolated missed deadlines, never sustained halving).
+F2 SETTLED BALL DISAPPEARS — after an e<1 Zeno cascade the ball vanishes. Disposition,
+two parts: (a) the physics is REGISTERED behavior, not a defect — rule S-1
+(DELIVERABLE_B §3) marks the ball SETTLED below v_settle and emits no further events;
+rolling/sliding contact is explicitly out of Phase-1 scope (R1 companion ruling). The
+product-default regime (e=1, v1.2 B4) never settles — the finding manifests only on e<1
+fixtures. (b) The HARNESS presentation of that semantics is defective: a SETTLED ball must
+remain visible, resting at its settle position on the curve, until restart — fixed in T2
+(S2.1). True rolling contact is a genuinely new dynamical regime (constrained motion with
+a departure condition; time-parametrization has no closed form in general — a deterministic
+fixed-order quadrature thesis, not an engine patch) and is escalated as OPEN DECISION 6,
+never smuggled into an assessment-harness task.
+F3 SOUND QUALITY — the AV-1 blip is a bare sine by spec (deliberately minimal).
+Superseded by AV-2 (BRIEF S3 v2): exponentially decaying three-partial voice, impact speed
+driving amplitude, decay time, and brightness; pitch mapping unchanged; still
+assessment-only, C-003 inherits nothing.
+NUMBERS: 3 findings; F1/F3 harness-scoped (T2); F2 split harness (T2) / component
+(decision 6).
+LEARNED: the AV harness is doing its job — it converted a Phase-0 scope ruling (S-1, R1)
+from registered text into a felt product decision within one session of use.
+NEXT: OUT_58 review; decision 4 answer opens the resumption bundle (D-4 step 3);
+decision 6 shapes the Phase-2 slate.
+
+---
+### JRN-I008-9 · CLAIM
+actor: composer-agent · task: I-008-T2 · manifest: n/a
+
+WHAT: Claimed I-008-T2 on branch task/I-008-T2 from packet/57 tip (chain through serial 57;
+main merge deferred to Director). Scope: PACKET 58 assessment-feedback improvements —
+S8 perf instrumentation (repro-first RED/GREEN), S2.1 settled-ball persistence, S3 v2 AV-2
+voice + S5.1 selftest format; zero changes under src/ tests/ config/ data/.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Steps 3–14 per PACKET 58 TASK I-008-T2.
+
+---
 ### JRN-I008-7 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

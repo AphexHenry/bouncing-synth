@@ -63,3 +63,30 @@ objective: A running bounce-view meeting S1–S7 with selftest, guard, and frame
 plus repair-A (c3-v2) and repair-B (c6/L-15) closing the OUT_54 ledger.
 branch: `task/I-008-T1` from `task/C-001-T17` tip (stacked, JRN-I002-6).
 Steps and acceptance criteria are carried verbatim in the dispatching packet (PACKET 55).
+
+## Amendments (PACKET 58) — assessment-feedback improvements
+
+S2.1 SETTLED-BALL PERSISTENCE (amends S2): a ball whose stream has ended by S-1 settle
+remains rendered at its settle position on the curve, visually distinct from an active
+ball (agent's design), until scenario end or restart. A ball whose stream ends by domain
+exit leaves the window naturally; only SETTLED balls persist.
+
+S3 v2 — ASSESSMENT VOICE AV-2 (replaces AV-1's waveform; pitch mapping unchanged): per
+collision, one voice with 2 ms linear attack and exponential decay:
+y(τ) = a · e^(−τ/τ_d) · [sin(2πfτ) + 0.5k·sin(2π·2fτ) + 0.25k·sin(2π·3fτ)] / (1 + 0.75k),
+where f = 220 · 2^(2u) Hz (u = contact parameter normalized over the curve's declared
+domain, as AV-1), k = min(1, |v_n|/10), a = 0.3 · k' with k' = min(1, |v_n|/10),
+τ_d = 80 ms · (0.5 + 0.5k). Overlapping voices sum; the master output is clamped to
+[−1, 1] after a 0.5 master gain. Settled balls emit nothing. AV-2 is assessment-only and
+versioned here; C-003 inherits nothing.
+
+S5.1 SELFTEST LINE FORMAT v2 (amends S5): the per-collision line becomes
+`seq ball_id t s f_hz amp tau_ms k` — the voice parameters are a pure deterministic
+function of the event stream.
+
+S8 PERFORMANCE INSTRUMENTATION: `bounce-view --perf-seconds <n> <scenario.json>` runs the
+INTERACTIVE window (not the dummy driver) for n seconds, then prints to stdout: the
+display mode (resolution + refresh Hz), total frames, and frame-time mean / p50 / p95 /
+max in ms, plus one line per render-loop subsystem (engine query, curve draw, ball draw,
+present, audio) with its mean ms/frame — and exits 0. The measurement is part of the
+committed harness, not scaffolding.
