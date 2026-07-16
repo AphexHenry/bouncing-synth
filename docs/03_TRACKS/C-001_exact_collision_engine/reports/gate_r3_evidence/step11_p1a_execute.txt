@@ -1,0 +1,1 @@
+gate-exec-ok study=P1-A manifest=/Users/baptistebohelay/Dev/research/bouncing-synth/tools/gaterunner/manifests/P1-A.json
