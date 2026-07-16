@@ -1,3 +1,25 @@
+### JRN-C001-97 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Post-verification finding from OUT_56's CF-E2b metadata, owned for the record:
+PACKET 54's T17 brief demanded "fresh Tier-1 calibration fixtures" for all four repro
+classes, but the deg≥3 polynomial class has no Tier-1 closed form (DELIVERABLE_B §6) —
+CF-E2b is provenance tier 2 (refsim-cas-tier2, mpmath 1.3.0, residual_max 0), as OUT_54's
+mint line disclosed at the time (tier-2 helper named). PM authoring imprecision: the brief
+demanded an attribute unsatisfiable for the class; the agent delivered the physically
+correct fixture and disclosed the tier. No evidence is voided — the reference is
+convergence-verified and the 1e-9 comparison tolerance is tier-appropriate; T17's VERIFIED
+status stands. Classified as attribute-feasibility imprecision, distinct from L-18's
+numeric class; first occurrence — recurs → LESSONS per P6 §6.3. Durable fix routed to the
+resumption bundle: fixture briefs name the tier PER CLASS from the coverage architecture,
+and the schema's explicit tier + new reference_termination fields become mint requirements
+(JRN-I008-7).
+NUMBERS: CF-E2b tier 2; residual_max 0; T17 evidence unchanged.
+LEARNED: a brief attribute must be checked against the coverage architecture's feasibility
+per class at authoring, exactly as L-18 requires for numbers.
+NEXT: gate-resumption bundle (open decisions 4+5) after D-4 step 2.
+
+---
 ### JRN-C001-96 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

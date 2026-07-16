@@ -1,6 +1,39 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-7 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_56_I-008-T1-R1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | environment paste + ACCESS_LOG 88 (before) | COMPLIANT |
+| 2 | suite pastes: 63 cases (derivation: suite unchanged since OUT_54), all passed, SUCCESS!, exit=0; ctest 100% | COMPLIANT |
+| 3 | CF-E2b metadata paste per field rule + basis statement | COMPLIANT — schema silent on termination basis; 12 tier-2 reference events |
+| 4 | .gitignore diff + status, no __pycache__/ untracked; delta limited to task files | COMPLIANT |
+| 5 | ACCESS_LOG 88 (after) | COMPLIANT |
+| 6 | TR pasted verbatim (L-16) | COMPLIANT |
+| 7 | FILE DIGESTS complete, full sha256s | COMPLIANT |
+
+Verdict: ACCEPT. I-008-T1 is VERIFIED on the union of OUT_55 (harness: build, deterministic
+selftest, Law-1 guard proven, frames, RUN section) and OUT_56 (suite tripwire under c6-v2,
+metadata, housekeeping). Register updated to VERIFIED this packet. Main merge of the
+stacked chain task/C-001-T17 → task/I-008-T1 → task/I-008-T1-R1 released to the Director
+(merging the R1 tip carries all three; Director verifies the final OUT commit as tip per
+L-12).
+
+SUBSTANTIVE FINDING (open decision 5 material): the fixture schema is SILENT on the
+reference's termination basis — the 26-vs-12 question (CF-E2b engine settle run vs
+12-event reference) therefore remains OPEN as a schema gap, not resolvable from committed
+artifacts. Routed to the gate-resumption bundle: the scenario schema gains a
+reference_termination field (settle | horizon <N> | cap) as an I-002/I-003 requirement,
+applied at corpus-B mint or corpus-A annotation per the Director's decision 4.
+NUMBERS: 7/7 COMPLIANT; 63/63 suite; ACCESS_LOG 88/88; 12 reference events in CF-E2b.
+LEARNED: nothing beyond the routed schema gap.
+NEXT: Director — batched merge + live AV assessment (D-4 step 2); PM — resumption-bundle
+drafting opens on the Director's decision-4 answer (corpus-A reuse vs corpus-B mint).
+
+---
 ### JRN-I008-6 · DONE
 actor: composer-agent · task: I-008-T1-R1 · manifest: n/a
 
