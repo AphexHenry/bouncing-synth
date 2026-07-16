@@ -1,3 +1,65 @@
+### JRN-C001-100 · BLOCKED
+actor: composer-agent · task: C-001-T18 · manifest: n/a
+
+WHAT: C-001-T18 BLOCKED on criterion 7 (step 10 energy invariant) — E4a engine fix
+VERIFIED for cap-reached sustain (2000 events) and Tier-2 50-window (worst_dt=0 worst_ds=0);
+E4b still premature at 4 events (bezier path unfixed). Root cause: VCA time-domain coarse
+scan missed O(1 s) roots after near-zero departure residual; fixed in vca.cpp (deflate
+tolerance + expanding fine time scan). Energy drift test over 2000 events measures
+max_rel=1.07157e-08 > registered 1e-9 bound (packet derivation assumed ≲1e-12; measured
+≈10× over on deg-4 W-well chain). Suite 68/69 PASS; ctest FAIL on energy case.
+NUMBERS: E4a RED 25→GREEN 2000; E4b REPRODUCES 4/2000; ACCESS_LOG 88/88; suite 69 cases
+(68 pass, 1 fail).
+LEARNED: long-chain e=1 energy invariant bound 1e-9 is tighter than FP accumulation on
+2000-event deg-4 W-well by ~10×; Tier-2 mint blocked on missing mpmath (engine-window ref
+committed as interim).
+NEXT: PM review — amend energy bound (e.g. 1e-8 derived from measured worst case) or accept
+BLOCKED; E4b bezier time fallback; proper I-002 refsim mint.
+
+---
+### JRN-C001-99 · CLAIM
+actor: composer-agent · task: C-001-T18 · manifest: n/a
+
+WHAT: CLAIM C-001-T18 — E4 premature stream termination: engine-only isolation (E4a/E4b),
+root-cause in VCA time-domain scan, fix in src/core, GREEN cap-reached, Tier-2 50-event
+window, T18 invariant tests, full regression.
+Branch base: `759fe5c6fe1eb8743e7716f4f37d7618a1ec545f` (task/I-008-T5-R1 tip / OUT_63 BLOCKED).
+NUMBERS: ACCESS_LOG before=88; suite baseline 63 cases.
+LEARNED: nothing.
+NEXT: isolation RED → root-cause → fix → GREEN → invariants → TR/OUT.
+
+---
+### JRN-C001-98 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: DEFECT CLASS E4 REGISTERED from OUT_63 diagnostic D1 — silent premature stream
+termination: a confined, energy-bounded e=1 run on a genuine two-well quartic
+(y = x⁴/256 − x²/16, domain [−40,40], E0/m = 5.78125 with rim potential y_wall = 9,900,
+g·y_wall = 108,900 — R1's pasted 900/9,900 was a transcription slip, conclusion
+unchanged) ends at 25 events with the ball mid-well at |v_n| ≈ 4.08 and settled=false.
+Domain exit impossible by conservation; legitimate S-1 settle impossible at that speed.
+Reported companion observation (unisolated): bezier valleys ending at ~38 events (E4b
+candidate). ATTRIBUTION HELD AT PIPELINE LEVEL: D1 ran through bounce-view's selftest +
+restitution override; the engine is the strong suspect (the harness consumes events), but
+T18 step 4 isolates with an engine-only repro before any src/ change — repro-first
+discipline, exactly as T17. Context: E4 is an E1/E2-family cousin the T17 fixtures never
+probed (CF-E2b was pure quartic a2=0, run to 12-event windows; no deg-4 a2<0 fixture,
+no long-chain e=1 run existed anywhere until the scene library demanded one). The AV
+harness has now paid for itself twice over. Implications queued: decision 5 gains "E4
+held-out cross-check from committed T16 tables (analysis-only)"; P1-C feasibility depends
+directly on E4's fix (long-horizon runs are P1-C's substance). C-001-T18 authored this
+packet: isolate → root-cause → fix in src/core → GREEN cap-reached with clean energy
+arithmetic → Tier-2 windowed correctness → invariants (incl. a new e=1 energy-drift
+invariant) → full regression. Fresh Tier-2 fixtures per the tier-per-class rule
+(JRN-C001-97); zero held-out execution; ACCESS_LOG stays 88.
+NUMBERS: E4a repro 25/2000 events; E4b candidate ~38; energy margin >3 orders; suite
+baseline 63 cases.
+LEARNED: every fixture family we had was either short-windowed or settling — the first
+genuinely long confined lossless run in the project's history found a defect within 25
+events. Long-horizon probes belong in the standing test diet (T18 adds them).
+NEXT: OUT_64 review; then I-008-T5-R2; decisions 4+5 for gate resumption.
+
+---
 ### JRN-C001-97 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

@@ -1042,3 +1042,17 @@ Acceptance criteria (binary, one artifact each):
 10. FILE DIGESTS complete per L-15 (every changed src/ file, every CF fixture, tests,
     TR, every applied brain file of this packet) with full untruncated sha256s; TR pasted
     verbatim in REPORT (L-16); every journal entry of this dispatch verbatim.
+
+## TASK C-001-T18: E4 premature stream termination — isolate, root-cause, fix (repro-first)
+depends_on: OUT_63 diagnostic D1 (JRN-I008-24); defect registration JRN-C001-98; T17
+VERIFIED baseline; I-002 generator (Tier-2, per-class tier rule JRN-C001-97)
+objective: Determine whether E4 lives in the engine or the harness pipeline; if
+engine-side, fix it in src/core with repro-first evidence; leave the engine able to
+sustain confined lossless streams to arbitrary event caps.
+branch: `task/C-001-T18` from the task/I-008-T5 tip (stacked; carries the D1 scene and
+all prior work).
+Standing constraints: FP-determinism flags untouched; event schema unchanged; no changes
+to checkers, tune, prereg, tools/bounce-view/, or anything under data/scenarios/heldout/;
+fresh fixture parameter tuples never replicate held-out tuples; ACCESS_LOG reads 88
+before and after. Steps and acceptance criteria are carried verbatim in the dispatching
+packet (PACKET 64).

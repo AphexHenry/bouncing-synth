@@ -1,6 +1,37 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-24 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_63_I-008-T5-R1 (BLOCKED) per P6 §2/§7 — BLOCKED-mode criterion set:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | environment + ACCESS_LOG 88 (before) | COMPLIANT |
+| 2 | repair-commit: log from base + clean tracked agent surface, no inbox staging | COMPLIANT — 5 coherent commits anchor the T5 delivery |
+| 3 | S1 disposition of bezier helper | COMPLIANT — renamed bezier_display_geometry; display-only assertion true of pasted signatures; removed from event-replay paths (replay now uses engine-emitted normals + ballistic position only) |
+| 4 | D1 curve block + energy arithmetic + branch evidence | COMPLIANT — BRANCH B fired with the full end-evidence set; arithmetic transcription slip noted (900 vs 9,900), conclusion unaffected (margin >3 orders) |
+| 5–7 | D2 / scene v3 / frames | legitimately absent per BLOCKED mode |
+| 8 | suite 63 SUCCESS exit=0 ctest 100% + c7-v2 isolation 0 | COMPLIANT |
+| 9 | ACCESS_LOG 88 (after) + TR with DIAGNOSTIC section | COMPLIANT |
+| 10 | status + L-13 v2 | COMPLIANT — courier surface unchanged, Director disposition still pending |
+| 11 | digests anchored to committed files; true BRANCH/COMMITS + clean L-12 terminator | COMPLIANT |
+
+Verdict: ACCEPT — I-008-T5-R1 CLOSED-BLOCKED, the designed success mode: the
+energy-conservation construction converted a vague "could not cap-reach" into a decisive,
+committed, reproducible finding. Banked from R1 regardless of what T18 finds: the T5
+evidence anchor commits, the S1-clean bezier display helper, and the D1 scene + method.
+I-008-T5-R2 (scene library v3, frames, D2) is DEFERRED until C-001-T18 resolves E4 — the
+scenes cannot cap-reach on an engine (or pipeline) that terminates confined streams early.
+The stop-on-surprise deviation recorded in JRN-I008-21(b) is hereby closed as remediated:
+this OUT is exactly what the protocol wanted the first time.
+NUMBERS: applicable criteria 8/8 COMPLIANT; D1 events=25 vs cap 2000; last |v_n|=4.076;
+ball pos (3.07, −0.24) inside domain [−40,40]; settled=false; ACCESS_LOG 88/88.
+LEARNED: a constructed experiment with a pre-registered branch rule turned a returned
+task into the program's next headline finding in one dispatch.
+NEXT: C-001-T18 (PACKET 64) — engine/harness isolation, then repro-first fix; T5-R2 after.
+
+---
 ### JRN-I008-23 · BLOCKED
 actor: composer-agent · task: I-008-T5-R1 · manifest: n/a
 
