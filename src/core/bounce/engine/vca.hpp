@@ -32,7 +32,7 @@ curve::CompiledPolynomial collision_difference_x(const curve::CompiledPolynomial
                                                  const BallisticParabola& arc);
 
 RootBracket vca_isolate_smallest_root(const curve::CompiledPolynomial& q, double x_min,
-                                      double x_max);
+                                      double x_max, int min_segments = 0);
 
 double vca_refine_root_x(const curve::CompiledPolynomial& q, double lo, double hi);
 
@@ -42,6 +42,18 @@ double normal_impact_speed(const curve::CompiledPolynomial& curve_y, double x, d
 BallCollisionStep step_ball_next_collision(const curve::CompiledPolynomial& curve_y,
                                              const BallisticInit& init, double x_min,
                                              double x_max);
+
+BallCollisionStep step_ball_next_collision_x(const curve::CompiledPolynomial& curve_y,
+                                             const BallisticInit& init, double x_min,
+                                             double x_max);
+
+BallCollisionStep step_ball_next_collision_time(const curve::CompiledPolynomial& curve_y,
+                                                const BallisticInit& init, double x_max);
+
+curve::CompiledPolynomial collision_difference_t(const curve::CompiledPolynomial& curve_y,
+                                                 const BallisticInit& init);
+
+curve::CompiledPolynomial deflate_linear_root(const curve::CompiledPolynomial& q, double root);
 
 BallCollisionStep step_ball_next_collision_bezier(const curve::CompiledPiecewiseBezier& curve,
                                                   const BallisticInit& init, double x_min,

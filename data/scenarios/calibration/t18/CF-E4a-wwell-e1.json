@@ -1,0 +1,44 @@
+{
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "-1/16",
+      "0",
+      "1/256"
+    ],
+    "curve_id": "CF-E4a-curve",
+    "domain": [
+      "-40",
+      "40"
+    ],
+    "family": "polynomial"
+  },
+  "family": "WWELL-E4",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "3",
+        "y": "1/2"
+      },
+      "radius": "0.1",
+      "restitution": "1",
+      "vel": {
+        "vx": "3/4",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "11"
+  },
+  "provenance_tier": 2,
+  "reference_events": [],
+  "scenario_id": "CF-E4a-wwell-e1",
+  "schema_version": "1",
+  "verification": {
+    "method": "none-calibration-repro",
+    "residual_max": "0"
+  }
+}

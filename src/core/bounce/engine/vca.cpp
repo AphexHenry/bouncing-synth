@@ -46,6 +46,8 @@ CompiledPolynomial poly_derivative(const CompiledPolynomial& p) {
   return compile_polynomial(dc);
 }
 
+} // namespace
+
 CompiledPolynomial deflate_linear_root(const CompiledPolynomial& q, double root) {
   if (q.degree < 1) {
     return compile_polynomial({0.0});
@@ -60,6 +62,8 @@ CompiledPolynomial deflate_linear_root(const CompiledPolynomial& q, double root)
   }
   return compile_polynomial(out);
 }
+
+namespace {
 
 double strict_departure_x_min(double x_dep, double vx, double x_max) {
   if (vx > 0.0) {
@@ -114,12 +118,13 @@ curve::CompiledPolynomial collision_difference_x(const CompiledPolynomial& curve
   return poly_subtract(curve_y, arc.poly);
 }
 
-RootBracket vca_isolate_smallest_root(const CompiledPolynomial& q, double x_min, double x_max) {
+RootBracket vca_isolate_smallest_root(const CompiledPolynomial& q, double x_min, double x_max,
+                                      int min_segments) {
   RootBracket out{};
   if (q.degree < 1 || x_max <= x_min) {
     return out;
   }
-  const int nseg = std::max(16, q.degree * 8);
+  const int nseg = min_segments > 0 ? min_segments : std::max(16, q.degree * 8);
   const double step = (x_max - x_min) / static_cast<double>(nseg);
   double prev_x = x_min;
   double prev_v = eval(q, prev_x);
@@ -338,16 +343,31 @@ BallCollisionStep step_ball_next_collision_time(const CompiledPolynomial& curve_
   CompiledPolynomial diff = collision_difference_t(curve_y, init);
   const double t_depart = std::nextafter(0.0, std::numeric_limits<double>::infinity());
   double t_lo = 0.0;
-  if (eval(diff, 0.0) == 0.0) {
+  const double diff_at_depart = eval(diff, 0.0);
+  if (diff_at_depart == 0.0 || std::abs(diff_at_depart) <= 1e-14) {
     diff = deflate_linear_root(diff, 0.0);
     t_lo = t_depart;
   }
-  const double t_hi = 1000.0;
+  constexpr double kTimeHorizonMax = 1000.0;
+  constexpr double kTimeScanStep = 0.02;
+  const double char_time = std::max(std::abs(init.vy / init.g), 0.1);
+  double scan_window = std::max(4.0 * char_time, 0.5);
   for (int attempt = 0; attempt < 8; ++attempt) {
-    if (t_hi <= t_lo) {
+    if (t_lo >= kTimeHorizonMax) {
       return out;
     }
-    const RootBracket bracket = vca_isolate_smallest_root(diff, t_lo, t_hi);
+    RootBracket bracket{};
+    double scan_hi = t_lo;
+    while (scan_hi < kTimeHorizonMax) {
+      scan_hi = std::min(kTimeHorizonMax, t_lo + scan_window);
+      const int nseg = std::min(
+          4096, std::max(32, static_cast<int>(std::ceil((scan_hi - t_lo) / kTimeScanStep))));
+      bracket = vca_isolate_smallest_root(diff, t_lo, scan_hi, nseg);
+      if (bracket.found || scan_hi >= kTimeHorizonMax) {
+        break;
+      }
+      scan_window = std::min(scan_window * 2.0, kTimeHorizonMax - t_lo);
+    }
     if (!bracket.found) {
       return out;
     }

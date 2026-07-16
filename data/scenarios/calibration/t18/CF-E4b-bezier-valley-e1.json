@@ -1,0 +1,73 @@
+{
+  "curve": {
+    "curve_id": "CF-E4b-curve",
+    "domain": [
+      "0",
+      "10"
+    ],
+    "family": "piecewise-bezier",
+    "segments": [
+      {
+        "control": [
+          [
+            0,
+            10
+          ],
+          [
+            2.5,
+            0
+          ],
+          [
+            5,
+            0
+          ]
+        ],
+        "kind": "quadratic"
+      },
+      {
+        "control": [
+          [
+            5,
+            0
+          ],
+          [
+            7.5,
+            0
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "kind": "quadratic"
+      }
+    ]
+  },
+  "family": "BEZIER-VALLEY-E4",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "3",
+        "y": "8/5"
+      },
+      "radius": "0.1",
+      "restitution": "1",
+      "vel": {
+        "vx": "1",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "11"
+  },
+  "provenance_tier": 2,
+  "reference_events": [],
+  "scenario_id": "CF-E4b-bezier-valley-e1",
+  "schema_version": "1",
+  "verification": {
+    "method": "none-calibration-repro",
+    "residual_max": "0"
+  }
+}
