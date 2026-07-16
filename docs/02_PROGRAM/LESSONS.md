@@ -149,3 +149,14 @@ PACKET 54 c3 ("E1 zero events" — expected failure signature on fresh parameter
 JRN-C001-95) and PACKET 55 c6 ("events=12" — reference-window count bound to a
 settle-semantics run, JRN-I008-4); second occurrence per P6 §6.3, with the companion P6 §4
 amendment proposal riding open decision 2.
+
+L-19: Every binding clause of the spec a task delivers against must be operationalized as
+at least one acceptance criterion at dispatch, or explicitly waived in the packet with a
+reason. A clause without a criterion will be optimized away — twice now the letter of the
+criteria was met while the clause died (S11 confinement, JRN-I008-18; S11 scene
+definitions, JRN-I008-21). At authoring, the PM walks the spec clause-by-clause and asks
+"which criterion would fail if this clause were violated?"; a clause with no answer gets a
+criterion or a written waiver. At review, a discovered clause-without-criterion is a PM
+authoring defect; conformance is re-established by amendment and repair, never by silent
+reinterpretation. Companion P6 §4 amendment proposal rides open decision 2. Origin:
+JRN-I008-18, JRN-I008-21; second occurrence per P6 §6.3.
