@@ -1,6 +1,21 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-3 · BLOCKED
+actor: composer-agent · task: I-008-T1 · manifest: n/a
+
+WHAT: bounce-view v1 implemented per BRIEF S1–S7 (SDL2 target, Law-1 guard, selftest,
+interactive RUN, frames). REPAIR-A (c3-v2) satisfied from committed TR. BLOCKED: REPAIR-B —
+doctest --list-test-cases emits nine per-fixture T17 names; TR expects three aggregate names
+(tests/ read-only). BLOCKED: step 9 CF-E2b selftest events=26 under S5 settle/200 cap;
+criterion expects events=12 (T17 paired-window count; engine gives 12 only with max-events=12).
+Steps 3/7/8/10/11 evidence on file in TR.
+NUMBERS: SDL2 2.32.8; ACCESS_LOG 88/88; FL-1 selftest events=34; CF-E2b events=26; frames 2.
+LEARNED: TR-documented doctest names may differ from registered TEST_CASE strings; S5 settle
+semantics extend beyond T17 reference windows on settling fixtures.
+NEXT: PM disposition on REPAIR-B naming + step 9 event-count criterion vs S5.
+
+---
 ### JRN-I008-2 · CLAIM
 actor: composer-agent · task: I-008-T1 · manifest: n/a
 

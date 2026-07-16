@@ -92,3 +92,10 @@ target_compile_definitions(bounce-survey-heldout-load PRIVATE BOUNCE_SOURCE_DIR=
 bounce_apply_fp_determinism(bounce-survey-heldout-load)
 
 add_test(NAME bounce-tests COMMAND bounce-tests)
+
+find_program(SDL2_CONFIG sdl2-config)
+if(SDL2_CONFIG)
+  add_subdirectory(tools/bounce-view)
+else()
+  message(STATUS "sdl2-config not found; skipping bounce-view target")
+endif()
