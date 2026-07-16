@@ -2,6 +2,7 @@
 #include "bounce/engine/collision_sim.hpp"
 
 #include "bounce/engine/vca.hpp"
+#include "bounce/numerics/double_double.hpp"
 
 #include <cmath>
 #include <limits>
@@ -32,11 +33,23 @@ bool time_less(double t_a, int ball_a, double t_b, int ball_b) {
 ReflectedVelocity reflect_velocity(const curve::CompiledPolynomial& curve_y, double x, double vx,
                                    double vy, double restitution) {
   const auto n = curve::normal(curve_y, x);
-  const double vn = vx * n.nx + vy * n.ny;
+  using numerics::dd_add;
+  using numerics::dd_from_double;
+  using numerics::dd_mul;
+  using numerics::dd_sub;
+  using numerics::to_double;
+  const auto vxd = dd_from_double(vx);
+  const auto vyd = dd_from_double(vy);
+  const auto nxd = dd_from_double(n.nx);
+  const auto nyd = dd_from_double(n.ny);
+  const auto vn_dd = dd_add(dd_mul(vxd, nxd), dd_mul(vyd, nyd));
+  const auto coeff = dd_from_double(1.0 + restitution);
+  const auto vnx = dd_mul(coeff, dd_mul(vn_dd, nxd));
+  const auto vny = dd_mul(coeff, dd_mul(vn_dd, nyd));
   ReflectedVelocity out{};
-  out.vx = vx - (1.0 + restitution) * vn * n.nx;
-  out.vy = vy - (1.0 + restitution) * vn * n.ny;
-  out.normal_speed_out = std::abs(vn);
+  out.vx = to_double(dd_sub(vxd, vnx));
+  out.vy = to_double(dd_sub(vyd, vny));
+  out.normal_speed_out = std::abs(to_double(vn_dd));
   return out;
 }
 

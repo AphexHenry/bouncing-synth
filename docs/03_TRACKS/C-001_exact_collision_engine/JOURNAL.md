@@ -1,3 +1,89 @@
+### JRN-C001-103 · BLOCKED
+actor: composer-agent · task: C-001-T18-R1 · manifest: n/a
+
+WHAT: C-001-T18-R1 BLOCKED on criterion 6 (step 8 E4b cap-reached) — E4a chain COMPLETE:
+circular ref purged; true I-002 mint (mpmath 1.3.0); E4a window worst_dt=5.87e-10;
+energy attribution BRANCH X repaired (x-domain time routing + DD reflect + DD curve eval);
+max_rel=9.32e-10 PASS at held 1e-9. E4b bezier time fallback lands 6/2000 (was 4);
+premature stream persists — BLOCKED. Side finding: capacity test hangs on huge-domain flat
+scenario (investigate). CLI OOB >256 registered.
+NUMBERS: E4a 2000 GREEN; E4a energy 9.32e-10; E4b 6/2000; ACCESS_LOG 88/88; T17+T18 groups PASS.
+LEARNED: drift uniform on primary+time paths → DD reflection + x-domain schedule routing
+restores cumulative invariant; bezier valley needs further s/time schedule work.
+NEXT: PM review — E4b repair dispatch; capacity regression triage.
+
+---
+### JRN-C001-102 · CLAIM
+actor: composer-agent · task: C-001-T18-R1 · manifest: n/a
+
+WHAT: CLAIM C-001-T18-R1 — purge circular ref; true I-002 Tier-2 mint; energy-drift
+attribution + repair; E4b bezier time fallback; full T18 regression.
+Branch base: `759fe5cc45d6326ed87995d54ca1b7d84de2b75b` (merge-base task/C-001-T18 with
+759fe5c OUT_63 tip; `git log --oneline -3 759fe5c`: 759fe5c OUT_63 …, e346a0c, 0f14ec2).
+NUMBERS: ACCESS_LOG before=88; suite baseline 69 T18 cases.
+LEARNED: nothing.
+NEXT: hygiene → mint → window → attribution → E4b → suite → TR/OUT.
+
+---
+### JRN-C001-101 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_64_C-001-T18 (BLOCKED) per P6 §2/§7. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain + ACCESS_LOG 88 (before) | COMPLIANT |
+| 2 | E4a fixture + corrected energy arithmetic + engine-only RED | COMPLIANT — BRANCH A: engine-side; arithmetic now correct (y_wall=9,900; g·y_wall=108,900) |
+| 3 | E4b fixture + energy arithmetic + engine-only result | COMPLIANT — REPRODUCES at 4/2000, engine-side |
+| 4 | root cause with evidence | COMPLIANT — time-domain VCA at 32 segments over [0,1000] misses O(1 s) roots; departure residual 2.77e-17 undeflated; both paths return found=false |
+| 5 | GREEN cap-reached per reproduced class | PARTIAL → NON-COMPLIANT as written — E4a GREEN (2000); E4b unfixed |
+| 6 | Tier-2 mint + 50-event window | NON-COMPLIANT — the committed "reference" is ENGINE OUTPUT compared against itself; worst_dt=worst_ds=0 exactly is the circularity signature, not a pass; mint bypassed the I-002 pinned venv (mpmath 1.3.0, I-002-T1) |
+| 7 | suite with new cases, all pass | NON-COMPLIANT — 68/69; energy invariant FAIL at max_rel=1.07157e-08 vs 1e-9 |
+| 8 | T16-table cross-check (analysis only) | COMPLIANT — 13 R-a rows (parabola-periodic/settle, poly-periodic/quasichaotic/settle families) show short engine streams pattern-consistent with E4; not signature-identical; zero held-out execution |
+| 9 | ACCESS_LOG 88 + affirmations | COMPLIANT |
+| 10 | TR + status + L-13 v2 | COMPLIANT with a defect noted: the status paste predates the work commit (fixtures shown untracked while d01cdd8 claims them) — R1 pastes a post-commit status |
+| 11 | digests + true BRANCH/COMMITS + L-12 | COMPLIANT |
+
+Verdict: RETURN_FOR_REPAIR — continues as C-001-T18-R1 (PACKET 65). No criterion is
+amended: each NON-COMPLIANT reflects work still to do or evidence to redo, not defective
+authoring.
+
+RULINGS OF RECORD:
+(a) CIRCULAR REFERENCE REJECTED AND QUARANTINED: CF-E4a-wwell-e1-ref50.json is engine
+output masquerading as a reference inside data/scenarios/calibration/ — it is deleted in
+R1 before any other step, and criterion-6 evidence is void until a true I-002 Tier-2 mint
+exists. The agent disclosed the substitution plainly (credit), but a self-comparison
+"PASS" has zero evidentiary value and its presence in the calibration store is
+contamination. Likely unblock: the I-002-T1 pinned venv carries mpmath 1.3.0 — the mint
+was attempted outside it.
+(b) ENERGY BOUND HELD PER L-18: measured drift 1.07e-8 exceeds the registered 1e-9 bound
+by 10×, and my authoring-time estimate of FP accumulation (≲1e-12 over 2000 events) by
+four orders. Re-deriving the bound from the measured worst case is declined — that is a
+threshold laundered from its own failure. The 10^4 gap between estimate and measurement
+means something REAL: either the fix's new root path (fine time scan) returns
+lower-precision roots than the registered refinement schedule — reflections at slightly
+wrong contact points bleed energy, a precision regression the invariant just caught — or
+the test's energy reconstruction from event records is wrong. R1 decides by per-path
+attribution. If neither: primary-path events genuinely bleeding ~5e-12/event would be a
+P1-C-critical finding → BLOCKED to Director.
+(c) NEW KNOWN ISSUE: bounce-run-scenario CLI OOB above 256 events
+(MultiBallSimResult.events) — a potential buffer overrun; registered; fix deferred to its
+own small task; gate-runner exposure believed nil (Phase-1 windows ≤ 200) but to be
+confirmed in the resumption bundle.
+(d) EVIDENCE HYGIENE: the CLAIM's branch-base hash is a splice (33 trailing hex chars
+identical to the retired T2 base) — impossible as a genuine SHA; R1 re-establishes the
+true base with a git proof. Recorded as an agent reporting-precision item (second of the
+class after the T17 test-name notation, JRN-C001-96 → LESSONS threshold reached is NOT
+declared: the classes differ in mechanism; tracking continues).
+(e) DECISION-5 MATERIAL: the 13 pattern-consistent R-a rows mean E4 may co-explain part
+of the T16 falsification beyond E2 — strengthening the fresh-corpus-B recommendation and
+enlarging the held-out re-test scope at resumption.
+NUMBERS: 8/11 COMPLIANT; E4a 25→2000; E4b 4/2000 open; drift 1.07157e-08 vs 1e-9; 13 R-a
+rows; suite 69 cases (68 pass); ACCESS_LOG 88/88.
+LEARNED: an invariant that trips 10× over its bound while the estimate said 10⁴ under is
+not an inconvenience to be re-derived away — it is the next experiment.
+NEXT: OUT_65 review; then I-008-T5-R2; decisions 4+5.
+
+---
 ### JRN-C001-100 · BLOCKED
 actor: composer-agent · task: C-001-T18 · manifest: n/a
 

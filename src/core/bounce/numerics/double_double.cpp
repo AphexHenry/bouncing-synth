@@ -49,6 +49,10 @@ DoubleDouble dd_add(const DoubleDouble& a, const DoubleDouble& b) {
   return dd_normalize(s.hi, s.lo + e);
 }
 
+DoubleDouble dd_sub(const DoubleDouble& a, const DoubleDouble& b) {
+  return dd_add(a, {-b.hi, -b.lo});
+}
+
 DoubleDouble dd_mul(const DoubleDouble& a, const DoubleDouble& b) {
   const double p = a.hi * b.hi;
   double a_hi = 0.0;

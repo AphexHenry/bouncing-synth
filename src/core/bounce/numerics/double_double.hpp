@@ -13,6 +13,7 @@ DoubleDouble dd_from_double(double value);
 double to_double(const DoubleDouble& value);
 
 DoubleDouble dd_add(const DoubleDouble& a, const DoubleDouble& b);
+DoubleDouble dd_sub(const DoubleDouble& a, const DoubleDouble& b);
 DoubleDouble dd_mul(const DoubleDouble& a, const DoubleDouble& b);
 DoubleDouble dd_div(const DoubleDouble& a, const DoubleDouble& b);
 

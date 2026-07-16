@@ -17,6 +17,15 @@ struct RootBracket {
   bool found = false;
 };
 
+enum class CollisionRootPath {
+  None = 0,
+  XPrimary = 1,
+  TimeFallback = 2,
+  TimeFineScan = 3,
+  BezierSParam = 4,
+  BezierTimeFallback = 5,
+};
+
 struct BallCollisionStep {
   bool found = false;
   bool accepted = false;
@@ -26,6 +35,7 @@ struct BallCollisionStep {
   double impact_speed = 0.0;
   int segment_index = 0;
   double segment_s = 0.0;
+  CollisionRootPath root_path = CollisionRootPath::None;
 };
 
 curve::CompiledPolynomial collision_difference_x(const curve::CompiledPolynomial& curve_y,
@@ -58,5 +68,9 @@ curve::CompiledPolynomial deflate_linear_root(const curve::CompiledPolynomial& q
 BallCollisionStep step_ball_next_collision_bezier(const curve::CompiledPiecewiseBezier& curve,
                                                   const BallisticInit& init, double x_min,
                                                   double x_max);
+
+BallCollisionStep step_ball_next_collision_bezier_time(const curve::CompiledPiecewiseBezier& curve,
+                                                       const BallisticInit& init, double x_min,
+                                                       double x_max);
 
 } // namespace bounce::core::engine

@@ -4,6 +4,8 @@
 #include "bounce/curve/polynomial.hpp"
 #include "bounce/scenario/calibration_loader.hpp"
 
+#include "bounce/numerics/double_double.hpp"
+
 #include <doctest/doctest.h>
 #include <cmath>
 #include <limits>
@@ -23,15 +25,47 @@ bounce::core::engine::MultiBallSimResult run_fixture(const char* path, int max_e
   return bounce::core::scenario::run_calibration_scenario(scenario, max_events);
 }
 
+double eval_curve_dd(const bounce::core::curve::CompiledPolynomial& p, double x) {
+  using bounce::core::numerics::dd_add;
+  using bounce::core::numerics::dd_from_double;
+  using bounce::core::numerics::dd_mul;
+  using bounce::core::numerics::to_double;
+  bounce::core::numerics::DoubleDouble acc =
+      dd_from_double(p.coeffs[static_cast<std::size_t>(p.degree)]);
+  for (int k = p.degree - 1; k >= 0; --k) {
+    acc = dd_add(dd_mul(acc, dd_from_double(x)),
+                 dd_from_double(p.coeffs[static_cast<std::size_t>(k)]));
+  }
+  return to_double(acc);
+}
+
 double energy_at_contact(double g, double y, double vx, double vy) {
-  return g * y + 0.5 * (vx * vx + vy * vy);
+  using bounce::core::numerics::dd_add;
+  using bounce::core::numerics::dd_from_double;
+  using bounce::core::numerics::dd_mul;
+  using bounce::core::numerics::to_double;
+  const auto gy = dd_mul(dd_from_double(g), dd_from_double(y));
+  const auto ke =
+      dd_mul(dd_from_double(0.5), dd_add(dd_mul(dd_from_double(vx), dd_from_double(vx)),
+                                         dd_mul(dd_from_double(vy), dd_from_double(vy))));
+  return to_double(dd_add(gy, ke));
 }
 
 constexpr int stored_events(const bounce::core::engine::MultiBallSimResult& result) {
   return std::min(result.count, static_cast<int>(bounce::core::engine::kMaxSimEvents));
 }
 
-double energy_drift_over_run(const char* path, int max_events, double& e0_out) {
+struct PathAttribution {
+  int x_primary = 0;
+  int time_fallback = 0;
+  int time_fine_scan = 0;
+  double max_rel_x = 0.0;
+  double max_rel_time = 0.0;
+  double max_rel_fine = 0.0;
+};
+
+double energy_drift_over_run(const char* path, int max_events, double& e0_out,
+                             PathAttribution* attribution = nullptr) {
   bounce::core::scenario::CalibrationScenario scenario{};
   REQUIRE(bounce::core::scenario::load_calibration_scenario(path, scenario));
   std::vector<double> coeffs(scenario.coeff_count);
@@ -43,7 +77,12 @@ double energy_drift_over_run(const char* path, int max_events, double& e0_out) {
   const double g = ball.init.g;
   e0_out = energy_at_contact(g, ball.init.y0, ball.init.vx, ball.init.vy);
   double x_min = ball.init.x0;
+  double e_ref = e0_out;
+  double e_prev = 0.0;
+  bool have_e_prev = false;
   double max_rel = 0.0;
+  double max_step_rel = 0.0;
+  int max_step_index = -1;
   int produced = 0;
   for (int i = 0; i < max_events; ++i) {
     const auto step = bounce::core::engine::step_ball_next_collision(
@@ -66,8 +105,39 @@ double energy_drift_over_run(const char* path, int max_events, double& e0_out) {
       continue;
     }
     const double vy_contact = ball.init.vy - ball.init.g * step.t;
-    const double ek = energy_at_contact(g, step.y, ball.init.vx, vy_contact);
-    max_rel = std::max(max_rel, std::abs(ek - e0_out) / e0_out);
+    const double y_contact = eval_curve_dd(curve, step.x);
+    const double ek = energy_at_contact(g, y_contact, ball.init.vx, vy_contact);
+    const double rel = std::abs(ek - e0_out) / e0_out;
+    if (have_e_prev) {
+      const double step_rel = std::abs(ek - e_prev) / e_prev;
+      if (step_rel > max_step_rel) {
+        max_step_rel = step_rel;
+        max_step_index = produced;
+      }
+    } else {
+      e_prev = ek;
+      have_e_prev = true;
+    }
+    e_prev = ek;
+    max_rel = std::max(max_rel, rel);
+    if (attribution != nullptr) {
+      switch (step.root_path) {
+      case bounce::core::engine::CollisionRootPath::XPrimary:
+        ++attribution->x_primary;
+        attribution->max_rel_x = std::max(attribution->max_rel_x, rel);
+        break;
+      case bounce::core::engine::CollisionRootPath::TimeFallback:
+        ++attribution->time_fallback;
+        attribution->max_rel_time = std::max(attribution->max_rel_time, rel);
+        break;
+      case bounce::core::engine::CollisionRootPath::TimeFineScan:
+        ++attribution->time_fine_scan;
+        attribution->max_rel_fine = std::max(attribution->max_rel_fine, rel);
+        break;
+      default:
+        break;
+      }
+    }
     ++produced;
     const auto reflected = bounce::core::engine::reflect_velocity(
         curve, step.x, ball.init.vx, vy_contact, ball.restitution);
@@ -83,6 +153,8 @@ double energy_drift_over_run(const char* path, int max_events, double& e0_out) {
     }
   }
   CHECK(produced == max_events);
+  MESSAGE("max_step_rel=", max_step_rel, " at_event=", max_step_index);
+  (void)e_ref;
   return max_rel;
 }
 
@@ -125,8 +197,13 @@ TEST_CASE("T18 CF-E4a no consecutive duplicate t_hex s_hex per ball") {
 
 TEST_CASE("T18 CF-E4a e=1 energy drift invariant") {
   double e0 = 0.0;
-  const double max_rel = energy_drift_over_run(kE4aPath, 2000, e0);
+  PathAttribution attribution{};
+  const double max_rel = energy_drift_over_run(kE4aPath, 2000, e0, &attribution);
   MESSAGE("max_rel_energy_drift=", max_rel);
+  MESSAGE("path_counts x=", attribution.x_primary, " time=", attribution.time_fallback,
+          " fine=", attribution.time_fine_scan);
+  MESSAGE("path_max_rel x=", attribution.max_rel_x, " time=", attribution.max_rel_time,
+          " fine=", attribution.max_rel_fine);
   CHECK(max_rel <= 1e-9);
   (void)e0;
 }
