@@ -17,4 +17,4 @@ parent:   PROJECT §13
 | I-005 | Event/pattern analysis harness | SPECCED | P1-D addendum basis (drift/timing analysis beyond gate needs) | — |
 | I-006 | JUCE build scaffold (VST3 target, pluginval in CI) | SPECCED | C-003, C-004, C-005 | — |
 | I-007 | CI pipeline | SPECCED | open decision 1 (escalated) | — |
-| I-008 | AV assessment harness `bounce-view` (C++/SDL2; D-5 default-lossless playback, damping opt-in; AV-2 voice; settled-ball persistence; S8 v2 perf instrument; Law-1 path guard; S7/S9 language rules) | T1–T3 VERIFIED (OUT_55/56/58/59) — FEATURE-COMPLETE for D-4 assessment | Director re-assessment; blocks nothing gate-bearing | docs/05_INFRA/I-008_av_harness/ |
+| I-008 | AV assessment harness `bounce-view` (C++/SDL2; D-5 default-lossless playback; AV-2 voice; settled-ball persistence; S8 v2 perf instrument; Law-1 path guard; S7/S9 language rules) | T1–T3 VERIFIED; T4 IN FLIGHT (PACKET 61) — S11 assessment scene library | Director re-assessment; blocks nothing gate-bearing | docs/05_INFRA/I-008_av_harness/ |

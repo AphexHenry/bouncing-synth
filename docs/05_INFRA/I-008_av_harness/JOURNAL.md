@@ -1,6 +1,25 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-15 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: OUT_60 apply-only ACCEPTED (3/3 files confirmed, digests, ledger, L-12 terminator).
+Director request: curved surface in the visual app. Disposition: capability already exists
+— the renderer draws the scenario's compiled curve (T2 frames show the CF-E2a parabola);
+the flat line was only ever the FL-1 example command. Gap identified: no scenario exists
+that is DESIGNED for assessment — the curved fixtures are defect-repro artifacts with
+evidence roles. T4 authored (PACKET 61): an assessment scene library per new BRIEF S11 —
+four scenes (parabola bowl; two-well deg-4 polynomial; bezier landscape; three-ball
+polyphony scene), each sustaining ≥60 s of simulated default-lossless playback, stored
+under tools/bounce-view/scenarios/ as presentation assets with empty reference arrays
+(loadable per the graze-fixture precedent) and verification.method marked
+assessment-only. data/ remains fully frozen; the Law-1 guard is untouched.
+NUMBERS: 4 scenes; ≥60 s sim-time design target each; ≤2000-event evidence cap.
+LEARNED: nothing.
+NEXT: OUT_61 review → Director plays the scene library; decision 4 still gates D-4 step 3.
+
+---
 ### JRN-I008-14 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

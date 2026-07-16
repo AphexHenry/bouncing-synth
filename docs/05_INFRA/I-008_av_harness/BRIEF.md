@@ -118,3 +118,28 @@ files are never modified; the override applies where the harness constructs its 
 - Open-ended streams: interactive playback sustains e=1 streams indefinitely (rolling
   event consumption); selftest keeps its 200-event default cap with `--max-events <n>`
   available.
+
+## Amendments (PACKET 61) — assessment scene library
+
+S11 — ASSESSMENT SCENES: a library of scenario files whose only purpose is looking and
+listening; they carry no evidence role and are never comparison inputs.
+- Location: `tools/bounce-view/scenarios/*.json` — presentation assets of the harness.
+  data/scenarios/** (heldout, calibration) remains frozen and is never the home of
+  assessment scenes.
+- Form: valid schema_version 1 scenario JSONs with `reference_events: []` (loadable per
+  the graze-fixture precedent) and `verification.method: "none-assessment-only"`;
+  provenance notes them hand-authored for assessment.
+- Design constraints per scene: under the interactive default (e=1 override, D-5) the
+  ball(s) remain within the curve's domain and the stream sustains at least 60 s of
+  SIMULATED time within at most 2000 events — a constructive design target the author
+  iterates toward, evidenced by the scene's own override selftest paste (t_last ≥ 60 at
+  events ≤ 2000). Geometry confines the motion (bowls/wells) rather than relying on
+  lucky parameters.
+- Initial set (parameters are the author's choice within the constraints):
+  A1 `bowl-parabola` — single ball inside an upward parabola bowl.
+  A2 `twowell-poly4` — single ball over a degree-4 "W" polynomial with two wells.
+  A3 `bezier-landscape` — single ball on a bezier hill-and-valley segment.
+  A4 `trio-parabola` — three balls in one parabola bowl (polyphony showcase; staggered
+  initial conditions so contacts interleave).
+- The TR RUN section leads with these scenes; calibration fixtures remain listed as
+  secondary examples.
