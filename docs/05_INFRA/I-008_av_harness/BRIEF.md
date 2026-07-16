@@ -143,3 +143,25 @@ listening; they carry no evidence role and are never comparison inputs.
   initial conditions so contacts interleave).
 - The TR RUN section leads with these scenes; calibration fixtures remain listed as
   secondary examples.
+
+## Amendments (PACKET 62) — dynamic camera + scene library v2
+
+S12 — DYNAMIC CAMERA: the viewport must AT ALL TIMES contain (a) every active ball and
+(b) the curve segment in a neighborhood of each ball, with sensible margins; framing the
+curve's full domain is explicitly NOT required and is wrong for disparate-scale curves
+(CF-E2b spans y ∈ [0, 5e6]). Pan and zoom follow the balls smoothly (agent's design:
+smoothed tracking, easing, hysteresis — no hard jumps). Settled balls count as active for
+framing. FRAME SELF-CHECK: every dumped frame prints one line per ball
+`frame_check ball_id=<i> ball_px=(x,y) in_viewport=<true|false>` plus one line
+`frame_check curve_pixels=<N>` counting curve-colored pixels actually rasterized in the
+viewport — the renderer reports what it drew, making camera correctness paste-provable.
+
+S11 v2 — SCENE LIBRARY (replaces the S11 design-target clause): each scene's sustain
+proof is the CAP-REACHED run: under `--restitution 1 --max-events 2000` the selftest must
+end with `events=2000` — derivation: with e=1 and confining geometry the stream cannot
+end before the cap; ending early ⇔ domain exit ⇔ the scene is not confined. Additional
+design targets (constructive; the author iterates parameters until met, evidenced by the
+run's own paste): global mean inter-event interval t_last/events ≤ 2.0 s (keeps the scene
+musically alive); for the polyphony scene, every ball_id count ≥ 200 within the
+2000-event run. The four scenes (A1 bowl-parabola, A2 twowell-poly4, A3 bezier-landscape,
+A4 trio-parabola) are REAUTHORED to these targets; names and files are reused in place.
