@@ -1,4 +1,55 @@
 ---
+### JRN-C001-95 · CORRECTION
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_54_C-001-T17 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain paste | COMPLIANT |
+| 2 | gate_r3_evidence commit + G0 tracked-clean | COMPLIANT |
+| 3 | mints + RED per class as specified | NON-COMPLIANT as written — CF-E1 RED shows eng_count=1 (spurious t=0 on on-curve start) against the criterion's literal "E1 zero events" |
+| 4 | GREEN per fixture (counts, worst deltas, seq/ball_id) | COMPLIANT |
+| 5 | E3 disposition with numbers | COMPLIANT — GREEN, worst 5.551e-16 / 4.441e-16 |
+| 6 | invariant tests named in doctest output; 100% + SUCCESS + exit=0 | suite output COMPLIANT; test names absent from the doctest output artifact — names appear byte-verbatim elsewhere in the OUT (TR listing) → L-15 remediation branch |
+| 7 | FL-1/PB-1 exact; graze green; repeat-identity N=3 | COMPLIANT |
+| 8 | ACCESS_LOG 88 before/after; contamination affirmations | COMPLIANT |
+| 9 | status + L-13 v2 delta + dispositions | COMPLIANT |
+| 10 | FILE DIGESTS + TR verbatim + journal entries verbatim | COMPLIANT |
+
+Verdict: AMEND + RETURN, scoped to criteria 3 and 6. Root cause on c3 is a PM authoring
+defect (P6 §4.2): "E1 zero events" registered an expected empirical manifestation of a
+DEFECTIVE engine on parameters not yet chosen at authoring time — a research outcome as
+acceptance criterion. The agent honestly reported the fresh-mint manifestation (all 6
+reference contacts absent; one spurious t=0 emission; premature termination), which is the
+defect class demonstrated. Owned per P6 §2.4/§6.1; first occurrence of the §4.2 class — no
+LESSONS entry required yet (§6.3).
+
+CORRECTED CRITERION c3-v2 (replaces T17 acceptance criterion 3): "Step 5: ≥4 fixture mints
+(generator invocations + digests) + RED paste per class demonstrating the defect class as
+observed: E1 — every reference contact absent from the engine stream (first contact missed;
+any spurious on-curve-start emission reported as observed); E2 — duplicate or non-monotonic
+t at the departure contact; CF-E3 — status stated (divergence, or green pre-fix)."
+
+REPAIR ROUTING (near-zero cost, OUT_51/L-15 precedent): repair-A (c3-v2 assertion from the
+committed TR) and repair-B (doctest test-case listing vs the TR's three names) execute as
+steps 4–5 of TASK I-008-T1 (this packet); any mismatch with OUT_54's copies is BLOCKED. T17
+→ VERIFIED at OUT_55 review if both repairs land; main merge of task/C-001-T17 is held until
+then, batched per JRN-I002-6.
+
+RESUMPTION-BUNDLE NOTE (substantive, for open decision 5): T17's fix added a time-domain
+fallback search path and directional root selection — a new determinism surface. P1-B
+coverage at gate resumption must include fixtures exercising the fallback branch (small-|vx|
+periodic legs). Also of record: E3 is fixed inferentially — fresh fixture CF-E3 green at
+5.6e-16; the two original held-out E3 scenarios (HO-bezier-settle-3, HO-parabola-settle-4)
+remain untested until resumption (ACCESS_LOG frozen at 88).
+NUMBERS: 8/10 COMPLIANT; 2 scoped repairs; T17 substantive evidence: 4/4 CF fixtures GREEN,
+63/63 doctest, ACCESS_LOG 88/88.
+LEARNED: a defect-class criterion must specify the class signature, never the exact
+empirical count a defective engine will produce on fresh parameters.
+NEXT: I-008-T1 (this packet); OUT_55 review marks T17 VERIFIED on repair; then D-4 step 3
+planning (gate-resumption bundle).
+
+---
 ### JRN-C001-94 · DONE
 actor: composer-agent · task: C-001-T17 · manifest: n/a
 

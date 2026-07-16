@@ -17,3 +17,4 @@ parent:   PROJECT §13
 | I-005 | Event/pattern analysis harness | SPECCED | P1-D addendum basis (drift/timing analysis beyond gate needs) | — |
 | I-006 | JUCE build scaffold (VST3 target, pluginval in CI) | SPECCED | C-003, C-004, C-005 | — |
 | I-007 | CI pipeline | SPECCED | open decision 1 (escalated) | — |
+| I-008 | AV assessment harness `bounce-view` (C++/SDL2, links bounce_core; assessment-only mapping AV-1; Law-1 path guard; no real-time claims per P1-D deferral) | BRIEFED — T1 IN FLIGHT (PACKET 55) | Director assessment (D-4 step 2); blocks nothing gate-bearing | docs/05_INFRA/I-008_av_harness/ |
