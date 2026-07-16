@@ -3,6 +3,7 @@
 
 #include "av_mapping.hpp"
 #include "ppm_writer.hpp"
+#include "scene.hpp"
 
 #include <SDL.h>
 
@@ -22,48 +23,39 @@ constexpr int kSelftestMaxEvents = 200;
 constexpr int kFrameWidth = 800;
 constexpr int kFrameHeight = 600;
 
+std::vector<double> parse_frame_times(const char* spec) {
+  std::vector<double> out;
+  if (spec == nullptr || spec[0] == '\0') {
+    return out;
+  }
+  std::stringstream ss(spec);
+  std::string token;
+  while (std::getline(ss, token, ',')) {
+    out.push_back(std::stod(token));
+  }
+  return out;
+}
+
 std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
   std::vector<std::uint8_t> rgb(static_cast<std::size_t>(kFrameWidth * kFrameHeight * 3), 24);
 
-  double x_min = pb.scenario.domain_min;
-  double x_max = pb.scenario.domain_max;
-  double y_min = 0.0;
-  double y_max = 1.0;
+  PlaybackView view{};
+  view.pb = pb;
+  reset_playback_view(view);
+  SceneCache cache{};
+  build_scene_cache(view, kFrameWidth, kFrameHeight, cache, true);
 
-  if (pb.scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::Polynomial) {
-    const auto curve_y = bounce::core::curve::compile_polynomial(
-        std::vector<double>(pb.scenario.coeffs.begin(),
-                            pb.scenario.coeffs.begin() + pb.scenario.coeff_count));
-    const int samples = 128;
-    for (int i = 0; i <= samples; ++i) {
-      const double x = x_min + (x_max - x_min) * static_cast<double>(i) / static_cast<double>(samples);
-      y_min = std::min(y_min, bounce::core::curve::eval(curve_y, x));
-      y_max = std::max(y_max, bounce::core::curve::eval(curve_y, x));
-    }
-  }
-  for (int b = 0; b < pb.scenario.ball_count; ++b) {
-    const auto state = ball_state_at(pb, b, t);
-    x_min = std::min(x_min, state.pos.x);
-    x_max = std::max(x_max, state.pos.x);
-    y_min = std::min(y_min, state.pos.y);
-    y_max = std::max(y_max, state.pos.y);
-  }
-  if (y_max <= y_min) {
-    y_max = y_min + 1.0;
-  }
-  if (x_max <= x_min) {
-    x_max = x_min + 1.0;
-  }
-  const double pad_x = 0.05 * (x_max - x_min);
-  const double pad_y = 0.05 * (y_max - y_min);
-  x_min -= pad_x;
-  x_max += pad_x;
-  y_min -= pad_y;
-  y_max += pad_y;
+  Playback render_pb = pb;
+  reset_playback(render_pb);
+  advance_playback_to(render_pb, t);
 
   auto to_px = [&](double x, double y) {
-    const int px = static_cast<int>((x - x_min) / (x_max - x_min) * static_cast<double>(kFrameWidth - 1));
-    const int py = static_cast<int>((y_max - y) / (y_max - y_min) * static_cast<double>(kFrameHeight - 1));
+    const int px = static_cast<int>((x - cache.viewport.x_min) /
+                                    (cache.viewport.x_max - cache.viewport.x_min) *
+                                    static_cast<double>(kFrameWidth - 1));
+    const int py = static_cast<int>((cache.viewport.y_max - y) /
+                                    (cache.viewport.y_max - cache.viewport.y_min) *
+                                    static_cast<double>(kFrameHeight - 1));
     return std::pair<int, int>{px, py};
   };
 
@@ -77,24 +69,40 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
     rgb[idx + 2] = b;
   };
 
-  if (pb.scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::Polynomial) {
-    const auto curve_y = bounce::core::curve::compile_polynomial(
-        std::vector<double>(pb.scenario.coeffs.begin(),
-                            pb.scenario.coeffs.begin() + pb.scenario.coeff_count));
-    for (int i = 0; i < kFrameWidth; ++i) {
-      const double x = x_min + (x_max - x_min) * static_cast<double>(i) / static_cast<double>(kFrameWidth - 1);
-      const auto [px, py] = to_px(x, bounce::core::curve::eval(curve_y, x));
-      plot(px, py, 180, 180, 200);
+  if (cache.has_polynomial) {
+    for (const auto& p : cache.curve_screen_points) {
+      plot(p.x, p.y, 180, 180, 200);
     }
   }
 
-  for (int b = 0; b < pb.scenario.ball_count; ++b) {
-    const auto state = ball_state_at(pb, b, t);
-    const auto [px, py] = to_px(state.pos.x, state.pos.y);
+  for (int b = 0; b < render_pb.scenario.ball_count; ++b) {
+    const std::size_t idx = static_cast<std::size_t>(b);
+    bounce::core::engine::Vec2 pos{};
+    bool settled = false;
+    if (render_pb.settled[idx]) {
+      pos = render_pb.settle_pos[idx];
+      settled = true;
+    } else {
+      const double dt = t - render_pb.arc_start_t[idx];
+      pos = bounce::core::engine::position_at_time(render_pb.current[idx], std::max(0.0, dt));
+    }
+    const auto [px, py] = to_px(pos.x, pos.y);
+    const std::uint8_t r = settled ? 80 : 240;
+    const std::uint8_t g = settled ? 140 : 90;
+    const std::uint8_t bl = settled ? 180 : 60;
     for (int dy = -4; dy <= 4; ++dy) {
       for (int dx = -4; dx <= 4; ++dx) {
         if (dx * dx + dy * dy <= 16) {
-          plot(px + dx, py + dy, 240, 90, 60);
+          plot(px + dx, py + dy, r, g, bl);
+        }
+      }
+    }
+    if (settled) {
+      for (int dy = -6; dy <= 6; ++dy) {
+        for (int dx = -6; dx <= 6; ++dx) {
+          if (std::abs(dx) == 6 || std::abs(dy) == 6) {
+            plot(px + dx, py + dy, 100, 180, 220);
+          }
         }
       }
     }
@@ -123,11 +131,29 @@ int run_selftest(const SelftestOptions& opts) {
   for (const auto& event : pb.events) {
     const auto blip = blip_params(pb.scenario, event);
     std::cout << event.seq << ' ' << event.ball_id << ' ' << std::setprecision(17) << event.t
-              << ' ' << event.s << ' ' << blip.f_hz << ' ' << blip.amp << '\n';
+              << ' ' << event.s << ' ' << blip.f_hz << ' ' << blip.amp << ' ' << blip.tau_ms << ' '
+              << blip.k << '\n';
   }
-  std::cout << "selftest ok events=" << pb.events.size() << '\n';
+  const double t_last = pb.events.empty() ? 0.0 : pb.events.back().t;
+  std::cout << "selftest ok events=" << pb.events.size() << " t_last=" << std::setprecision(17)
+            << t_last << '\n';
 
-  if (opts.frames > 0 && opts.outdir != nullptr) {
+  const auto times = parse_frame_times(opts.frame_times);
+  if (!times.empty() && opts.outdir != nullptr) {
+    std::filesystem::create_directories(opts.outdir);
+    for (std::size_t i = 0; i < times.size(); ++i) {
+      const double t = times[i];
+      const auto rgb = render_frame_rgb(pb, t);
+      std::ostringstream name;
+      name << opts.outdir << "/frame_" << i << ".ppm";
+      if (!write_ppm(name.str().c_str(), kFrameWidth, kFrameHeight, rgb)) {
+        std::cerr << "failed to write frame\n";
+        SDL_Quit();
+        return 1;
+      }
+      std::cout << "frame_dump index=" << i << " t_frame=" << std::setprecision(17) << t << '\n';
+    }
+  } else if (opts.frames > 0 && opts.outdir != nullptr) {
     std::filesystem::create_directories(opts.outdir);
     const double t_end = std::max(pb.end_time, 0.1);
     for (int i = 0; i < opts.frames; ++i) {

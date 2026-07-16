@@ -13,6 +13,7 @@ namespace bounce_view {
 struct BallRenderState {
   bounce::core::engine::Vec2 pos{};
   bool visible = true;
+  bool settled = false;
 };
 
 struct Playback {

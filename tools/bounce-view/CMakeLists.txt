@@ -23,9 +23,12 @@ add_executable(bounce-view
   main.cpp
   law1_guard.cpp
   av_mapping.cpp
+  audio_voice.cpp
   playback.cpp
   selftest.cpp
   interactive.cpp
+  perf.cpp
+  scene.cpp
   ppm_writer.cpp
 )
 target_link_libraries(bounce-view PRIVATE bounce-core ${SDL2_LIBS_LIST})

@@ -14,9 +14,12 @@ BlipParams blip_params(const bounce::core::scenario::CalibrationScenario& scenar
     u = (event.s - scenario.domain_min) / span;
   }
   u = std::clamp(u, 0.0, 1.0);
+  const double k = std::min(1.0, std::abs(event.impact_speed) / 10.0);
   BlipParams out{};
   out.f_hz = 220.0 * std::pow(2.0, 2.0 * u);
-  out.amp = 0.3 * std::min(1.0, std::abs(event.impact_speed) / 10.0);
+  out.k = k;
+  out.amp = 0.3 * k;
+  out.tau_ms = 80.0 * (0.5 + 0.5 * k);
   return out;
 }
 

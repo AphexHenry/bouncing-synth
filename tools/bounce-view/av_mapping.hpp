@@ -9,6 +9,8 @@ namespace bounce_view {
 struct BlipParams {
   double f_hz = 0.0;
   double amp = 0.0;
+  double tau_ms = 0.0;
+  double k = 0.0;
 };
 
 BlipParams blip_params(const bounce::core::scenario::CalibrationScenario& scenario,

@@ -130,6 +130,7 @@ BallRenderState ball_state_at(const Playback& pb, int ball_id, double t) {
   const std::size_t idx = static_cast<std::size_t>(ball_id);
   if (scratch.settled[idx]) {
     out.pos = scratch.settle_pos[idx];
+    out.settled = true;
     return out;
   }
   const double dt = t - scratch.arc_start_t[idx];

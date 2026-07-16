@@ -8,6 +8,7 @@ namespace bounce_view {
 struct SelftestOptions {
   const char* scenario_path = nullptr;
   const char* outdir = nullptr;
+  const char* frame_times = nullptr;
   int frames = 0;
 };
 
