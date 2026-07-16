@@ -24,13 +24,6 @@ namespace {
 constexpr int kWindowW = 800;
 constexpr int kWindowH = 600;
 
-SDL_Point to_screen(double x, double y, const Viewport& vp, int window_w, int window_h) {
-  SDL_Point p{};
-  p.x = static_cast<int>((x - vp.x_min) / (vp.x_max - vp.x_min) * static_cast<double>(window_w - 1));
-  p.y = static_cast<int>((vp.y_max - y) / (vp.y_max - vp.y_min) * static_cast<double>(window_h - 1));
-  return p;
-}
-
 bool g_render_optimized = false;
 
 using Clock = std::chrono::steady_clock;
@@ -71,153 +64,23 @@ void SDLCALL audio_callback(void* userdata, Uint8* stream, int len) {
   }
 }
 
-void draw_unoptimized(SDL_Renderer* renderer, const Playback& pb, double t, PerfStats* perf) {
-  SDL_SetRenderDrawColor(renderer, 18, 20, 28, 255);
-  SDL_RenderClear(renderer);
-
-  const auto engine_start = Clock::now();
-  double x_min = pb.scenario.domain_min;
-  double x_max = pb.scenario.domain_max;
-  double y_min = 0.0;
-  double y_max = 1.0;
-  bounce::core::curve::CompiledPolynomial curve_y{};
-  if (pb.scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::Polynomial) {
-    curve_y = bounce::core::curve::compile_polynomial(
-        std::vector<double>(pb.scenario.coeffs.begin(),
-                            pb.scenario.coeffs.begin() + pb.scenario.coeff_count));
-    for (int i = 0; i <= 128; ++i) {
-      const double x = x_min + (x_max - x_min) * static_cast<double>(i) / 128.0;
-      y_min = std::min(y_min, bounce::core::curve::eval(curve_y, x));
-      y_max = std::max(y_max, bounce::core::curve::eval(curve_y, x));
-    }
-  }
-  for (int b = 0; b < pb.scenario.ball_count; ++b) {
-    const auto state = ball_state_at(pb, b, t);
-    x_min = std::min(x_min, state.pos.x);
-    x_max = std::max(x_max, state.pos.x);
-    y_min = std::min(y_min, state.pos.y);
-    y_max = std::max(y_max, state.pos.y);
-  }
-  if (y_max <= y_min) {
-    y_max = y_min + 1.0;
-  }
-  if (x_max <= x_min) {
-    x_max = x_min + 1.0;
-  }
-  const double pad_x = 0.05 * (x_max - x_min);
-  const double pad_y = 0.05 * (y_max - y_min);
-  x_min -= pad_x;
-  x_max += pad_x;
-  y_min -= pad_y;
-  y_max += pad_y;
-  if (perf != nullptr) {
-    record_subsystem(perf->engine_query, elapsed_ms(engine_start));
-  }
-
-  auto to_px = [&](double x, double y) -> SDL_Point {
-    SDL_Point p{};
-    p.x = static_cast<int>((x - x_min) / (x_max - x_min) * static_cast<double>(kWindowW - 1));
-    p.y = static_cast<int>((y_max - y) / (y_max - y_min) * static_cast<double>(kWindowH - 1));
-    return p;
-  };
-
-  const auto curve_start = Clock::now();
-  SDL_SetRenderDrawColor(renderer, 180, 180, 200, 255);
-  if (pb.scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::Polynomial) {
-    int prev_x = -1;
-    int prev_y = -1;
-    for (int i = 0; i < kWindowW; ++i) {
-      const double x = x_min + (x_max - x_min) * static_cast<double>(i) / static_cast<double>(kWindowW - 1);
-      const auto p = to_px(x, bounce::core::curve::eval(curve_y, x));
-      if (prev_x >= 0) {
-        SDL_RenderDrawLine(renderer, prev_x, prev_y, p.x, p.y);
-      }
-      prev_x = p.x;
-      prev_y = p.y;
-    }
-  }
-  if (perf != nullptr) {
-    record_subsystem(perf->curve_draw, elapsed_ms(curve_start));
-  }
-
-  const auto ball_start = Clock::now();
-  for (int b = 0; b < pb.scenario.ball_count; ++b) {
-    const auto state = ball_state_at(pb, b, t);
-    const auto p = to_px(state.pos.x, state.pos.y);
-    if (state.settled) {
-      SDL_SetRenderDrawColor(renderer, 100, 180, 220, 255);
-      SDL_Rect outer{p.x - 7, p.y - 7, 14, 14};
-      SDL_RenderDrawRect(renderer, &outer);
-      SDL_SetRenderDrawColor(renderer, 80, 140, 180, 255);
-    } else {
-      SDL_SetRenderDrawColor(renderer, 240, 90, 60, 255);
-    }
-    SDL_Rect rect{p.x - 5, p.y - 5, 10, 10};
-    SDL_RenderFillRect(renderer, &rect);
-  }
-  if (perf != nullptr) {
-    record_subsystem(perf->ball_draw, elapsed_ms(ball_start));
-  }
+void draw_unoptimized(SDL_Renderer* renderer, Playback& render_pb, double t, CameraState& camera,
+                    PerfStats* perf) {
+  PlaybackView view{};
+  view.pb = render_pb;
+  reset_playback_view(view);
+  SceneCache cache{};
+  build_scene_cache(view, t, kWindowW, kWindowH, cache, false, &camera);
+  draw_scene(renderer, cache, view, t, kWindowW, kWindowH, perf);
 }
 
 void draw_optimized(SDL_Renderer* renderer, SceneCache& cache, Playback& render_pb, double t,
-                    PerfStats* perf) {
-  const auto engine_start = Clock::now();
-  advance_playback_to(render_pb, t);
-  std::vector<BallRenderState> balls(static_cast<std::size_t>(render_pb.scenario.ball_count));
-  for (int b = 0; b < render_pb.scenario.ball_count; ++b) {
-    const std::size_t idx = static_cast<std::size_t>(b);
-    if (render_pb.settled[idx]) {
-      balls[idx].pos = render_pb.settle_pos[idx];
-      balls[idx].settled = true;
-    } else {
-      const double dt = t - render_pb.arc_start_t[idx];
-      balls[idx].pos =
-          bounce::core::engine::position_at_time(render_pb.current[idx], std::max(0.0, dt));
-    }
-  }
-  if (perf != nullptr) {
-    record_subsystem(perf->engine_query, elapsed_ms(engine_start));
-  }
-
-  SDL_SetRenderDrawColor(renderer, 18, 20, 28, 255);
-  SDL_RenderClear(renderer);
-
-  const auto curve_start = Clock::now();
-  SDL_SetRenderDrawColor(renderer, 180, 180, 200, 255);
-  if (cache.has_polynomial && !cache.curve_screen_points.empty()) {
-    int prev_x = -1;
-    int prev_y = -1;
-    for (const auto& p : cache.curve_screen_points) {
-      if (prev_x >= 0) {
-        SDL_RenderDrawLine(renderer, prev_x, prev_y, p.x, p.y);
-      }
-      prev_x = p.x;
-      prev_y = p.y;
-    }
-  }
-  if (perf != nullptr) {
-    record_subsystem(perf->curve_draw, elapsed_ms(curve_start));
-  }
-
-  const auto ball_start = Clock::now();
-  for (int b = 0; b < render_pb.scenario.ball_count; ++b) {
-    const auto& state = balls[static_cast<std::size_t>(b)];
-    const auto p = to_screen(state.pos.x, state.pos.y, cache.viewport, kWindowW, kWindowH);
-    if (state.settled) {
-      SDL_SetRenderDrawColor(renderer, 100, 180, 220, 255);
-      SDL_Rect outer{p.x - 7, p.y - 7, 14, 14};
-      SDL_RenderDrawRect(renderer, &outer);
-      SDL_SetRenderDrawColor(renderer, 80, 140, 180, 255);
-    } else {
-      SDL_SetRenderDrawColor(renderer, 240, 90, 60, 255);
-    }
-    SDL_Rect rect{p.x - 5, p.y - 5, 10, 10};
-    SDL_RenderFillRect(renderer, &rect);
-  }
-  if (perf != nullptr) {
-    record_subsystem(perf->ball_draw, elapsed_ms(ball_start));
-  }
+                    CameraState& camera, PerfStats* perf) {
+  PlaybackView view{};
+  view.pb = render_pb;
+  reset_playback_view(view);
+  build_scene_cache(view, t, kWindowW, kWindowH, cache, true, &camera);
+  draw_scene(renderer, cache, view, t, kWindowW, kWindowH, perf);
 }
 
 int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) {
@@ -271,11 +134,9 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
   bootstrap.pb = pb;
   reset_playback_view(bootstrap);
   SceneCache cache{};
+  CameraState camera{};
   Playback render_pb = pb;
   reset_playback(render_pb);
-  if (g_render_optimized) {
-    build_scene_cache(bootstrap, kWindowW, kWindowH, cache, true);
-  }
 
   PerfStats perf{};
   perf.display_w = kWindowW;
@@ -332,10 +193,12 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
       roll_event_stream(scenario_path, pb, cfg, error);
     }
 
+    advance_playback_to(render_pb, t);
+
     if (g_render_optimized) {
-      draw_optimized(renderer, cache, render_pb, t, perf_seconds > 0 ? &perf : nullptr);
+      draw_optimized(renderer, cache, render_pb, t, camera, perf_seconds > 0 ? &perf : nullptr);
     } else {
-      draw_unoptimized(renderer, pb, t, perf_seconds > 0 ? &perf : nullptr);
+      draw_unoptimized(renderer, render_pb, t, camera, perf_seconds > 0 ? &perf : nullptr);
     }
 
     const auto present_start = Clock::now();

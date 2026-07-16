@@ -17,9 +17,16 @@ struct Viewport {
   double y_max = 1.0;
 };
 
+struct CameraState {
+  Viewport current{};
+  bool initialized = false;
+};
+
 struct SceneCache {
   bounce::core::curve::CompiledPolynomial curve_y{};
+  bounce::core::curve::CompiledPiecewiseBezier curve_bezier{};
   bool has_polynomial = false;
+  bool has_bezier = false;
   Viewport viewport{};
   std::vector<SDL_Point> curve_screen_points{};
 };
@@ -38,13 +45,29 @@ struct RenderOptions {
   bool vsync = false;
 };
 
+struct FrameCheckResult {
+  int ball_id = 0;
+  int ball_px_x = 0;
+  int ball_px_y = 0;
+  bool in_viewport = false;
+  int curve_pixels = 0;
+};
+
 void reset_playback_view(PlaybackView& view);
 void seek_playback_view(PlaybackView& view, double t);
 BallRenderState ball_state_in_view(const PlaybackView& view, int ball_id, double t);
 
-void build_scene_cache(const PlaybackView& view, int window_w, int window_h, SceneCache& cache,
-                       bool optimize);
+Viewport compute_viewport_targets(const PlaybackView& view, double t);
+Viewport smooth_viewport(CameraState& camera, const Viewport& target, double alpha = 0.12);
+
+void build_scene_cache(const PlaybackView& view, double t, int window_w, int window_h,
+                       SceneCache& cache, bool optimize, CameraState* camera = nullptr);
+
 void draw_scene(SDL_Renderer* renderer, const SceneCache& cache, const PlaybackView& view,
-                double t, PerfStats* perf);
+                double t, int window_w, int window_h, PerfStats* perf);
+
+std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
+                                                   const PlaybackView& view, double t,
+                                                   int window_w, int window_h);
 
 } // namespace bounce_view

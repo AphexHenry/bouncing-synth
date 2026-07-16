@@ -37,28 +37,52 @@ std::vector<double> parse_frame_times(const char* spec) {
   return out;
 }
 
-std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
+void print_frame_checks(const std::vector<FrameCheckResult>& checks) {
+  int curve_pixels = 0;
+  for (const auto& row : checks) {
+    if (row.ball_id >= 0) {
+      std::cout << "frame_check ball_id=" << row.ball_id << " ball_px=(" << row.ball_px_x << ','
+                << row.ball_px_y << ") in_viewport=" << (row.in_viewport ? "true" : "false")
+                << '\n';
+    }
+    curve_pixels = row.curve_pixels;
+  }
+  std::cout << "frame_check curve_pixels=" << curve_pixels << '\n';
+}
+
+SDL_Point to_screen(double x, double y, const Viewport& vp, int window_w, int window_h) {
+  SDL_Point p{};
+  p.x = static_cast<int>((x - vp.x_min) / (vp.x_max - vp.x_min) * static_cast<double>(window_w - 1));
+  p.y = static_cast<int>((vp.y_max - y) / (vp.y_max - vp.y_min) * static_cast<double>(window_h - 1));
+  return p;
+}
+
+int count_curve_pixels_rgb(const std::vector<std::uint8_t>& rgb, int width, int height) {
+  int count = 0;
+  for (int py = 0; py < height; ++py) {
+    for (int px = 0; px < width; ++px) {
+      const std::size_t idx = static_cast<std::size_t>((py * width + px) * 3);
+      if (rgb[idx] == 180 && rgb[idx + 1] == 180 && rgb[idx + 2] == 200) {
+        ++count;
+      }
+    }
+  }
+  return count;
+}
+
+std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t,
+                                           std::vector<FrameCheckResult>* checks_out) {
   std::vector<std::uint8_t> rgb(static_cast<std::size_t>(kFrameWidth * kFrameHeight * 3), 24);
 
   PlaybackView view{};
   view.pb = pb;
   reset_playback_view(view);
   SceneCache cache{};
-  build_scene_cache(view, kFrameWidth, kFrameHeight, cache, true);
+  build_scene_cache(view, t, kFrameWidth, kFrameHeight, cache, true, nullptr);
 
   Playback render_pb = pb;
   reset_playback(render_pb);
   advance_playback_to(render_pb, t);
-
-  auto to_px = [&](double x, double y) {
-    const int px = static_cast<int>((x - cache.viewport.x_min) /
-                                    (cache.viewport.x_max - cache.viewport.x_min) *
-                                    static_cast<double>(kFrameWidth - 1));
-    const int py = static_cast<int>((cache.viewport.y_max - y) /
-                                    (cache.viewport.y_max - cache.viewport.y_min) *
-                                    static_cast<double>(kFrameHeight - 1));
-    return std::pair<int, int>{px, py};
-  };
 
   auto plot = [&](int px, int py, std::uint8_t r, std::uint8_t g, std::uint8_t b) {
     if (px < 0 || py < 0 || px >= kFrameWidth || py >= kFrameHeight) {
@@ -70,9 +94,20 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
     rgb[idx + 2] = b;
   };
 
-  if (cache.has_polynomial) {
+  if (!cache.curve_screen_points.empty()) {
+    int prev_x = -1;
+    int prev_y = -1;
     for (const auto& p : cache.curve_screen_points) {
-      plot(p.x, p.y, 180, 180, 200);
+      if (prev_x >= 0) {
+        const int steps = std::max(std::abs(p.x - prev_x), std::abs(p.y - prev_y));
+        for (int s = 0; s <= steps; ++s) {
+          const double u = steps == 0 ? 0.0 : static_cast<double>(s) / static_cast<double>(steps);
+          plot(static_cast<int>(prev_x + u * (p.x - prev_x)),
+               static_cast<int>(prev_y + u * (p.y - prev_y)), 180, 180, 200);
+        }
+      }
+      prev_x = p.x;
+      prev_y = p.y;
     }
   }
 
@@ -87,14 +122,14 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
       const double dt = t - render_pb.arc_start_t[idx];
       pos = bounce::core::engine::position_at_time(render_pb.current[idx], std::max(0.0, dt));
     }
-    const auto [px, py] = to_px(pos.x, pos.y);
+    const auto p = to_screen(pos.x, pos.y, cache.viewport, kFrameWidth, kFrameHeight);
     const std::uint8_t r = settled ? 80 : 240;
     const std::uint8_t g = settled ? 140 : 90;
     const std::uint8_t bl = settled ? 180 : 60;
     for (int dy = -4; dy <= 4; ++dy) {
       for (int dx = -4; dx <= 4; ++dx) {
         if (dx * dx + dy * dy <= 16) {
-          plot(px + dx, py + dy, r, g, bl);
+          plot(p.x + dx, p.y + dy, r, g, bl);
         }
       }
     }
@@ -102,12 +137,27 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t) {
       for (int dy = -6; dy <= 6; ++dy) {
         for (int dx = -6; dx <= 6; ++dx) {
           if (std::abs(dx) == 6 || std::abs(dy) == 6) {
-            plot(px + dx, py + dy, 100, 180, 220);
+            plot(p.x + dx, p.y + dy, 100, 180, 220);
           }
         }
       }
     }
   }
+
+  if (checks_out != nullptr) {
+    *checks_out = compute_frame_checks(cache, view, t, kFrameWidth, kFrameHeight);
+    const int curve_pixels = count_curve_pixels_rgb(rgb, kFrameWidth, kFrameHeight);
+    if (!checks_out->empty()) {
+      for (auto& row : *checks_out) {
+        row.curve_pixels = curve_pixels;
+      }
+    } else {
+      FrameCheckResult row{};
+      row.curve_pixels = curve_pixels;
+      checks_out->push_back(row);
+    }
+  }
+
   return rgb;
 }
 
@@ -148,7 +198,8 @@ int run_selftest(const SelftestOptions& opts) {
     std::filesystem::create_directories(opts.outdir);
     for (std::size_t i = 0; i < times.size(); ++i) {
       const double t = times[i];
-      const auto rgb = render_frame_rgb(pb, t);
+      std::vector<FrameCheckResult> checks;
+      const auto rgb = render_frame_rgb(pb, t, &checks);
       std::ostringstream name;
       name << opts.outdir << "/frame_" << i << ".ppm";
       if (!write_ppm(name.str().c_str(), kFrameWidth, kFrameHeight, rgb)) {
@@ -156,6 +207,7 @@ int run_selftest(const SelftestOptions& opts) {
         SDL_Quit();
         return 1;
       }
+      print_frame_checks(checks);
       std::cout << "frame_dump index=" << i << " t_frame=" << std::setprecision(17) << t << '\n';
     }
   } else if (opts.frames > 0 && opts.outdir != nullptr) {
@@ -164,7 +216,8 @@ int run_selftest(const SelftestOptions& opts) {
     for (int i = 0; i < opts.frames; ++i) {
       const double t = opts.frames == 1 ? 0.0
                                         : t_end * static_cast<double>(i) / static_cast<double>(opts.frames - 1);
-      const auto rgb = render_frame_rgb(pb, t);
+      std::vector<FrameCheckResult> checks;
+      const auto rgb = render_frame_rgb(pb, t, &checks);
       std::ostringstream name;
       name << opts.outdir << "/frame_" << i << ".ppm";
       if (!write_ppm(name.str().c_str(), kFrameWidth, kFrameHeight, rgb)) {
@@ -172,6 +225,7 @@ int run_selftest(const SelftestOptions& opts) {
         SDL_Quit();
         return 1;
       }
+      print_frame_checks(checks);
     }
   }
 

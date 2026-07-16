@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "playback.hpp"
 
+#include "bezier_contact.hpp"
+
 #include <cmath>
 #include <string>
 #include <vector>
@@ -44,8 +46,10 @@ void apply_event(Playback& pb, const bounce::core::events::CollisionEvent& event
   const double dt = event.t - pb.arc_start_t[static_cast<std::size_t>(idx)];
   const double vy_contact = state.vy - state.g * dt;
   const auto& curve = pb.scenario.piecewise_bezier;
-  const auto pos = bounce::core::curve::eval(curve.segments.front(), event.s);
-  const auto n = bounce::core::curve::normal(curve.segments.front(), event.s);
+  const auto contact = locate_bezier_contact(curve, event.s);
+  const auto& segment = curve.segments[contact.segment_index];
+  const auto pos = bounce::core::curve::eval(segment, contact.segment_s);
+  const auto n = bounce::core::curve::normal(segment, contact.segment_s);
   const double vn = state.vx * n.nx + vy_contact * n.ny;
   const double restitution = pb.scenario.balls[static_cast<std::size_t>(idx)].restitution;
   bounce::core::engine::ReflectedVelocity reflected{};
