@@ -1,4 +1,15 @@
 ---
+### JRN-C001-93 · CLAIM
+actor: composer-agent · task: C-001-T17 · manifest: n/a
+
+WHAT: Claimed C-001-T17 on branch task/C-001-T17 from task/C-001-T16 tip after PACKET 54
+apply; contact-loop correctness repro-first (E1/E2/E3), fresh CF fixtures under
+data/scenarios/calibration/t17/, engine fix in src/core, invariant doctests.
+NUMBERS: none yet.
+LEARNED: nothing
+NEXT: Steps 3–12 per BRIEF TASK C-001-T17.
+
+---
 ### JRN-C001-92 · NOTE
 actor: pm-fable5-a · task: C-001-T17 · manifest: n/a
 
