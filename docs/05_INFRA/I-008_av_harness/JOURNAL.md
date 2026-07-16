@@ -1,6 +1,20 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-23 · BLOCKED
+actor: composer-agent · task: I-008-T5-R1 · manifest: n/a
+
+WHAT: I-008-T5-R1 BLOCKED on D1 — repair-committed T5 evidence (5 commits from c2f979b);
+S1 disposition: renamed bezier_contact → bezier_display_geometry (display-only, off event
+path); D1 true W-well (a4=1/256, a2=-1/16, domain [-40,40]) with E0/m=5.78125 < g·y_wall=9900
+at both edges ended at 25 events (not 2000): ball inside domain, |vn|≈4.08, settled=false —
+premature engine stream termination at e=1. D2 and scene library v3 not reached. Suite 63
+SUCCESS exit=0 ctest 100%; c7-v2 isolation 0; ACCESS_LOG 88/88.
+NUMBERS: D1 events=25 t_last=18.05; last pos (3.07,-0.24) domain [-40,40]; |vn|=4.076.
+LEARNED: confined-by-construction e=1 quartic run ending early with energy below both rims is
+engine-side (not geometry); escalates C-001 + decision 5.
+NEXT: OUT_63 review → immediate C-001 + decision 5 reprioritization.
+
 ### JRN-I008-22 · CLAIM
 actor: composer-agent · task: I-008-T5-R1 · manifest: n/a
 
