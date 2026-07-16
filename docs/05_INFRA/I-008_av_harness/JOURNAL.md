@@ -38,6 +38,22 @@ NEXT: OUT_58 review; decision 4 answer opens the resumption bundle (D-4 step 3);
 decision 6 shapes the Phase-2 slate.
 
 ---
+### JRN-I008-10 · DONE
+actor: composer-agent · task: I-008-T2 · manifest: n/a
+
+WHAT: I-008-T2 complete on branch task/I-008-T2. S8 --perf-seconds landed (instrumentation
+commit before optimization). RED FL-1: present subsystem dominant (0.313 ms/frame). GREEN:
+p95=16.381 ms ≤ 2×(1000/120)=16.667 ms with VSYNC + curve cache + incremental playback.
+S2.1 settled-ball persistence: CF-E2a frames at t=2.5 (mid-cascade) and t=3.5 (post-settle,
+t_frame > t_last). AV-2 voice + S5.1 v2 log format; CF-E2a and FL-1 A/B diff count 0. Suite
+63/63 SUCCESS ctest 100%. Zero diff on frozen paths vs packet/57 tip. ACCESS_LOG 88.
+NUMBERS: RED frames=552 p95=0.632 ms; GREEN frames=1092 p95=16.381 ms; events CF-E2a=28
+t_last=3.070104; t_frame=3.5; diff counts 0/0.
+LEARNED: VSYNC makes present the GREEN bottleneck by design; unoptimized RED cost was
+curve_draw + SDL_Delay pacing, not engine query.
+NEXT: OUT_58 review → Director re-assessment.
+
+---
 ### JRN-I008-9 · CLAIM
 actor: composer-agent · task: I-008-T2 · manifest: n/a
 

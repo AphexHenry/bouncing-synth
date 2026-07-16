@@ -79,6 +79,7 @@ int main(int argc, char** argv) {
   }
 
   if (perf_seconds > 0) {
+    bounce_view::set_render_optimized(true);
     return bounce_view::run_perf_seconds(scenario_path, perf_seconds);
   }
 
@@ -91,5 +92,6 @@ int main(int argc, char** argv) {
     return bounce_view::run_selftest(opts);
   }
 
+  bounce_view::set_render_optimized(true);
   return bounce_view::run_interactive(scenario_path);
 }
