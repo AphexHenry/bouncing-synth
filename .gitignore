@@ -12,3 +12,4 @@ build/
 
 # Local tool virtual environments (F2; C-001-T12)
 tools/**/.venv/
+__pycache__/
