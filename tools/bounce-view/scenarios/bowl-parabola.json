@@ -6,12 +6,12 @@
     "coeffs": [
       "0",
       "0",
-      "1/20"
+      "1/4"
     ],
     "curve_id": "bowl-parabola-curve",
     "domain": [
       "0",
-      "40"
+      "100"
     ],
     "family": "polynomial"
   },
@@ -20,19 +20,19 @@
     {
       "ball_id": 0,
       "pos": {
-        "x": "5",
-        "y": "3"
+        "x": "0",
+        "y": "6"
       },
       "radius": "0.1",
       "restitution": "1/2",
       "vel": {
-        "vx": "0.8",
+        "vx": "5/4",
         "vy": "0"
       }
     }
   ],
   "physics": {
-    "gravity": "10"
+    "gravity": "11"
   },
   "provenance_tier": 2,
   "reference_events": [],

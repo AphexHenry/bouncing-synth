@@ -3,49 +3,36 @@
     "hand_authored_assessment": true
   },
   "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1/4"
+    ],
     "curve_id": "bezier-landscape-curve",
     "domain": [
       "0",
-      "80"
+      "100"
     ],
-    "family": "piecewise-bezier",
-    "segments": [
-      {
-        "control": [
-          [0, 0],
-          [20, 8],
-          [40, 2]
-        ],
-        "kind": "quadratic"
-      },
-      {
-        "control": [
-          [40, 2],
-          [60, 8],
-          [80, 0]
-        ],
-        "kind": "quadratic"
-      }
-    ]
+    "family": "polynomial"
   },
   "family": "ASSESS-A3",
   "initial_state": [
     {
       "ball_id": 0,
       "pos": {
-        "x": "20",
-        "y": "14"
+        "x": "0",
+        "y": "6"
       },
       "radius": "0.1",
       "restitution": "1/2",
       "vel": {
-        "vx": "1",
+        "vx": "5/4",
         "vy": "0"
       }
     }
   ],
   "physics": {
-    "gravity": "6/10"
+    "gravity": "11"
   },
   "provenance_tier": 2,
   "reference_events": [],
