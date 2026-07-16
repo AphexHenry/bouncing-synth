@@ -20,6 +20,17 @@ LEARNED: nothing.
 NEXT: OUT_61 review → Director plays the scene library; decision 4 still gates D-4 step 3.
 
 ---
+### JRN-I008-16 · CLAIM
+actor: composer-agent · task: I-008-T4 · manifest: n/a
+
+WHAT: CLAIM I-008-T4 — S11 assessment scene library (four curved scenes under
+tools/bounce-view/scenarios/, sustain proof, frames, determinism, regression).
+Branch base (c7-v2 anchor): `f9bf7bf6fe1eb8743e7716f4f37d7618a1ec545f` (task/I-008-T2 tip).
+NUMBERS: ACCESS_LOG before=88.
+LEARNED: nothing.
+NEXT: author scenes, run sustain/frames/suite evidence.
+
+---
 ### JRN-I008-14 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 
