@@ -1,0 +1,71 @@
+{
+  "claims": {
+    "hand_authored_assessment": true
+  },
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "3/16"
+    ],
+    "curve_id": "trio-parabola-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "ASSESS-A4",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "6"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "4/3",
+        "vy": "0"
+      }
+    },
+    {
+      "ball_id": 1,
+      "pos": {
+        "x": "10",
+        "y": "20"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "-1",
+        "vy": "0"
+      }
+    },
+    {
+      "ball_id": 2,
+      "pos": {
+        "x": "20",
+        "y": "77"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "5/4",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "11"
+  },
+  "provenance_tier": 2,
+  "reference_events": [],
+  "scenario_id": "trio-parabola",
+  "schema_version": "1",
+  "verification": {
+    "method": "none-assessment-only",
+    "residual_max": "0"
+  }
+}

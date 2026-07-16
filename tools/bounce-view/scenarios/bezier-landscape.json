@@ -1,0 +1,58 @@
+{
+  "claims": {
+    "hand_authored_assessment": true
+  },
+  "curve": {
+    "curve_id": "bezier-landscape-curve",
+    "domain": [
+      "0",
+      "80"
+    ],
+    "family": "piecewise-bezier",
+    "segments": [
+      {
+        "control": [
+          [0, 0],
+          [20, 8],
+          [40, 2]
+        ],
+        "kind": "quadratic"
+      },
+      {
+        "control": [
+          [40, 2],
+          [60, 8],
+          [80, 0]
+        ],
+        "kind": "quadratic"
+      }
+    ]
+  },
+  "family": "ASSESS-A3",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "20",
+        "y": "14"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "1",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "6/10"
+  },
+  "provenance_tier": 2,
+  "reference_events": [],
+  "scenario_id": "bezier-landscape",
+  "schema_version": "1",
+  "verification": {
+    "method": "none-assessment-only",
+    "residual_max": "0"
+  }
+}

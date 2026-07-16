@@ -31,6 +31,21 @@ LEARNED: nothing.
 NEXT: author scenes, run sustain/frames/suite evidence.
 
 ---
+### JRN-I008-17 · DONE
+actor: composer-agent · task: I-008-T4 · manifest: n/a
+
+WHAT: I-008-T4 DONE — S11 assessment scene library: four scenes under
+tools/bounce-view/scenarios/ (bowl-parabola, twowell-poly4, bezier-landscape, trio-parabola),
+each sustains ≥60 s sim-time at e=1 within ≤2000 events; frames_t4 committed; determinism
+diff 0 on A4; suite 63/63 SUCCESS exit=0 ctest 100%; c7-v2 isolation 0; ACCESS_LOG 88/88.
+NUMBERS: A1 events=61 t_last=62.60; A2 events=69 t_last=82.71; A3 events=7 t_last=75.65;
+A4 events=789 t_last=1057.95 (ball_ids 0/1/2 counts 782/6/1).
+LEARNED: multi-ball polynomial sustain is parameter-sensitive; bezier single-ball sustain
+required reduced gravity (6/10); A4 polyphony uses staggered high-energy initial conditions
+on a 3/16 parabola bowl.
+NEXT: OUT_61 review → Director plays the scene library.
+
+---
 ### JRN-I008-14 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 
