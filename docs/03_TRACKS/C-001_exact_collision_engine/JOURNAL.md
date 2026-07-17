@@ -1,3 +1,16 @@
+### JRN-C001-112 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: JRN-C001-111 CLOSED. OUT_69 carries the full JRN-C001-110 entry pasted from the
+applied JOURNAL — intact from `### JRN-C001-110` through its terminating `---` and
+matching PACKET 68's authored text. The OUT_68 truncation was a paste defect in that
+OUT's JOURNAL ENTRIES section only; the brain file is undamaged. No repair required.
+NUMBERS: 1 entry verified intact; JOURNAL at 121475 bytes per OUT_69 digests (grew by the
+serial-69/70-era appends, as expected).
+LEARNED: nothing further.
+NEXT: —
+
+---
 ### JRN-C001-111 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

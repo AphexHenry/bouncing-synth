@@ -1,6 +1,53 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-33 · CLAIM
+actor: cursor-grok-4.5-agent · task: I-008-T6-R1 · manifest: n/a
+
+WHAT: CLAIM I-008-T6-R1 — S14 git-injected build stamp, F7 deep display-truth checks
+(events ~100/500/1000 on CF-E4a + CF-E3 under --restitution 1), S13 runtime Load
+(drag-and-drop + in-app picker), regression 78/78, isolation, TR, OUT_70.
+Branch base (from task/I-008-T6 tip): `26d60f5` (full hash pending step-3 paste).
+NUMBERS: ACCESS_LOG before pending step 3.
+LEARNED: nothing.
+NEXT: step 3 environment paste, then S14/S13 implementation and evidence.
+
+---
+### JRN-I008-32 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_69_I-008-T6 (FAILED) per P6 §2/§7. Criterion table (halt-mode):
+| # | criterion | verdict |
+|---|---|---|
+| 1 | env + 88 + FULL porcelain status + base proof | COMPLIANT — banked (base cb595df proven, merge-base ancestor exit=0) |
+| 2 | JRN-C001-110 integrity paste + statement | COMPLIANT IN SUBSTANCE — the full entry pasted from the applied file, intact through its terminating `---`, matching PACKET 68's text; the formal intact/blocked statement was cut off by the halt, but the artifact itself decides: JRN-C001-111 CLOSED — OUT_68's truncation was an OUT-paste defect only |
+| 3–8 | S14 / F7 deep checks / S13 / regression / final logs / TR | legitimately absent — task halted pre-implementation |
+| 9 | digests committed-only + real BRANCH/COMMITS + L-12 | COMPLIANT — FAILED tree committed at 7d8b9fa before emission; hygiene artifact clean |
+
+Verdict: FAILED accepted as a valid ending; task re-dispatched as I-008-T6-R1.
+
+RULINGS: (a) DEVIATION HARMLESS — the out-of-scope act was a READ (source search) with
+zero writes, zero held-out contact, and zero evidentiary consequence; the protocol's
+taint concern does not attach to reading public engine interfaces a linking target must
+compile against. (b) PM WHITELIST DEFECT OWNED (P6 §2.4/§6.1): PACKET 69 omitted the read
+surface the task structurally requires. STANDING CORRECTION (first occurrence of the
+whitelist-omits-required-read-surface class; recurs → LESSONS): every I-008/harness task
+whitelist includes `src/` READ-ONLY for interface context, with the write prohibition
+unchanged and explicit. (c) CONDUCT NOTE, on the record: a new agent model executed the
+apply/claim/halt/emit cycle flawlessly on first dispatch — self-detected the deviation,
+stopped before any implementation, committed the FAILED tree, emitted a complete OUT with
+inline evidence and a clean L-21 artifact. The protocol survived an agent swap without a
+single instruction repeated out-of-band; that is what the self-containment rules (L-16,
+stateless-agent discipline) were for.
+NUMBERS: banked criteria 3/3; deviation impact 0 files written, ACCESS_LOG 88/88;
+JRN-C001-111 closed; remainder re-dispatched unchanged.
+LEARNED: an over-strict halt costs one dispatch; an under-strict continuation could cost
+the evidence chain — the asymmetry justifies the agent's choice, and the whitelist fix
+removes the false trigger.
+NEXT: OUT_70 review → Director re-assessment (rebuilt binary + Load feature) →
+decision 4.
+
+---
 ### JRN-I008-31 · FAILED
 actor: gpt-5.5-agent · task: I-008-T6 · manifest: n/a
 
