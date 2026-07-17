@@ -1,6 +1,21 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-34 · DONE
+actor: cursor-grok-4.5-agent · task: I-008-T6-R1 · manifest: n/a
+
+WHAT: I-008-T6-R1 DONE — S14 git-injected build stamp; F7 deep display-truth checks at
+events 100/500/1000 on CF-E4a and CF-E3 (all six contacting-ball d≤r; BRANCH G / H1
+pending Director rebuild); S13 Load (picker + drop + Law-1 + malformed-safe); suite
+78/78 SUCCESS; ctest 100%; isolation 0 from claim tip over frozen paths; ACCESS_LOG 88;
+TR + OUT_70.
+NUMBERS: 6/6 deep frames pass; suite 78; ACCESS_LOG 88/88; isolation 0
+(claim db00167..HEAD); stamp ccd39ca.
+LEARNED: picker defaulting to the first calibration path under e=1 can hang on long
+streams; proof selection prefers assessment scenes.
+NEXT: OUT_70 review → Director rebuilt re-test (F7 H1) → decision 4.
+
+---
 ### JRN-I008-33 · CLAIM
 actor: cursor-grok-4.5-agent · task: I-008-T6-R1 · manifest: n/a
 
