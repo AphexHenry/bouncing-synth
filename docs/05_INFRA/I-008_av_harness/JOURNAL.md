@@ -1,6 +1,20 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-37 · DONE
+actor: cursor-grok-4.5-agent · task: I-008-T7 · manifest: n/a
+
+WHAT: I-008-T7 DONE — S15 assessment camera (uniform scale, quantized hysteretic zoom,
+1-2-5 grid/axes/labels/scale bar, min ball draw ≥3 px + marker ring, lock, pause/step,
+HUD, bounded probes) and S14.1 dirty-scope stamp; proofs steps 5–8 green; suite 78/78
+SUCCESS; ctest 100%; isolation 0 from claim tip; ACCESS_LOG 88; TR + OUT_71.
+NUMBERS: 4/4 uniform+grid frames; zoom log 2 levels no oscillation; 3/3 pause steps
+match selftest t; lock identical level/scale; suite 78; ACCESS_LOG 88/88.
+LEARNED: hysteretic zoom must be proven on presentation-cadence time steps — event-jump
+drives create false A↔B oscillation that real playback does not.
+NEXT: OUT_71 review → Director look-and-listen (rebuilt binary; F7 line; F8 verdict).
+
+---
 ### JRN-I008-36 · CLAIM
 actor: cursor-grok-4.5-agent · task: I-008-T7 · manifest: n/a
 

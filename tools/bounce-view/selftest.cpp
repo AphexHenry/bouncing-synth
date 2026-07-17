@@ -10,6 +10,7 @@
 #include <SDL.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <filesystem>
 #include <iomanip>
@@ -40,12 +41,22 @@ std::vector<double> parse_frame_times(const char* spec) {
 
 void print_frame_checks(const std::vector<FrameCheckResult>& checks) {
   int curve_pixels = 0;
+  bool printed_grid = false;
   for (const auto& row : checks) {
     if (row.ball_id >= 0) {
       std::cout << "frame_check ball_id=" << row.ball_id << " ball_px=(" << row.ball_px_x << ','
                 << row.ball_px_y << ") in_viewport=" << (row.in_viewport ? "true" : "false")
                 << " ball_on_curve_px_dist=" << std::setprecision(17) << row.ball_on_curve_px_dist
-                << " ball_radius_px=" << row.ball_radius_px << " scale=" << row.scale << '\n';
+                << " ball_radius_px=" << row.ball_radius_px << " ball_draw_px=" << row.ball_draw_px
+                << " scale=" << row.scale << " scale_x=" << row.scale_x << " scale_y=" << row.scale_y
+                << " camera_level=" << row.camera_level << " camera_scale=" << row.camera_scale
+                << '\n';
+    }
+    if (!printed_grid) {
+      std::cout << "frame_check grid_step=" << std::setprecision(17) << row.grid_step
+                << " grid_lines_v=" << row.grid_lines_v << " grid_lines_h=" << row.grid_lines_h
+                << '\n';
+      printed_grid = true;
     }
     curve_pixels = row.curve_pixels;
   }
@@ -72,7 +83,7 @@ int count_curve_pixels_rgb(const std::vector<std::uint8_t>& rgb, int width, int 
   return count;
 }
 
-std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t,
+std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t, CameraState& camera,
                                            std::vector<FrameCheckResult>* checks_out) {
   std::vector<std::uint8_t> rgb(static_cast<std::size_t>(kFrameWidth * kFrameHeight * 3), 24);
 
@@ -80,7 +91,7 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t,
   view.pb = pb;
   reset_playback_view(view);
   SceneCache cache{};
-  build_scene_cache(view, t, kFrameWidth, kFrameHeight, cache, true, nullptr);
+  build_scene_cache(view, t, kFrameWidth, kFrameHeight, cache, true, &camera);
 
   Playback render_pb = pb;
   reset_playback(render_pb);
@@ -125,20 +136,33 @@ std::vector<std::uint8_t> render_frame_rgb(const Playback& pb, double t,
       pos = bounce::core::engine::position_at_time(render_pb.current[idx], std::max(0.0, dt));
     }
     const auto p = to_screen(pos.x, pos.y, cache.viewport, kFrameWidth, kFrameHeight);
+    const double radius_world =
+        b < static_cast<int>(render_pb.display_radius.size()) ? render_pb.display_radius[idx] : 0.1;
+    const double radius_px = radius_world * cache.scale;
+    const double draw_px = std::max(3.0, radius_px);
+    const int rcore = std::max(1, static_cast<int>(std::lround(draw_px)));
     const std::uint8_t r = settled ? 80 : 240;
     const std::uint8_t g = settled ? 140 : 90;
     const std::uint8_t bl = settled ? 180 : 60;
-    for (int dy = -4; dy <= 4; ++dy) {
-      for (int dx = -4; dx <= 4; ++dx) {
-        if (dx * dx + dy * dy <= 16) {
+    for (int dy = -rcore; dy <= rcore; ++dy) {
+      for (int dx = -rcore; dx <= rcore; ++dx) {
+        if (dx * dx + dy * dy <= rcore * rcore) {
           plot(p.x + dx, p.y + dy, r, g, bl);
         }
       }
     }
+    if (radius_px < 3.0) {
+      const int ring = rcore + 2;
+      for (int a = 0; a < 24; ++a) {
+        const double ang = 2.0 * 3.14159265358979323846 * static_cast<double>(a) / 24.0;
+        plot(p.x + static_cast<int>(std::lround(ring * std::cos(ang))),
+             p.y + static_cast<int>(std::lround(ring * std::sin(ang))), 255, 220, 120);
+      }
+    }
     if (settled) {
-      for (int dy = -6; dy <= 6; ++dy) {
-        for (int dx = -6; dx <= 6; ++dx) {
-          if (std::abs(dx) == 6 || std::abs(dy) == 6) {
+      for (int dy = -(rcore + 2); dy <= rcore + 2; ++dy) {
+        for (int dx = -(rcore + 2); dx <= rcore + 2; ++dx) {
+          if (std::abs(dx) == rcore + 2 || std::abs(dy) == rcore + 2) {
             plot(p.x + dx, p.y + dy, 100, 180, 220);
           }
         }
@@ -214,13 +238,14 @@ int run_selftest(const SelftestOptions& opts) {
   std::cout << "selftest ok events=" << pb.events.size() << " t_last=" << std::setprecision(17)
             << t_last << '\n';
 
+  CameraState camera{};
   const auto times = parse_frame_times(opts.frame_times);
   if (!times.empty() && opts.outdir != nullptr) {
     std::filesystem::create_directories(opts.outdir);
     for (std::size_t i = 0; i < times.size(); ++i) {
       const double t = times[i];
       std::vector<FrameCheckResult> checks;
-      const auto rgb = render_frame_rgb(pb, t, &checks);
+      const auto rgb = render_frame_rgb(pb, t, camera, &checks);
       std::ostringstream name;
       name << opts.outdir << "/frame_" << i << ".ppm";
       if (!write_ppm(name.str().c_str(), kFrameWidth, kFrameHeight, rgb)) {
@@ -238,7 +263,7 @@ int run_selftest(const SelftestOptions& opts) {
       const double t = opts.frames == 1 ? 0.0
                                         : t_end * static_cast<double>(i) / static_cast<double>(opts.frames - 1);
       std::vector<FrameCheckResult> checks;
-      const auto rgb = render_frame_rgb(pb, t, &checks);
+      const auto rgb = render_frame_rgb(pb, t, camera, &checks);
       std::ostringstream name;
       name << opts.outdir << "/frame_" << i << ".ppm";
       if (!write_ppm(name.str().c_str(), kFrameWidth, kFrameHeight, rgb)) {

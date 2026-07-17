@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 
+#include <string>
 #include <vector>
 
 namespace bounce_view {
@@ -17,9 +18,21 @@ struct Viewport {
   double y_max = 1.0;
 };
 
+// S15 assessment camera: uniform aspect-preserving scale, quantized hysteretic zoom.
 struct CameraState {
-  Viewport current{};
+  double s_base = 1.0;
+  int level = 0;
+  double scale = 1.0; // s_base * 1.25^level
+  double center_x = 0.0;
+  double center_y = 0.0;
   bool initialized = false;
+  bool locked = false;
+  Viewport current{};
+  double scale_x = 0.0;
+  double scale_y = 0.0;
+  double grid_step = 1.0;
+  int grid_lines_v = 0;
+  int grid_lines_h = 0;
 };
 
 struct SceneCache {
@@ -29,6 +42,13 @@ struct SceneCache {
   bool has_bezier = false;
   Viewport viewport{};
   std::vector<SDL_Point> curve_screen_points{};
+  double scale = 1.0;
+  double scale_x = 0.0;
+  double scale_y = 0.0;
+  int camera_level = 0;
+  double grid_step = 1.0;
+  int grid_lines_v = 0;
+  int grid_lines_h = 0;
 };
 
 struct PlaybackView {
@@ -53,7 +73,24 @@ struct FrameCheckResult {
   int curve_pixels = 0;
   double ball_on_curve_px_dist = 0.0;
   double ball_radius_px = 0.0;
+  double ball_draw_px = 0.0;
   double scale = 0.0;
+  double scale_x = 0.0;
+  double scale_y = 0.0;
+  int camera_level = 0;
+  double camera_scale = 0.0;
+  double grid_step = 0.0;
+  int grid_lines_v = 0;
+  int grid_lines_h = 0;
+};
+
+struct HudState {
+  double sim_t = 0.0;
+  int event_count = 0;
+  std::string restitution;
+  bool camera_locked = false;
+  int camera_level = 0;
+  std::string build_short;
 };
 
 void reset_playback_view(PlaybackView& view);
@@ -61,16 +98,27 @@ void seek_playback_view(PlaybackView& view, double t);
 BallRenderState ball_state_in_view(const PlaybackView& view, int ball_id, double t);
 
 Viewport compute_viewport_targets(const PlaybackView& view, double t);
-Viewport smooth_viewport(CameraState& camera, const Viewport& target, double alpha = 0.12);
 
-void build_scene_cache(const PlaybackView& view, double t, int window_w, int window_h,
+// Returns true when level/scale changed (caller should print `camera: level=… scale=…`).
+bool update_camera(CameraState& camera, const Viewport& content, int window_w, int window_h);
+
+// Returns true when camera level/scale changed (stdout `camera:` line may be printed by caller).
+bool build_scene_cache(const PlaybackView& view, double t, int window_w, int window_h,
                        SceneCache& cache, bool optimize, CameraState* camera = nullptr);
 
 void draw_scene(SDL_Renderer* renderer, const SceneCache& cache, const PlaybackView& view,
                 double t, int window_w, int window_h, PerfStats* perf);
 
+void draw_hud_overlay(SDL_Renderer* renderer, const HudState& hud, int window_w, int window_h);
+
+void print_hud_line(const HudState& hud);
+void print_camera_line(const CameraState& camera);
+
 std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
                                                    const PlaybackView& view, double t,
                                                    int window_w, int window_h);
+
+double nice_grid_step(double view_span);
+void count_grid_lines(const Viewport& vp, double step, int& lines_v, int& lines_h);
 
 } // namespace bounce_view

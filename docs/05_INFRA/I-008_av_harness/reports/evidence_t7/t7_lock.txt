@@ -1,0 +1,12 @@
+bounce-view build 9e8920b (task/I-008-T7+dirty)
+restitution: override=1 (scenario values ignored; use --scenario-restitution to respect file)
+s15-proof: camera lock session
+camera: level=0 scale=3.897125005221564
+camera: lock engaged
+camera: level=0 scale=3.897125005221564
+frame_check ball_id=0 camera_level=0 camera_scale=3.897125005221564 scale_x=3.897125005221564 scale_y=3.897125005221564
+frame_dump index=0 t_frame=7.3522749705577795
+camera: level=0 scale=3.897125005221564
+frame_check ball_id=0 camera_level=0 camera_scale=3.897125005221564 scale_x=3.897125005221564 scale_y=3.897125005221564
+frame_dump index=1 t_frame=25.724900309424218
+camera: level=0 scale=3.897125005221564

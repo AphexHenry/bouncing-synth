@@ -9,14 +9,26 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
 #include <limits>
+#include <string>
 #include <vector>
 
 namespace bounce_view {
 
+double nice_grid_step_for_viewport(const Viewport& vp); // defined below
+
 namespace {
 
 using Clock = std::chrono::steady_clock;
+
+constexpr double kZoomBase = 1.25;
+constexpr double kComfortHi = 0.98; // zoom out only when content nearly overflows
+constexpr double kComfortLo = 0.35; // zoom in only when content is sparse
+constexpr double kPanAlpha = 0.12;
+constexpr double kMinBallDrawPx = 3.0;
 
 double elapsed_ms(Clock::time_point start) {
   return std::chrono::duration<double, std::milli>(Clock::now() - start).count();
@@ -201,7 +213,462 @@ double min_curve_pixel_distance(int px, int py, const std::vector<SDL_Point>& cu
   return best;
 }
 
+double scale_at_level(double s_base, int level) {
+  return s_base * std::pow(kZoomBase, static_cast<double>(level));
+}
+
+void rebuild_viewport_from_camera(CameraState& camera, int window_w, int window_h) {
+  camera.scale = scale_at_level(camera.s_base, camera.level);
+  const double view_w = static_cast<double>(window_w - 1) / std::max(1e-12, camera.scale);
+  const double view_h = static_cast<double>(window_h - 1) / std::max(1e-12, camera.scale);
+  camera.current.x_min = camera.center_x - 0.5 * view_w;
+  camera.current.x_max = camera.center_x + 0.5 * view_w;
+  camera.current.y_min = camera.center_y - 0.5 * view_h;
+  camera.current.y_max = camera.center_y + 0.5 * view_h;
+  camera.scale_x = camera.scale;
+  camera.scale_y = camera.scale;
+  camera.grid_step = nice_grid_step_for_viewport(camera.current);
+  count_grid_lines(camera.current, camera.grid_step, camera.grid_lines_v, camera.grid_lines_h);
+}
+
+// Minimal 5x7 glyphs: digits, minus, dot, 'e'. Bits row-major, MSB left.
+constexpr int kGlyphW = 5;
+constexpr int kGlyphH = 7;
+
+const char* glyph_bits(char c) {
+  switch (c) {
+  case '0':
+    return "01110"
+           "10001"
+           "10011"
+           "10101"
+           "11001"
+           "10001"
+           "01110";
+  case '1':
+    return "00100"
+           "01100"
+           "00100"
+           "00100"
+           "00100"
+           "00100"
+           "01110";
+  case '2':
+    return "01110"
+           "10001"
+           "00001"
+           "00010"
+           "00100"
+           "01000"
+           "11111";
+  case '3':
+    return "01110"
+           "10001"
+           "00001"
+           "00110"
+           "00001"
+           "10001"
+           "01110";
+  case '4':
+    return "00010"
+           "00110"
+           "01010"
+           "10010"
+           "11111"
+           "00010"
+           "00010";
+  case '5':
+    return "11111"
+           "10000"
+           "11110"
+           "00001"
+           "00001"
+           "10001"
+           "01110";
+  case '6':
+    return "00110"
+           "01000"
+           "10000"
+           "11110"
+           "10001"
+           "10001"
+           "01110";
+  case '7':
+    return "11111"
+           "00001"
+           "00010"
+           "00100"
+           "01000"
+           "01000"
+           "01000";
+  case '8':
+    return "01110"
+           "10001"
+           "10001"
+           "01110"
+           "10001"
+           "10001"
+           "01110";
+  case '9':
+    return "01110"
+           "10001"
+           "10001"
+           "01111"
+           "00001"
+           "00010"
+           "01100";
+  case '-':
+    return "00000"
+           "00000"
+           "00000"
+           "11111"
+           "00000"
+           "00000"
+           "00000";
+  case '.':
+    return "00000"
+           "00000"
+           "00000"
+           "00000"
+           "00000"
+           "00100"
+           "00100";
+  case 'e':
+    return "00000"
+           "00000"
+           "01110"
+           "10001"
+           "11111"
+           "10000"
+           "01110";
+  case ' ':
+    return "00000"
+           "00000"
+           "00000"
+           "00000"
+           "00000"
+           "00000"
+           "00000";
+  default:
+    return "11111"
+           "10001"
+           "10001"
+           "10001"
+           "10001"
+           "10001"
+           "11111";
+  }
+}
+
+void draw_glyph(SDL_Renderer* renderer, int x, int y, char c, int scale) {
+  const char* bits = glyph_bits(c);
+  for (int row = 0; row < kGlyphH; ++row) {
+    for (int col = 0; col < kGlyphW; ++col) {
+      if (bits[row * kGlyphW + col] == '1') {
+        SDL_Rect r{x + col * scale, y + row * scale, scale, scale};
+        SDL_RenderFillRect(renderer, &r);
+      }
+    }
+  }
+}
+
+void draw_text(SDL_Renderer* renderer, int x, int y, const std::string& text, int scale = 1) {
+  int cursor = x;
+  for (char c : text) {
+    draw_glyph(renderer, cursor, y, c, scale);
+    cursor += (kGlyphW + 1) * scale;
+  }
+}
+
+std::string format_tick(double v) {
+  // Compact label: prefer fixed, fall back to scientific-ish with 'e'.
+  char buf[64];
+  const double av = std::abs(v);
+  if (av != 0.0 && (av >= 1e4 || av < 1e-3)) {
+    std::snprintf(buf, sizeof(buf), "%.2e", v);
+  } else {
+    std::snprintf(buf, sizeof(buf), "%.3g", v);
+  }
+  std::string s(buf);
+  for (char& c : s) {
+    if (c == 'E') {
+      c = 'e';
+    }
+  }
+  return s;
+}
+
+void draw_grid_and_axes(SDL_Renderer* renderer, const CameraState& camera, int window_w,
+                        int window_h) {
+  const Viewport& vp = camera.current;
+  const double step = camera.grid_step;
+  if (!(step > 0.0)) {
+    return;
+  }
+
+  const double x0 = std::ceil(vp.x_min / step) * step;
+  const double y0 = std::ceil(vp.y_min / step) * step;
+
+  SDL_SetRenderDrawColor(renderer, 40, 44, 56, 255);
+  for (double x = x0; x <= vp.x_max + 1e-12; x += step) {
+    const auto a = to_screen(x, vp.y_min, vp, window_w, window_h);
+    const auto b = to_screen(x, vp.y_max, vp, window_w, window_h);
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
+  }
+  for (double y = y0; y <= vp.y_max + 1e-12; y += step) {
+    const auto a = to_screen(vp.x_min, y, vp, window_w, window_h);
+    const auto b = to_screen(vp.x_max, y, vp, window_w, window_h);
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
+  }
+
+  // Emphasize world axes when in view.
+  SDL_SetRenderDrawColor(renderer, 90, 100, 130, 255);
+  if (vp.x_min <= 0.0 && vp.x_max >= 0.0) {
+    const auto a = to_screen(0.0, vp.y_min, vp, window_w, window_h);
+    const auto b = to_screen(0.0, vp.y_max, vp, window_w, window_h);
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
+  }
+  if (vp.y_min <= 0.0 && vp.y_max >= 0.0) {
+    const auto a = to_screen(vp.x_min, 0.0, vp, window_w, window_h);
+    const auto b = to_screen(vp.x_max, 0.0, vp, window_w, window_h);
+    SDL_RenderDrawLine(renderer, a.x, a.y, b.x, b.y);
+  }
+
+  SDL_SetRenderDrawColor(renderer, 160, 170, 190, 255);
+  for (double x = x0; x <= vp.x_max + 1e-12; x += step) {
+    const auto p = to_screen(x, std::clamp(0.0, vp.y_min, vp.y_max), vp, window_w, window_h);
+    draw_text(renderer, p.x + 2, std::min(window_h - 12, p.y + 2), format_tick(x), 1);
+  }
+  for (double y = y0; y <= vp.y_max + 1e-12; y += step) {
+    const auto p = to_screen(std::clamp(0.0, vp.x_min, vp.x_max), y, vp, window_w, window_h);
+    draw_text(renderer, std::max(2, p.x + 2), p.y - 8, format_tick(y), 1);
+  }
+
+  // Screen-space scale bar (bottom-left).
+  const double bar_world = step;
+  const int bar_px = std::max(1, static_cast<int>(std::lround(bar_world * camera.scale)));
+  const int bar_x = 16;
+  const int bar_y = window_h - 28;
+  SDL_SetRenderDrawColor(renderer, 220, 220, 230, 255);
+  SDL_RenderDrawLine(renderer, bar_x, bar_y, bar_x + bar_px, bar_y);
+  SDL_RenderDrawLine(renderer, bar_x, bar_y - 3, bar_x, bar_y + 3);
+  SDL_RenderDrawLine(renderer, bar_x + bar_px, bar_y - 3, bar_x + bar_px, bar_y + 3);
+  draw_text(renderer, bar_x, bar_y + 6, format_tick(bar_world), 1);
+}
+
+void draw_ball_at(SDL_Renderer* renderer, int cx, int cy, double radius_world, double scale,
+                  bool settled) {
+  const double radius_px = radius_world * scale;
+  const double draw_px = std::max(kMinBallDrawPx, radius_px);
+  const bool marker = radius_px < kMinBallDrawPx;
+  const int r = std::max(1, static_cast<int>(std::lround(draw_px)));
+
+  if (settled) {
+    SDL_SetRenderDrawColor(renderer, 100, 180, 220, 255);
+    SDL_Rect outer{cx - r - 2, cy - r - 2, 2 * r + 4, 2 * r + 4};
+    SDL_RenderDrawRect(renderer, &outer);
+    SDL_SetRenderDrawColor(renderer, 80, 140, 180, 255);
+  } else {
+    SDL_SetRenderDrawColor(renderer, 240, 90, 60, 255);
+  }
+  for (int dy = -r; dy <= r; ++dy) {
+    for (int dx = -r; dx <= r; ++dx) {
+      if (dx * dx + dy * dy <= r * r) {
+        SDL_RenderDrawPoint(renderer, cx + dx, cy + dy);
+      }
+    }
+  }
+  if (marker) {
+    SDL_SetRenderDrawColor(renderer, 255, 220, 120, 255);
+    const int ring = r + 2;
+    for (int a = 0; a < 32; ++a) {
+      const double ang = 2.0 * 3.14159265358979323846 * static_cast<double>(a) / 32.0;
+      const int px = cx + static_cast<int>(std::lround(ring * std::cos(ang)));
+      const int py = cy + static_cast<int>(std::lround(ring * std::sin(ang)));
+      SDL_RenderDrawPoint(renderer, px, py);
+    }
+  }
+}
+
 } // namespace
+
+double nice_grid_step(double view_span) {
+  if (!(view_span > 0.0) || !std::isfinite(view_span)) {
+    return 1.0;
+  }
+  // Target ~8 lines on the provided span; snap to 1-2-5 and adjust until [4,12].
+  double approx = view_span / 8.0;
+  auto snap = [](double v) {
+    const double exp10 = std::floor(std::log10(v));
+    const double base = std::pow(10.0, exp10);
+    const double m = v / base;
+    double nice_m = 1.0;
+    if (m <= 1.5) {
+      nice_m = 1.0;
+    } else if (m <= 3.5) {
+      nice_m = 2.0;
+    } else if (m <= 7.5) {
+      nice_m = 5.0;
+    } else {
+      return 10.0 * base;
+    }
+    return nice_m * base;
+  };
+  auto next_larger = [](double step) {
+    const double exp10 = std::floor(std::log10(step) + 1e-12);
+    const double base = std::pow(10.0, exp10);
+    const double m = step / base;
+    if (m < 1.5) {
+      return 2.0 * base;
+    }
+    if (m < 3.5) {
+      return 5.0 * base;
+    }
+    if (m < 7.5) {
+      return 10.0 * base;
+    }
+    return 20.0 * base;
+  };
+  auto next_smaller = [](double step) {
+    const double exp10 = std::floor(std::log10(step) + 1e-12);
+    const double base = std::pow(10.0, exp10);
+    const double m = step / base;
+    if (m > 4.5) {
+      return 2.0 * base;
+    }
+    if (m > 1.5) {
+      return 1.0 * base;
+    }
+    return 0.5 * base;
+  };
+
+  double step = snap(approx);
+  for (int i = 0; i < 8; ++i) {
+    const int lines = static_cast<int>(std::floor(view_span / step)) + 1;
+    if (lines < 4) {
+      step = next_smaller(step);
+    } else if (lines > 12) {
+      step = next_larger(step);
+    } else {
+      break;
+    }
+  }
+  return step;
+}
+
+// Choose one 1-2-5 step so BOTH axes land in [4,12] (window aspect is fixed 4:3).
+double nice_grid_step_for_viewport(const Viewport& vp) {
+  const double span_x = std::max(1e-12, vp.x_max - vp.x_min);
+  const double span_y = std::max(1e-12, vp.y_max - vp.y_min);
+  const double longer = std::max(span_x, span_y);
+  double step = nice_grid_step(longer);
+  auto next_larger = [](double s) {
+    const double exp10 = std::floor(std::log10(s) + 1e-12);
+    const double base = std::pow(10.0, exp10);
+    const double m = s / base;
+    if (m < 1.5) {
+      return 2.0 * base;
+    }
+    if (m < 3.5) {
+      return 5.0 * base;
+    }
+    if (m < 7.5) {
+      return 10.0 * base;
+    }
+    return 20.0 * base;
+  };
+  auto next_smaller = [](double s) {
+    const double exp10 = std::floor(std::log10(s) + 1e-12);
+    const double base = std::pow(10.0, exp10);
+    const double m = s / base;
+    if (m > 4.5) {
+      return 2.0 * base;
+    }
+    if (m > 1.5) {
+      return 1.0 * base;
+    }
+    return 0.5 * base;
+  };
+  for (int i = 0; i < 12; ++i) {
+    int lv = 0;
+    int lh = 0;
+    count_grid_lines(vp, step, lv, lh);
+    const int mn = std::min(lv, lh);
+    const int mx = std::max(lv, lh);
+    if (mn < 4) {
+      step = next_smaller(step);
+    } else if (mx > 12) {
+      step = next_larger(step);
+    } else {
+      break;
+    }
+  }
+  return step;
+}
+
+void count_grid_lines(const Viewport& vp, double step, int& lines_v, int& lines_h) {
+  lines_v = 0;
+  lines_h = 0;
+  if (!(step > 0.0)) {
+    return;
+  }
+  const double x0 = std::ceil(vp.x_min / step) * step;
+  const double y0 = std::ceil(vp.y_min / step) * step;
+  for (double x = x0; x <= vp.x_max + 1e-12; x += step) {
+    ++lines_v;
+  }
+  for (double y = y0; y <= vp.y_max + 1e-12; y += step) {
+    ++lines_h;
+  }
+}
+
+bool update_camera(CameraState& camera, const Viewport& content, int window_w, int window_h) {
+  Viewport padded = content;
+  pad_viewport(padded);
+  const double content_w = std::max(1e-9, padded.x_max - padded.x_min);
+  const double content_h = std::max(1e-9, padded.y_max - padded.y_min);
+  const double target_cx = 0.5 * (padded.x_min + padded.x_max);
+  const double target_cy = 0.5 * (padded.y_min + padded.y_max);
+
+  const int prev_level = camera.level;
+  const double prev_scale = camera.scale;
+
+  if (!camera.initialized) {
+    camera.center_x = target_cx;
+    camera.center_y = target_cy;
+    const double fit =
+        std::min(static_cast<double>(window_w - 1) / content_w,
+                 static_cast<double>(window_h - 1) / content_h);
+    // Level 0 targets ~70% fill (content inside view with margin).
+    constexpr double kInitFill = 0.70;
+    camera.s_base = std::max(1e-12, fit * kInitFill);
+    camera.level = 0;
+    camera.initialized = true;
+    rebuild_viewport_from_camera(camera, window_w, window_h);
+    return true;
+  }
+
+  if (!camera.locked) {
+    camera.center_x = camera.center_x + kPanAlpha * (target_cx - camera.center_x);
+    camera.center_y = camera.center_y + kPanAlpha * (target_cy - camera.center_y);
+
+    // Fill fraction at current scale (max of axis fills).
+    const double view_w =
+        static_cast<double>(window_w - 1) / std::max(1e-12, scale_at_level(camera.s_base, camera.level));
+    const double view_h =
+        static_cast<double>(window_h - 1) / std::max(1e-12, scale_at_level(camera.s_base, camera.level));
+    const double fill = std::max(content_w / view_w, content_h / view_h);
+    // At most one level change per update (presentation-frame cadence).
+    if (fill > kComfortHi) {
+      --camera.level; // zoom out
+    } else if (fill < kComfortLo) {
+      ++camera.level; // zoom in
+    }
+  }
+
+  rebuild_viewport_from_camera(camera, window_w, window_h);
+  return camera.level != prev_level || std::abs(camera.scale - prev_scale) > 1e-15;
+}
 
 void reset_playback_view(PlaybackView& view) {
   view.next_event = 0;
@@ -288,28 +755,23 @@ Viewport compute_viewport_targets(const PlaybackView& view, double t) {
     vp.y_min = 0.0;
     vp.y_max = 1.0;
   }
-  pad_viewport(vp);
   return vp;
 }
 
-Viewport smooth_viewport(CameraState& camera, const Viewport& target, double alpha) {
-  if (!camera.initialized) {
-    camera.current = target;
-    camera.initialized = true;
-    return camera.current;
-  }
-  auto lerp = [alpha](double from, double to) { return from + alpha * (to - from); };
-  camera.current.x_min = lerp(camera.current.x_min, target.x_min);
-  camera.current.x_max = lerp(camera.current.x_max, target.x_max);
-  camera.current.y_min = lerp(camera.current.y_min, target.y_min);
-  camera.current.y_max = lerp(camera.current.y_max, target.y_max);
-  return camera.current;
-}
-
-void build_scene_cache(const PlaybackView& view, double t, int window_w, int window_h,
+bool build_scene_cache(const PlaybackView& view, double t, int window_w, int window_h,
                        SceneCache& cache, bool optimize, CameraState* camera) {
   const Viewport target = compute_viewport_targets(view, t);
-  cache.viewport = camera != nullptr ? smooth_viewport(*camera, target) : target;
+  CameraState local{};
+  CameraState* cam = camera != nullptr ? camera : &local;
+  const bool changed = update_camera(*cam, target, window_w, window_h);
+  cache.viewport = cam->current;
+  cache.scale = cam->scale;
+  cache.scale_x = cam->scale_x;
+  cache.scale_y = cam->scale_y;
+  cache.camera_level = cam->level;
+  cache.grid_step = cam->grid_step;
+  cache.grid_lines_v = cam->grid_lines_v;
+  cache.grid_lines_h = cam->grid_lines_h;
 
   cache.has_polynomial = false;
   cache.has_bezier = false;
@@ -322,7 +784,7 @@ void build_scene_cache(const PlaybackView& view, double t, int window_w, int win
           std::vector<double>(view.pb.scenario.coeffs.begin(),
                               view.pb.scenario.coeffs.begin() + view.pb.scenario.coeff_count));
       sample_polynomial_curve(cache.curve_y, cache.viewport, window_w, window_h,
-                            cache.curve_screen_points);
+                              cache.curve_screen_points);
     } else {
       const auto curve_y = bounce::core::curve::compile_polynomial(
           std::vector<double>(view.pb.scenario.coeffs.begin(),
@@ -336,12 +798,26 @@ void build_scene_cache(const PlaybackView& view, double t, int window_w, int win
     sample_bezier_curve(cache.curve_bezier, cache.viewport, window_w, window_h,
                         cache.curve_screen_points);
   }
+  return changed;
 }
 
 void draw_scene(SDL_Renderer* renderer, const SceneCache& cache, const PlaybackView& view,
                 double t, int window_w, int window_h, PerfStats* perf) {
   SDL_SetRenderDrawColor(renderer, 18, 20, 28, 255);
   SDL_RenderClear(renderer);
+
+  // Reconstruct camera fields for overlays from cache.
+  CameraState overlay{};
+  overlay.current = cache.viewport;
+  overlay.scale = cache.scale;
+  overlay.scale_x = cache.scale_x;
+  overlay.scale_y = cache.scale_y;
+  overlay.level = cache.camera_level;
+  overlay.grid_step = cache.grid_step;
+  overlay.grid_lines_v = cache.grid_lines_v;
+  overlay.grid_lines_h = cache.grid_lines_h;
+  overlay.initialized = true;
+  draw_grid_and_axes(renderer, overlay, window_w, window_h);
 
   const auto engine_start = Clock::now();
   std::vector<BallRenderState> balls(static_cast<std::size_t>(view.pb.scenario.ball_count));
@@ -376,30 +852,46 @@ void draw_scene(SDL_Renderer* renderer, const SceneCache& cache, const PlaybackV
       continue;
     }
     const auto p = to_screen(state.pos.x, state.pos.y, cache.viewport, window_w, window_h);
-    if (state.settled) {
-      SDL_SetRenderDrawColor(renderer, 100, 180, 220, 255);
-      SDL_Rect outer{p.x - 7, p.y - 7, 14, 14};
-      SDL_RenderDrawRect(renderer, &outer);
-      SDL_SetRenderDrawColor(renderer, 80, 140, 180, 255);
-    } else {
-      SDL_SetRenderDrawColor(renderer, 240, 90, 60, 255);
-    }
-    SDL_Rect rect{p.x - 5, p.y - 5, 10, 10};
-    SDL_RenderFillRect(renderer, &rect);
+    const double radius_world =
+        b < static_cast<int>(view.pb.display_radius.size())
+            ? view.pb.display_radius[static_cast<std::size_t>(b)]
+            : 0.1;
+    draw_ball_at(renderer, p.x, p.y, radius_world, cache.scale, state.settled);
   }
   if (perf != nullptr) {
     record_subsystem(perf->ball_draw, elapsed_ms(ball_start));
   }
 }
 
+void draw_hud_overlay(SDL_Renderer* renderer, const HudState& hud, int window_w, int window_h) {
+  (void)window_w;
+  char buf[256];
+  std::snprintf(buf, sizeof(buf), "t=%.6g ev=%d r=%s cam=%s L=%d %s", hud.sim_t, hud.event_count,
+                hud.restitution.c_str(), hud.camera_locked ? "locked" : "auto", hud.camera_level,
+                hud.build_short.c_str());
+  SDL_SetRenderDrawColor(renderer, 210, 215, 225, 255);
+  draw_text(renderer, 8, 8, buf, 1);
+  (void)window_h;
+}
+
+void print_hud_line(const HudState& hud) {
+  std::cout << "hud: t=" << std::setprecision(17) << hud.sim_t << " events=" << hud.event_count
+            << " restitution=" << hud.restitution
+            << " camera=" << (hud.camera_locked ? "locked" : "auto")
+            << " level=" << hud.camera_level << " build=" << hud.build_short << '\n';
+}
+
+void print_camera_line(const CameraState& camera) {
+  std::cout << "camera: level=" << camera.level << " scale=" << std::setprecision(17)
+            << camera.scale << '\n';
+}
+
 std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
                                                    const PlaybackView& view, double t,
                                                    int window_w, int window_h) {
-  const double px_per_unit_x =
-      static_cast<double>(window_w - 1) / std::max(1e-12, cache.viewport.x_max - cache.viewport.x_min);
-  const double px_per_unit_y =
-      static_cast<double>(window_h - 1) / std::max(1e-12, cache.viewport.y_max - cache.viewport.y_min);
-  const double scale = 0.5 * (px_per_unit_x + px_per_unit_y);
+  const double scale_x = cache.scale_x;
+  const double scale_y = cache.scale_y;
+  const double scale = cache.scale;
 
   std::vector<FrameCheckResult> results;
   for (int b = 0; b < view.pb.scenario.ball_count; ++b) {
@@ -414,18 +906,24 @@ std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
     row.ball_px_y = p.y;
     row.in_viewport = p.x >= 0 && p.x < window_w && p.y >= 0 && p.y < window_h;
     row.scale = scale;
+    row.scale_x = scale_x;
+    row.scale_y = scale_y;
+    row.camera_level = cache.camera_level;
+    row.camera_scale = cache.scale;
+    row.grid_step = cache.grid_step;
+    row.grid_lines_v = cache.grid_lines_v;
+    row.grid_lines_h = cache.grid_lines_h;
     const double radius_world =
-        b < static_cast<int>(view.pb.display_radius.size()) ? view.pb.display_radius[static_cast<std::size_t>(b)]
-                                                            : 0.1;
+        b < static_cast<int>(view.pb.display_radius.size())
+            ? view.pb.display_radius[static_cast<std::size_t>(b)]
+            : 0.1;
     row.ball_radius_px = radius_world * scale;
+    row.ball_draw_px = std::max(kMinBallDrawPx, row.ball_radius_px);
     row.ball_on_curve_px_dist = min_curve_pixel_distance(p.x, p.y, cache.curve_screen_points);
     results.push_back(row);
   }
 
   int curve_pixels = 0;
-  if (!results.empty()) {
-    results.front().curve_pixels = 0;
-  }
   auto mark = [&](int px, int py) {
     if (px >= 0 && px < window_w && py >= 0 && py < window_h) {
       ++curve_pixels;
@@ -452,6 +950,13 @@ std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
   } else {
     FrameCheckResult row{};
     row.curve_pixels = curve_pixels;
+    row.scale_x = scale_x;
+    row.scale_y = scale_y;
+    row.camera_level = cache.camera_level;
+    row.camera_scale = cache.scale;
+    row.grid_step = cache.grid_step;
+    row.grid_lines_v = cache.grid_lines_v;
+    row.grid_lines_h = cache.grid_lines_h;
     results.push_back(row);
   }
   return results;

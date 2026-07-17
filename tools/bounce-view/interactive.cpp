@@ -16,9 +16,12 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -44,6 +47,46 @@ struct VoiceState {
   double start_ms = 0.0;
   bool active = false;
 };
+
+
+std::string restitution_short(const RunConfig& cfg) {
+  switch (cfg.mode) {
+  case RestitutionMode::ScenarioFaithful:
+    return "scenario";
+  case RestitutionMode::InteractiveDefault:
+    return "1";
+  case RestitutionMode::OverrideUniform: {
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "%g", cfg.override_r);
+    return buf;
+  }
+  }
+  return "?";
+}
+
+int count_events_at_or_before(const Playback& pb, double t) {
+  int n = 0;
+  for (const auto& ev : pb.events) {
+    if (ev.t <= t + 1e-15) {
+      ++n;
+    } else {
+      break;
+    }
+  }
+  return n;
+}
+
+bool step_to_next_event(const Playback& pb, double& sim_t, int& event_count) {
+  for (const auto& ev : pb.events) {
+    if (ev.t > sim_t + 1e-15) {
+      sim_t = ev.t;
+      event_count = count_events_at_or_before(pb, sim_t);
+      return true;
+    }
+  }
+  return false;
+}
+
 
 struct AudioContext {
   std::vector<VoiceState>* voices = nullptr;
@@ -77,7 +120,9 @@ void draw_unoptimized(SDL_Renderer* renderer, Playback& render_pb, double t, Cam
   view.pb = render_pb;
   reset_playback_view(view);
   SceneCache cache{};
-  build_scene_cache(view, t, kWindowW, kWindowH, cache, false, &camera);
+  if (build_scene_cache(view, t, kWindowW, kWindowH, cache, false, &camera)) {
+    print_camera_line(camera);
+  }
   draw_scene(renderer, cache, view, t, kWindowW, kWindowH, perf);
 }
 
@@ -86,7 +131,9 @@ void draw_optimized(SDL_Renderer* renderer, SceneCache& cache, Playback& render_
   PlaybackView view{};
   view.pb = render_pb;
   reset_playback_view(view);
-  build_scene_cache(view, t, kWindowW, kWindowH, cache, true, &camera);
+  if (build_scene_cache(view, t, kWindowW, kWindowH, cache, true, &camera)) {
+    print_camera_line(camera);
+  }
   draw_scene(renderer, cache, view, t, kWindowW, kWindowH, perf);
 }
 
@@ -221,6 +268,106 @@ int run_s13_proof_session(const RunConfig& cfg, Playback& pb, std::string& activ
   return 0;
 }
 
+
+int run_s15_proof_session(const char* mode, const RunConfig& cfg, Playback& pb) {
+  CameraState camera{};
+  PlaybackView view{};
+  view.pb = pb;
+  reset_playback_view(view);
+  constexpr int kW = kWindowW;
+  constexpr int kH = kWindowH;
+  const std::string build = build_stamp_short_commit();
+
+  if (std::strcmp(mode, "zoom") == 0) {
+    // Bounded scripted drive: presentation-like time steps over a capped horizon.
+    std::cout << "s15-proof: zoom drive on current scene (bounded)\n";
+    const double t_end = pb.events.empty() ? 1.0 : std::min(pb.events.back().t, 30.0);
+    constexpr double kDt = 1.0 / 30.0; // 30 Hz presentation-equivalent
+    const int max_steps = 900;        // hard bound (30s * 30Hz)
+    int printed = 0;
+    int steps = 0;
+    for (double t = 0.0; t <= t_end + 1e-15 && steps < max_steps; t += kDt, ++steps) {
+      const Viewport target = compute_viewport_targets(view, t);
+      if (update_camera(camera, target, kW, kH)) {
+        print_camera_line(camera);
+        ++printed;
+      }
+    }
+    std::cout << "s15-proof: zoom drive done camera_lines=" << printed << " steps=" << steps
+              << " t_end=" << t_end << '\n';
+    return 0;
+  }
+
+  if (std::strcmp(mode, "pause") == 0) {
+    std::cout << "s15-proof: pause/step session\n";
+    double sim_t = 0.0;
+    int event_count = 0;
+    bool paused = true;
+    HudState hud{};
+    hud.sim_t = sim_t;
+    hud.event_count = event_count;
+    hud.restitution = restitution_short(cfg);
+    hud.camera_locked = false;
+    hud.camera_level = camera.level;
+    hud.build_short = build;
+    std::cout << "pause: engaged\n";
+    print_hud_line(hud);
+    for (int step = 0; step < 3; ++step) {
+      if (!step_to_next_event(pb, sim_t, event_count)) {
+        std::cerr << "s15-proof: no next event for step " << step << '\n';
+        return 1;
+      }
+      std::cout << "step: .\n";
+      hud.sim_t = sim_t;
+      hud.event_count = event_count;
+      hud.camera_level = camera.level;
+      print_hud_line(hud);
+    }
+    (void)paused;
+    return 0;
+  }
+
+  if (std::strcmp(mode, "lock") == 0) {
+    std::cout << "s15-proof: camera lock session\n";
+    // Warm camera at first event, then lock.
+    if (!pb.events.empty()) {
+      const Viewport target = compute_viewport_targets(view, pb.events.front().t);
+      (void)update_camera(camera, target, kW, kH);
+      print_camera_line(camera);
+    }
+    camera.locked = true;
+    std::cout << "camera: lock engaged\n";
+    print_camera_line(camera);
+
+    auto dump_at = [&](double t, int index) {
+      SceneCache cache{};
+      build_scene_cache(view, t, kW, kH, cache, true, &camera);
+      const auto checks = compute_frame_checks(cache, view, t, kW, kH);
+      for (const auto& row : checks) {
+        if (row.ball_id >= 0) {
+          std::cout << "frame_check ball_id=" << row.ball_id
+                    << " camera_level=" << row.camera_level
+                    << " camera_scale=" << std::setprecision(17) << row.camera_scale
+                    << " scale_x=" << row.scale_x << " scale_y=" << row.scale_y << '\n';
+          break;
+        }
+      }
+      std::cout << "frame_dump index=" << index << " t_frame=" << std::setprecision(17) << t
+                << '\n';
+      print_camera_line(camera);
+    };
+
+    double t0 = pb.events.size() > 5 ? pb.events[5].t : (pb.events.empty() ? 0.1 : pb.events.back().t);
+    double t1 = pb.events.size() > 20 ? pb.events[20].t : t0 + 1.0;
+    dump_at(t0, 0);
+    dump_at(t1, 1);
+    return 0;
+  }
+
+  std::cerr << "s15-proof: unknown mode '" << mode << "' (want zoom|pause|lock)\n";
+  return 1;
+}
+
 int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) {
   print_build_stamp();
   print_restitution_line(cfg);
@@ -238,6 +385,11 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
   if (std::getenv("BOUNCE_VIEW_S13_PROOF") != nullptr) {
     // Same picker / Law-1 / malformed handlers as key `l` and SDL_DROPFILE; no present loop.
     return run_s13_proof_session(cfg, pb, active_path);
+  }
+
+  if (const char* s15 = std::getenv("BOUNCE_VIEW_S15_PROOF"); s15 != nullptr) {
+    // Same pause/step/lock/camera update paths as interactive keys; no present loop.
+    return run_s15_proof_session(s15, cfg, pb);
   }
 
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
@@ -297,6 +449,9 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
   bool picker_open = false;
   std::vector<std::string> picker_paths;
   int picker_selected = 0;
+  bool paused = false;
+  double sim_t = 0.0;
+  int hud_event_count = 0;
 
   while (running) {
     SDL_Event event{};
@@ -354,6 +509,11 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
           reset_playback(render_pb);
           next_event = 0;
           start_ticks = SDL_GetTicks();
+          sim_t = 0.0;
+          paused = false;
+          hud_event_count = 0;
+          camera = CameraState{};
+          print_camera_line(camera);
           for (auto& v : voices) {
             v.active = false;
           }
@@ -364,6 +524,41 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
           picker_open = true;
           print_picker_list(picker_paths, picker_selected);
         }
+        if (perf_seconds == 0 && key == SDLK_c) {
+          camera.locked = !camera.locked;
+          std::cout << "camera: " << (camera.locked ? "lock engaged" : "lock released") << '\n';
+          print_camera_line(camera);
+        }
+        if (perf_seconds == 0 && key == SDLK_SPACE) {
+          if (paused) {
+            start_ticks = SDL_GetTicks() - static_cast<Uint32>(std::max(0.0, sim_t) * 1000.0);
+            paused = false;
+            std::cout << "pause: released\n";
+          } else {
+            paused = true;
+            std::cout << "pause: engaged\n";
+          }
+        }
+        if (perf_seconds == 0 && paused && key == SDLK_PERIOD) {
+          int ec = hud_event_count;
+          if (step_to_next_event(pb, sim_t, ec)) {
+            hud_event_count = ec;
+            next_event = static_cast<std::size_t>(hud_event_count);
+            std::cout << "step: .\n";
+            // Fire voice for the event we landed on.
+            if (hud_event_count > 0) {
+              const auto& ev = pb.events[static_cast<std::size_t>(hud_event_count - 1)];
+              const auto blip = blip_params(pb.scenario, ev);
+              if (blip.amp > 0.0) {
+                auto& voice = voices[next_voice % voices.size()];
+                voice.params = blip;
+                voice.start_ms = static_cast<double>(SDL_GetTicks());
+                voice.active = true;
+                ++next_voice;
+              }
+            }
+          }
+        }
       }
     }
 
@@ -371,8 +566,10 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
       running = false;
     }
 
-    const double elapsed_s = static_cast<double>(SDL_GetTicks() - start_ticks) / 1000.0;
-    const double t = std::max(0.0, elapsed_s);
+    if (!paused) {
+      sim_t = std::max(0.0, static_cast<double>(SDL_GetTicks() - start_ticks) / 1000.0);
+    }
+    const double t = sim_t;
 
     while (next_event < pb.events.size() && pb.events[next_event].t <= t) {
       const auto& ev = pb.events[next_event];
@@ -385,9 +582,10 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
         ++next_voice;
       }
       ++next_event;
+      hud_event_count = static_cast<int>(next_event);
     }
 
-    if (perf_seconds == 0 && effective_lossless(cfg) && next_event + 8 >= pb.events.size()) {
+    if (perf_seconds == 0 && !paused && effective_lossless(cfg) && next_event + 8 >= pb.events.size()) {
       roll_event_stream(active_path.c_str(), pb, cfg, error);
     }
 
@@ -398,6 +596,16 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
     } else {
       draw_unoptimized(renderer, render_pb, t, camera, perf_seconds > 0 ? &perf : nullptr);
     }
+
+    HudState hud{};
+    hud.sim_t = t;
+    hud.event_count = hud_event_count;
+    hud.restitution = restitution_short(cfg);
+    hud.camera_locked = camera.locked;
+    hud.camera_level = camera.level;
+    hud.build_short = build_stamp_short_commit();
+    draw_hud_overlay(renderer, hud, kWindowW, kWindowH);
+
     if (picker_open) {
       draw_picker_overlay(renderer, picker_selected, static_cast<int>(picker_paths.size()));
     }

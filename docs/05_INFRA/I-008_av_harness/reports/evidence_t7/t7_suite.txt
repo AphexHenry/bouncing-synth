@@ -1,0 +1,105 @@
+[doctest] doctest version is "2.4.11"
+[doctest] run with "--help" for options
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_baseline_sim.cpp:41:
+TEST CASE:  baseline FL-1 first contact within 2*dt of tier-1 reference
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_baseline_sim.cpp:49: MESSAGE: first-contact t=0.99995 ref_t=1 |Δt|=5e-05
+
+events=256
+events=256
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_capacity.cpp:34:
+TEST CASE:  capacity lift: >64 events reached with monotone seq
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_capacity.cpp:42: MESSAGE: scenario: flat line, restitution=0.999, vx=0.1, domain=[0,1000000], --max-events=100
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_capacity.cpp:43: MESSAGE: events emitted: 100
+
+failed to load scenario: /nonexistent/bounce-scenario-missing.json
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:243:
+TEST CASE:  T18 CF-E4b sustains 2000 confined lossless events
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:245: MESSAGE: E4b events=2000
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:249:
+TEST CASE:  T18 CF-E4b root-cause trace at death step
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:196: MESSAGE: death_step event_index=6 x0=5.80289 y0=0.257851
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:197: MESSAGE: death_step vx=3.78115 vy=4.02867 x_min=5.80289
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:198: MESSAGE: combined found=true path=0x1040cc243
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:200: MESSAGE: combined seg=1 s=0.268429 t=0.142617
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:201: MESSAGE: combined x=6.34214 y=0.72054 impact=1.09047
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:202: MESSAGE: combined accepted=true
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:204: MESSAGE: time_fallback found=true path=0x1040cc243
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:206: MESSAGE: time_fallback seg=1 s=0.268429 t=0.142617
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:208: MESSAGE: time_fallback x=6.34214 y=0.72054 impact=1.09047
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:209: MESSAGE: time_fallback accepted=true
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:294:
+TEST CASE:  T18 CF-E4a e=1 energy drift invariant
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:156: MESSAGE: max_step_rel=1.0261e-09 at_event=1678
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:298: MESSAGE: max_rel_energy_drift=9.31998e-10
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:300: MESSAGE: path_counts x=1631 time=201 fine=168
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:305:
+TEST CASE:  T18 CF-E4b e=1 energy drift invariant
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:307: MESSAGE: E4b events for energy=2000
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:311:
+TEST CASE:  T18 CF-E4a energy scaling N=500
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:156: MESSAGE: max_step_rel=2.45451e-10 at_event=40
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:314: MESSAGE: N=500 max_rel_energy_drift=3.54648e-10
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:318:
+TEST CASE:  T18 CF-E4a energy scaling N=1000
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:156: MESSAGE: max_step_rel=4.45009e-10 at_event=768
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:321: MESSAGE: N=1000 max_rel_energy_drift=9.15665e-10
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:325:
+TEST CASE:  T18 CF-E4a energy scaling N=2000
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:156: MESSAGE: max_step_rel=1.0261e-09 at_event=1678
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:328: MESSAGE: N=2000 max_rel_energy_drift=9.31998e-10
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:333:
+TEST CASE:  T18 CF-E4a agrees with tier-2 50-event reference window
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:348: MESSAGE: worst_dt=5.87349e-10 worst_ds=4.6439e-10
+
+===============================================================================
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:353:
+TEST CASE:  T18 CF-E4b agrees with tier-2 50-event reference window
+
+/Users/baptistebohelay/Dev/research/bouncing-synth/tests/test_t18_invariants.cpp:366: MESSAGE: worst_dt=1.53655e-13 worst_ds=2.96652e-13
+
+===============================================================================
+[doctest] test cases:   78 |   78 passed | 0 failed | 0 skipped
+[doctest] assertions: 8931 | 8931 passed | 0 failed |
+[doctest] Status: SUCCESS!

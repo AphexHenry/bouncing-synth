@@ -1,0 +1,11 @@
+bounce-view build 9e8920b (task/I-008-T7+dirty)
+restitution: override=1 (scenario values ignored; use --scenario-restitution to respect file)
+s15-proof: pause/step session
+pause: engaged
+hud: t=0 events=0 restitution=1 camera=auto level=0 build=9e8920b
+step: .
+hud: t=1.0092411204748319 events=1 restitution=1 camera=auto level=0 build=9e8920b
+step: .
+hud: t=1.4343406324266501 events=2 restitution=1 camera=auto level=0 build=9e8920b
+step: .
+hud: t=3.316679933354969 events=3 restitution=1 camera=auto level=0 build=9e8920b

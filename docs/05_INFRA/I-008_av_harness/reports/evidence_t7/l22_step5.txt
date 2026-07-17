@@ -1,0 +1,18 @@
+=== e4a
+python3: 0.9952761984374554 == 0.9952761984374554 -> True
+python3: 3.0 >= 3 -> True
+python3: 4 <= 8 <= 12 -> True
+python3: 4 <= 6 <= 12 -> True
+python3: 0.9952761984374554 == 0.9952761984374554 -> True
+python3: 3.0 >= 3 -> True
+python3: 4 <= 8 <= 12 -> True
+python3: 4 <= 6 <= 12 -> True
+=== a2
+python3: 4.275354699637632 == 4.275354699637632 -> True
+python3: 3.0 >= 3 -> True
+python3: 4 <= 9 <= 12 -> True
+python3: 4 <= 7 <= 12 -> True
+python3: 3.420283759710106 == 3.420283759710106 -> True
+python3: 3.0 >= 3 -> True
+python3: 4 <= 11 <= 12 -> True
+python3: 4 <= 9 <= 12 -> True
