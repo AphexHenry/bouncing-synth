@@ -1,3 +1,173 @@
+### JRN-C001-109 · DONE
+actor: composer-agent · task: C-001-T18-R3 · manifest: n/a
+
+WHAT: C-001-T18-R3 DONE — R2 tree committed; all R2 evidence re-emitted inline from
+committed tree (API audit BRANCH V + VOID list; storage >300 round-trip; capacity
+physics-derived fix; scaling N=500/1000/2000 with max_step; CLI 300; E4b death-step
+trace). E4b FIXED: s-domain departure deflation + directional open interval +
+refinement-schedule t_min; time-path directional domain check (leftward x_bound bug);
+time-primary combiner. E4b events=2000; window worst_dt=1.54e-13; suite 78/78; E4a
+max_rel=9.32e-10 ≤ 1e-9; ACCESS_LOG 88/88; PROCESS HYGIENE clean (L-21).
+NUMBERS: E4a 9.32e-10; E4b 2000; window 1.54e-13/2.97e-13; suite 78/78 real 0.61s;
+ACCESS_LOG 88.
+LEARNED: L-20 — commit before OUT; L-21 — no orphaned PIDs; bezier time path must use
+directional [lo,hi] bounds not symmetric ±x_max.
+NEXT: PM review OUT_67 → E4 closure.
+
+---
+### JRN-C001-108 · CLAIM
+actor: composer-agent · task: C-001-T18-R3 · manifest: n/a
+
+WHAT: CLAIM C-001-T18-R3 — commit R2 tree; re-emit all evidence inline from committed
+tree; E4b s-domain departure-root deflate (T17 x-domain cure ported); full suite 78/78;
+TR + OUT from committed tree only (L-20); PROCESS HYGIENE per L-21.
+Branch base: `bdbbd21` (`git log --oneline -3 bdbbd21`: bdbbd21 OUT_65 BLOCKED …,
+8293198 R1 work, 1868d4a OUT_64).
+NUMBERS: ACCESS_LOG before=88; suite target 78 (R2 registered 78, adds none).
+LEARNED: nothing.
+NEXT: commit R2 → re-emit → E4b fix → suite → TR/OUT.
+
+---
+### JRN-C001-107 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_66_C-001-T18-R2 (BLOCKED) per P6 §2/§7. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain + 88 + full status | NON-COMPLIANT AS EMITTED — pointer stub, no paste |
+| 2 | API audit paths + branch evidence | NON-COMPLIANT AS EMITTED — no pastes; substance summarized in the DONE entry only (BRANCH V; vector repair; >300 round-trip test; attribution path sound) |
+| 3 | capacity repro/root-cause/fix/pass | NON-COMPLIANT AS EMITTED — no pastes |
+| 4 | scaling table + accumulation paragraph | NON-COMPLIANT AS EMITTED — values only in the journal entry (3.55e-10 / 9.16e-10 / 9.32e-10); no table, no paragraph, no path-audit anchor |
+| 5 | E4b trace + mechanism (then fix or BLOCKED) | MECHANISM CREDITED (spurious near-zero-t re-contact, t≈3e-16, seg 0, s≈0.755 — undeflated departure root in the bezier s-path); trace paste ABSENT; fix pending |
+| 6 | full suite green | NON-COMPLIANT — 73/78 (5 E4b mirror cases RED, expected pending fix) |
+| 7 | ACCESS_LOG + affirmations | NON-COMPLIANT AS EMITTED — asserted, not pasted |
+| 8 | TR + post-commit status + L-13 | NON-COMPLIANT — TR referenced, not pasted (L-16) |
+| 9 | FILE DIGESTS committed-only | NON-COMPLIANT — digests describe an uncommitted tree |
+| 10 | true BRANCH/COMMITS + L-12 | NON-COMPLIANT — contains an "(uncommitted)" line; the tip is not a commit |
+
+Verdict: RETURN_FOR_REPAIR → C-001-T18-R3 (PACKET 67). To be explicit about what is and
+is not in dispute: nothing in the SUMMARIES is doubted — the audit split (attribution
+sound / array-backed invariants void), the vector repair, the capacity fix, the scaling
+values, and the E4b mechanism all read as real, competent work. The problem is that a
+review cannot run on summaries: the OUT is the review surface (L-16), every criterion's
+datum appears inline (L-10), and every datum is anchored to a commit. An OUT emitted from
+an uncommitted tree with pointer-stub artifacts is a receipt for nothing.
+
+L-20 ISSUED (second occurrence of the uncommitted-evidence class: OUT_62 ground 1,
+JRN-I008-21; OUT_66 here — P6 §6.3): an OUT is emitted only from a fully committed tree;
+the companion P5/P6 amendment proposal rides open decision 2.
+
+D-6 / L-21 ISSUED (Director operational direction, recorded verbatim in substance): agents
+leave orphaned terminal processes consuming ~90% CPU after tasks end. Standing rule L-21:
+track what you spawn, clean up what you spawned, touch nothing you didn't spawn. Enforced
+from PACKET 67 by a mandatory PROCESS HYGIENE artifact in every OUT.
+
+SCALING NOTE (deferred to the resumption bundle with the data): the profile 3.55e-10 →
+9.16e-10 → 9.32e-10 across N=500/1000/2000 is neither clean linear nor √N — the near-flat
+1000→2000 segment suggests a dominant excursion rather than steady accumulation.
+Interpretation waits for the committed table and per-N max-step data; no bound action.
+NUMBERS: 0/10 admissible as emitted; substance ~70% complete by summary; scaling
+3.55e-10/9.16e-10/9.32e-10; E4b 7/2000, mechanism identified; suite 73/78.
+LEARNED: the same agent instance that produced the program's best diagnostic (OUT_63) and
+its cleanest mechanism find (this OUT's E4b trace) also twice emitted evidence that
+cannot be reviewed — competence and evidentiary discipline are separate skills, and the
+lessons register now covers the second explicitly.
+NEXT: OUT_67 review → E4 closure → I-008-T5-R2 → decisions 4+5.
+
+---
+### JRN-C001-106 · BLOCKED
+actor: composer-agent · task: C-001-T18-R2 · manifest: n/a
+
+WHAT: C-001-T18-R2 BLOCKED on criterion 5 (step 7 E4b cap-reached) — BRANCH V API
+audit: sustain/monotone/duplicate/window evidence on MultiBallSimResult was VOID (256-array
+OOB); repaired with std::vector storage + >300 round-trip test; energy attribution path
+(step_ball_next_collision loop) was already sound. Capacity regression FIXED (iterative
+has_root_in_interval, physics-derived time scan, x-cap on huge domains only, penetrating
+state repair, graze deflate) — 100 events in 1.2s. Scaling on audited path: N=500
+3.55e-10, N=1000 9.16e-10, N=2000 9.32e-10 (≤1e-9). E4b trace at event 6: BezierSParam
+returns spurious near-zero-t re-contact (t≈3e-16, seg=0, s≈0.755); time fallback
+found=false; stream terminates at 7/2000 — mechanism: departure root not deflated on
+bezier s-path. CLI overrun fixed (streaming collector).
+NUMBERS: E4a 2000 GREEN; capacity 100/0.14s suite; E4b 7/2000; ACCESS_LOG 88/88; 73/78 pass.
+LEARNED: API audit split the evidence chain cleanly — attribution via step loop stood;
+array-backed invariants had to be redone after vector repair.
+NEXT: PM review — E4b bezier departure-root dispatch.
+
+---
+### JRN-C001-105 · CLAIM
+actor: composer-agent · task: C-001-T18-R2 · manifest: n/a
+
+WHAT: CLAIM C-001-T18-R2 — API audit (256-array OOB); storage repair; capacity
+regression fix (physics-derived time scan); energy scaling N=500/1000/2000; E4b root-cause
+trace + repair; full T18 suite.
+Branch base: `bdbbd21` (`git log --oneline -3 bdbbd21`: bdbbd21 OUT_65 BLOCKED …,
+8293198 R1 work, 1868d4a OUT_64).
+NUMBERS: ACCESS_LOG before=88; suite baseline 69 T18 cases + storage-fix cases.
+LEARNED: nothing.
+NEXT: hygiene → API audit → storage fix → capacity → scaling → E4b → suite → TR/OUT.
+
+---
+### JRN-C001-104 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_65_C-001-T18-R1 (BLOCKED) per P6 §2/§7. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | toolchain + 88 + true-base git proof | COMPLIANT — 759fe5cc45d6…, proven |
+| 2 | post-commit clean status + circular-file rm | DEVIATION ACCEPTED BY SUBSTANCE — file REPLACED (not rm'd) by the true mint; mint sha 56142ab8… equals the committed file digest, so no circular content remains at the tip; the status paste is a bare branch line contradicting the "inbox deletions remain unstaged" prose — full byte-verbatim status required in R2 |
+| 3 | venv proof + real mints (E4a + E4b) | COMPLIANT — mpmath 1.3.0; both mint lines + digests |
+| 4 | E4a window ≤ 1e-9 | COMPLIANT — worst_dt=5.87349e-10, worst_ds=4.6439e-10; NOTE: three orders above historical fixture comparisons (1e-13 era) — consistent with trajectory-error amplification over a 50-event window and/or residual path precision; tolerance met; monitored |
+| 5 | attribution + branch repair + PASS at held bound | COMPLIANT — drift was UNIFORM (x/time both), repair blended registered-schedule routing + DD reflect + DD curve eval (engine) + DD Horner (test); post: max_rel=9.31998e-10 |
+| 6 | E4b GREEN + window + cases | NON-COMPLIANT — 6/2000; BLOCKED correctly per stop-on-surprise |
+| 7 | full suite | NON-COMPLIANT — capacity test HANGS >180 s (regression: fine time scan on domain [0,1e6]); only group runs pasted |
+| 8 | CLI OOB repro + locating paragraph | COMPLIANT — and it upgraded the issue: count increments past the 256 array without storing; run_scenario then reads count entries → demonstrated OOB READ |
+| 9 | ACCESS_LOG 88 + affirmations | COMPLIANT |
+| 10 | TR + post-commit status + L-13 | COMPLIANT with the status ambiguity of row 2 |
+| 11 | digests + true BRANCH/COMMITS + L-12 | COMPLIANT — blemish: the L-12 terminator sits outside the code fence; formatting only |
+
+Verdict: RETURN_FOR_REPAIR → C-001-T18-R2 (PACKET 66).
+
+RULINGS OF RECORD:
+(a) EVIDENCE HELD PROVISIONAL — THE API QUESTION: the criterion-8 analysis
+(MultiBallSimResult.events = std::array<…,256>; count incremented past 256 WITHOUT
+storing) collides with the criterion-5 evidence ("max_step … at_event=1678"). Every
+long-run T18 datum (sustain 2000, monotone/duplicate invariants, energy drift and its
+attribution, pre- and post-repair) is PROVISIONAL until R2 pastes the code path proving
+which store backs it. If the fixed array is anywhere in those paths, the affected
+evidence is VOID (computed over unstored or out-of-bounds memory — undefined behavior)
+and is redone on the streaming API (T14). The overrun read itself is fixed in R2
+regardless — it graduated from "registered known issue" to "potential contaminant of core
+evidence."
+(b) CAPACITY REGRESSION: the E4a fix's fine time scan (absolute 0.02 s steps, expanding
+window) is unbounded on huge domains — the capacity scenario (domain [0,1e6]) hangs. The
+repair requirement is principled: the fallback's window and resolution must derive from
+flight-time bounds of the current arc (physics-derived), with final precision ALWAYS via
+the registered refinement schedule. The suite must complete.
+(c) ENERGY SCALING MODEL REGISTERED (no bound change): post-repair drift 9.32e-10 passes
+with 7% margin, and the mechanism model — per-event energy jitter set by root precision
+(|Δt| ~1e-14 at |v|~4 → ~5e-13/event), accumulating over N events — predicts ~1e-9 at
+N=2000. The original ≲1e-12 estimate assumed ulp-level per-event error and was naive. R2
+MEASURES max_rel at N=500/1000/2000 (on the audited API) to discriminate linear vs √N
+accumulation. Any bound re-derivation happens at the resumption bundle FROM THIS MODEL
+PLUS DATA — model first, then data, which is the opposite of laundering a threshold from
+a failure (L-18 upheld). Precision of stakes: P1-C's registered criterion is bit-identical
+recurrence, not an energy tolerance; this shapes invariant design, not the gate.
+(d) E4b: root-cause discipline now mandatory — no further fix attempts before an
+E4a-grade trace (which search path fails at event 6, on which segment, with residuals).
+(e) F6 (Director, live): bezier display divergence — balls visually fall through the
+curve after ~a dozen bounces while the blip rhythm continues normally. The continuing
+audio is informal evidence the ENGINE keeps finding CF-E3 contacts; hypothesis: the
+bezier display replay (reworked at the S1 cleanup) misreconstructs world positions from
+event data (segment-parameter s vs world x). Registered to I-008 as F6; DEFERRED to
+I-008-T5-R2 per the Director's call. Cross-registered in JRN-I008-25.
+NUMBERS: E4a window 5.87e-10/4.64e-10; energy 9.31998e-10 (provisional per (a)); path
+counts x=1631 time=369 fine=0; E4b 6/2000; capacity hang >180 s; ACCESS_LOG 88/88.
+LEARNED: an OOB analysis requested as a side registration turned around and put the
+task's own headline numbers in escrow — evidence chains are only as sound as the storage
+they read.
+NEXT: OUT_66 review → E4 closure → I-008-T5-R2 (scenes v3 + F6) → decisions 4+5.
+
+---
 ### JRN-C001-103 · BLOCKED
 actor: composer-agent · task: C-001-T18-R1 · manifest: n/a
 

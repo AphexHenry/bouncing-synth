@@ -1,6 +1,26 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-25 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: FINDING F6 registered (Director, live run of CF-E3-bezier-settle interactive):
+balls visually fall through the drawn curve after roughly a dozen bounces while the blip
+rhythm continues normally. Diagnosis hypothesis: display-side bezier position replay —
+reworked during the OUT_63 S1 cleanup to reconstruct arcs from engine event data — maps
+the contact parameter incorrectly for bezier (segment-parameter s is not a world x);
+audio is a pure function of engine events and its normal rhythm informally exonerates the
+engine on this geometry. DEFERRED to I-008-T5-R2 with the Director's explicit assent;
+T5-R2 remains queued behind the C-001 E4 campaign and will carry: scene library v3, D2,
+frames, F6 fix with a frame_check-style paste proof (drawn ball on drawn curve at contact
+frames), and the Director re-assessment.
+NUMBERS: 1 new finding; T5-R2 backlog: scenes v3 + D2 + F6 + re-assessment.
+LEARNED: audio-visual disagreement is a powerful free diagnostic — the two channels
+consume the same events through different code paths, so their divergence localizes the
+defect to one side in a single observation.
+NEXT: I-008-T5-R2 after OUT_66/E4 closure.
+
+---
 ### JRN-I008-24 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

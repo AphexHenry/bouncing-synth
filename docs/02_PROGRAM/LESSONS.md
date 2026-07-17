@@ -160,3 +160,27 @@ criterion or a written waiver. At review, a discovered clause-without-criterion 
 authoring defect; conformance is re-established by amendment and repair, never by silent
 reinterpretation. Companion P6 §4 amendment proposal rides open decision 2. Origin:
 JRN-I008-18, JRN-I008-21; second occurrence per P6 §6.3.
+
+L-20: An OUT is emitted only from a fully committed tree. Every datum an acceptance
+criterion demands appears INLINE in the OUT (L-16), anchored to a commit that the
+BRANCH/COMMITS list names; digests of uncommitted files, "see TR" pointers, and
+"(uncommitted)" placeholder lines are inadmissible, and the L-12 terminator may follow
+only real commits. An agent that reaches OUT-writing time with an uncommitted tree
+commits first — the commit is cheap; the unreviewable OUT costs a full cycle. Origin:
+OUT_62 (JRN-I008-21 ground 1) and OUT_66 (JRN-C001-107); second occurrence per P6 §6.3;
+companion P5/P6 amendment proposal rides open decision 2.
+
+L-21 (Director direction D-6 — process hygiene): every agent tracks the processes it
+spawns and leaves the machine clean. Concretely: (1) when launching any background or
+long-running process (test binaries, timed runs, watchers, servers, perf windows), record
+its PID at launch; (2) give legitimately running work time to finish — prefer graceful
+termination (SIGTERM, wait, verify) over immediate kill, and never interrupt a process
+that is still doing work the task needs; (3) before writing the final OUT, terminate
+every recorded PID that is still alive and no longer needed, then verify; (4) NEVER
+terminate processes the task did not spawn — no name-pattern kills (pkill by name can hit
+the Director's or another agent's processes); scope strictly to recorded PIDs. Every OUT
+from PACKET 67 onward carries a PROCESS HYGIENE artifact: either the recorded-PID
+inventory with its post-termination verification paste, or the single line "no background
+processes spawned; all foreground commands exited" when true. Origin: Director
+observation of ~a dozen orphaned tasks at ~90% CPU after agent sessions (D-6,
+JRN-C001-107).
