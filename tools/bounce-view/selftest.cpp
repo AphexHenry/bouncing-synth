@@ -2,6 +2,7 @@
 #include "selftest.hpp"
 
 #include "av_mapping.hpp"
+#include "build_stamp.hpp"
 #include "ppm_writer.hpp"
 #include "restitution_config.hpp"
 #include "scene.hpp"
@@ -172,6 +173,7 @@ int run_selftest(const SelftestOptions& opts) {
     return 1;
   }
 
+  print_build_stamp();
   print_restitution_line(opts.run_cfg);
 
   Playback pb{};

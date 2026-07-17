@@ -3,6 +3,8 @@
 
 #include "audio_voice.hpp"
 #include "av_mapping.hpp"
+#include "build_stamp.hpp"
+#include "law1_guard.hpp"
 #include "perf.hpp"
 #include "playback.hpp"
 #include "restitution_config.hpp"
@@ -14,7 +16,11 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
 namespace bounce_view {
@@ -27,6 +33,7 @@ constexpr int kWindowH = 600;
 bool g_render_optimized = false;
 
 using Clock = std::chrono::steady_clock;
+namespace fs = std::filesystem;
 
 double elapsed_ms(Clock::time_point start) {
   return std::chrono::duration<double, std::milli>(Clock::now() - start).count();
@@ -65,7 +72,7 @@ void SDLCALL audio_callback(void* userdata, Uint8* stream, int len) {
 }
 
 void draw_unoptimized(SDL_Renderer* renderer, Playback& render_pb, double t, CameraState& camera,
-                    PerfStats* perf) {
+                      PerfStats* perf) {
   PlaybackView view{};
   view.pb = render_pb;
   reset_playback_view(view);
@@ -83,29 +90,167 @@ void draw_optimized(SDL_Renderer* renderer, SceneCache& cache, Playback& render_
   draw_scene(renderer, cache, view, t, kWindowW, kWindowH, perf);
 }
 
+void collect_json_files(const fs::path& root, std::vector<std::string>& out) {
+  std::error_code ec;
+  if (!fs::exists(root, ec)) {
+    return;
+  }
+  for (fs::recursive_directory_iterator it(root, ec), end; it != end && !ec; it.increment(ec)) {
+    if (!it->is_regular_file(ec)) {
+      continue;
+    }
+    if (it->path().extension() == ".json") {
+      out.push_back(it->path().generic_string());
+    }
+  }
+}
+
+std::vector<std::string> enumerate_picker_paths() {
+  std::vector<std::string> paths;
+  collect_json_files(fs::path("tools/bounce-view/scenarios"), paths);
+  collect_json_files(fs::path("data/scenarios/calibration"), paths);
+  std::sort(paths.begin(), paths.end());
+  return paths;
+}
+
+void print_picker_list(const std::vector<std::string>& paths, int selected) {
+  std::cout << "picker: " << paths.size() << " scenarios (Up/Down, Enter load, Esc cancel)\n";
+  for (std::size_t i = 0; i < paths.size(); ++i) {
+    const char* mark = static_cast<int>(i) == selected ? ">" : " ";
+    std::cout << "picker: " << mark << " [" << i << "] " << paths[i] << '\n';
+  }
+}
+
+enum class LoadAttempt : int { Ok = 0, Law1Refused = 1, Failed = 2 };
+
+LoadAttempt attempt_runtime_load(const std::string& path, Playback& pb, const RunConfig& cfg,
+                                 std::string& active_path, std::size_t& next_event,
+                                 Uint32& start_ticks, std::vector<VoiceState>& voices,
+                                 Playback& render_pb, CameraState& camera, bool sdl_ready) {
+  if (is_heldout_path(path)) {
+    std::cout << "LAW1: held-out scenario refused\n";
+    return LoadAttempt::Law1Refused;
+  }
+
+  Playback next{};
+  std::string error;
+  const int max_events =
+      effective_lossless(cfg) ? static_cast<int>(bounce::core::engine::kMaxSimEvents) : 200;
+  if (!load_and_simulate(path.c_str(), next, max_events, cfg, error)) {
+    std::cout << "load error: " << error << '\n';
+    return LoadAttempt::Failed;
+  }
+
+  pb = std::move(next);
+  active_path = path;
+  next_event = 0;
+  start_ticks = sdl_ready ? SDL_GetTicks() : 0;
+  for (auto& v : voices) {
+    v.active = false;
+  }
+  render_pb = pb;
+  reset_playback(render_pb);
+  camera = CameraState{};
+
+  std::cout << "loaded: " << path << '\n';
+  print_restitution_line(cfg);
+  print_build_stamp();
+  return LoadAttempt::Ok;
+}
+
+void draw_picker_overlay(SDL_Renderer* renderer, int selected, int count) {
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 160);
+  SDL_Rect dim{0, 0, kWindowW, kWindowH};
+  SDL_RenderFillRect(renderer, &dim);
+
+  const int row_h = 18;
+  const int visible = std::min(count, 24);
+  for (int i = 0; i < visible; ++i) {
+    if (i == selected) {
+      SDL_SetRenderDrawColor(renderer, 80, 140, 220, 220);
+    } else {
+      SDL_SetRenderDrawColor(renderer, 40, 40, 50, 200);
+    }
+    SDL_Rect row{40, 40 + i * row_h, kWindowW - 80, row_h - 2};
+    SDL_RenderFillRect(renderer, &row);
+  }
+}
+
+int run_s13_proof_session(const RunConfig& cfg, Playback& pb, std::string& active_path) {
+  std::vector<VoiceState> voices(32);
+  std::size_t next_event = 0;
+  Uint32 start_ticks = 0;
+  CameraState camera{};
+  Playback render_pb = pb;
+  reset_playback(render_pb);
+
+  auto picker_paths = enumerate_picker_paths();
+  // Prefer a lightweight assessment scene for the picker-load transcript (calibration
+  // streams under e=1 can run for a long time at kMaxSimEvents).
+  int picker_selected = 0;
+  const std::string preferred = "tools/bounce-view/scenarios/twowell-poly4.json";
+  for (std::size_t i = 0; i < picker_paths.size(); ++i) {
+    if (picker_paths[i] == preferred) {
+      picker_selected = static_cast<int>(i);
+      break;
+    }
+  }
+  print_picker_list(picker_paths, picker_selected);
+  if (!picker_paths.empty()) {
+    const std::string chosen = picker_paths[static_cast<std::size_t>(picker_selected)];
+    std::cout << "picker: loading " << chosen << '\n';
+    (void)attempt_runtime_load(chosen, pb, cfg, active_path, next_event, start_ticks, voices,
+                               render_pb, camera, false);
+  }
+
+  std::cout << "s13-proof: attempting held-out nonexistent path\n";
+  (void)attempt_runtime_load("data/scenarios/heldout/NONEXISTENT.json", pb, cfg, active_path,
+                             next_event, start_ticks, voices, render_pb, camera, false);
+  std::cout << "s13-proof: scene still active path=" << active_path << '\n';
+
+  const fs::path malformed = fs::temp_directory_path() / "bounce-view-s13-malformed.txt";
+  {
+    std::ofstream out(malformed);
+    out << "this is not json\n";
+  }
+  std::cout << "s13-proof: attempting malformed file " << malformed.generic_string() << '\n';
+  (void)attempt_runtime_load(malformed.generic_string(), pb, cfg, active_path, next_event,
+                             start_ticks, voices, render_pb, camera, false);
+  std::cout << "s13-proof: scene still active path=" << active_path << '\n';
+  return 0;
+}
+
 int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) {
+  print_build_stamp();
   print_restitution_line(cfg);
 
   Playback pb{};
   std::string error;
-  const int max_events = effective_lossless(cfg)
-                             ? static_cast<int>(bounce::core::engine::kMaxSimEvents)
-                             : 200;
+  std::string active_path = scenario_path;
+  const int max_events =
+      effective_lossless(cfg) ? static_cast<int>(bounce::core::engine::kMaxSimEvents) : 200;
   if (!load_and_simulate(scenario_path, pb, max_events, cfg, error)) {
     std::cerr << error << '\n';
     return 1;
+  }
+
+  if (std::getenv("BOUNCE_VIEW_S13_PROOF") != nullptr) {
+    // Same picker / Law-1 / malformed handlers as key `l` and SDL_DROPFILE; no present loop.
+    return run_s13_proof_session(cfg, pb, active_path);
   }
 
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
     std::cerr << SDL_GetError() << '\n';
     return 1;
   }
+  SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
   const Uint32 renderer_flags =
       SDL_RENDERER_ACCELERATED | (g_render_optimized ? SDL_RENDERER_PRESENTVSYNC : 0);
-  SDL_Window* window =
-      SDL_CreateWindow("bounce-view", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, kWindowW, kWindowH,
-                       SDL_WINDOW_SHOWN);
+  const std::string title = build_stamp_window_title();
+  SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                        kWindowW, kWindowH, SDL_WINDOW_SHOWN);
   SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, renderer_flags);
 
   SDL_DisplayMode mode{};
@@ -148,23 +293,76 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
   bool running = true;
   bool have_present_anchor = false;
   Clock::time_point last_present_time{};
+
+  bool picker_open = false;
+  std::vector<std::string> picker_paths;
+  int picker_selected = 0;
+
   while (running) {
     SDL_Event event{};
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         running = false;
       }
+      if (event.type == SDL_DROPFILE) {
+        char* dropped = event.drop.file;
+        if (dropped != nullptr) {
+          const std::string dropped_path(dropped);
+          SDL_free(dropped);
+          if (perf_seconds == 0) {
+            picker_open = false;
+            (void)attempt_runtime_load(dropped_path, pb, cfg, active_path, next_event, start_ticks,
+                                       voices, render_pb, camera, true);
+            SDL_SetWindowTitle(window, build_stamp_window_title().c_str());
+          }
+        }
+      }
       if (event.type == SDL_KEYDOWN) {
-        if (event.key.keysym.sym == SDLK_q || event.key.keysym.sym == SDLK_ESCAPE) {
+        const SDL_Keycode key = event.key.keysym.sym;
+        if (picker_open) {
+          if (key == SDLK_ESCAPE) {
+            picker_open = false;
+            std::cout << "picker: cancelled\n";
+          } else if (key == SDLK_UP) {
+            if (!picker_paths.empty()) {
+              picker_selected =
+                  (picker_selected + static_cast<int>(picker_paths.size()) - 1) %
+                  static_cast<int>(picker_paths.size());
+              print_picker_list(picker_paths, picker_selected);
+            }
+          } else if (key == SDLK_DOWN) {
+            if (!picker_paths.empty()) {
+              picker_selected = (picker_selected + 1) % static_cast<int>(picker_paths.size());
+              print_picker_list(picker_paths, picker_selected);
+            }
+          } else if (key == SDLK_RETURN || key == SDLK_KP_ENTER) {
+            if (!picker_paths.empty()) {
+              const std::string chosen = picker_paths[static_cast<std::size_t>(picker_selected)];
+              std::cout << "picker: loading " << chosen << '\n';
+              picker_open = false;
+              (void)attempt_runtime_load(chosen, pb, cfg, active_path, next_event, start_ticks,
+                                         voices, render_pb, camera, true);
+              SDL_SetWindowTitle(window, build_stamp_window_title().c_str());
+            }
+          }
+          continue;
+        }
+        if (key == SDLK_q || key == SDLK_ESCAPE) {
           running = false;
         }
-        if (event.key.keysym.sym == SDLK_r) {
+        if (key == SDLK_r) {
           reset_playback(render_pb);
           next_event = 0;
           start_ticks = SDL_GetTicks();
           for (auto& v : voices) {
             v.active = false;
           }
+        }
+        if (perf_seconds == 0 && key == SDLK_l) {
+          picker_paths = enumerate_picker_paths();
+          picker_selected = 0;
+          picker_open = true;
+          print_picker_list(picker_paths, picker_selected);
         }
       }
     }
@@ -190,7 +388,7 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
     }
 
     if (perf_seconds == 0 && effective_lossless(cfg) && next_event + 8 >= pb.events.size()) {
-      roll_event_stream(scenario_path, pb, cfg, error);
+      roll_event_stream(active_path.c_str(), pb, cfg, error);
     }
 
     advance_playback_to(render_pb, t);
@@ -199,6 +397,9 @@ int run_loop(const char* scenario_path, int perf_seconds, const RunConfig& cfg) 
       draw_optimized(renderer, cache, render_pb, t, camera, perf_seconds > 0 ? &perf : nullptr);
     } else {
       draw_unoptimized(renderer, render_pb, t, camera, perf_seconds > 0 ? &perf : nullptr);
+    }
+    if (picker_open) {
+      draw_picker_overlay(renderer, picker_selected, static_cast<int>(picker_paths.size()));
     }
 
     const auto present_start = Clock::now();
