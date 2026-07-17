@@ -1,0 +1,8 @@
+Internal ctest changing into directory: /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+Test project /Users/baptistebohelay/Dev/research/bouncing-synth/build/default
+    Start 1: bounce-tests
+1/1 Test #1: bounce-tests .....................   Passed    0.59 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.60 sec

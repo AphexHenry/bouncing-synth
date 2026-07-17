@@ -1,0 +1,27 @@
+{
+  "scenario_id": "SELFTEST-rational-hexfloat-mixed",
+  "family": "FL-HO",
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "11/4",
+        "y": "0"
+      },
+      "seq": 0,
+      "t": "11/4",
+      "tier": 1
+    },
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "5/2",
+        "y": "0"
+      },
+      "seq": 1,
+      "t": "5/2",
+      "tier": 1
+    }
+  ]
+}

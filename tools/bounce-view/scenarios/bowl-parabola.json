@@ -1,0 +1,45 @@
+{
+  "claims": {
+    "hand_authored_assessment": true
+  },
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1/4"
+    ],
+    "curve_id": "bowl-parabola-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "ASSESS-A1",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "6"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "5/4",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "11"
+  },
+  "provenance_tier": 2,
+  "reference_events": [],
+  "scenario_id": "bowl-parabola",
+  "schema_version": "1",
+  "verification": {
+    "method": "none-assessment-only",
+    "residual_max": "0"
+  }
+}

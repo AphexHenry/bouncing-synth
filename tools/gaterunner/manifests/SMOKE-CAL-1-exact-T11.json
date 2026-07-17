@@ -1,0 +1,66 @@
+{
+  "engine": "exact",
+  "engine_binary_sha256": "6062bd05ff4d6479e66385923e37414b62d0f183cb74970a2aef7d1587599395",
+  "engine_git_commit": "166f5d5c3dfa3e68076fcb833d375649bae1230c",
+  "engine_git_dirty": true,
+  "fp_determinism_flags": [
+    "-ffp-contract=off",
+    "-fno-fast-math"
+  ],
+  "runner_tool_sha256": "dbb685ff8cedfdd767ca508962bfdef7e603acfdbc17cece4b910d90ac09888c",
+  "scenarios": [
+    {
+      "event_count": 13,
+      "event_file_sha256": "e6cd3b4a0cd013aac68c5c32e39ed29bbed2a48775dd529c74a0f157ac451f71",
+      "exit_code": 0,
+      "scenario_id": "FL-1-h5-g10-e1o2",
+      "scenario_sha256": "f4ee64cc06da5c2f2baf3392a51c2d776af07b7378bb5c4649e4cbbb17489b01",
+      "wall_time_median_seconds": 0.0030297290000000088,
+      "wall_times_seconds": [
+        0.150438083,
+        0.00313450000000004,
+        0.00461824999999999,
+        0.003193290999999987,
+        0.0029249579999999775,
+        0.0025479999999999947,
+        0.0034315000000000317,
+        0.0029232920000000218,
+        0.0028277500000000177,
+        0.0028318749999999837
+      ]
+    },
+    {
+      "event_count": 2,
+      "event_file_sha256": "209e068b7270b22b557a1979299d40c964862a1a8a03432132dc19035e0cfa97",
+      "exit_code": 0,
+      "scenario_id": "PB-1-h9-g16-c1",
+      "scenario_sha256": "b2145d853c7b852dead946822687f33e8c2d18f53da4154954e59d5afe01101b",
+      "wall_time_median_seconds": 0.0026680000000000037,
+      "wall_times_seconds": [
+        0.0023062079999999763,
+        0.0026935000000000153,
+        0.002838499999999966,
+        0.002642499999999992,
+        0.0027960000000000207,
+        0.002631500000000009,
+        0.0024558750000000518,
+        0.0028909590000000263,
+        0.002965582999999994,
+        0.002496832999999976
+      ]
+    }
+  ],
+  "study_spec": {
+    "gate_id": null,
+    "horizon": "to_settle",
+    "notes": "Calibration smoke study \u2014 FL-1 and PB-1, twice for determinism cross-check.",
+    "scenario_set": "calibration",
+    "study_id": "SMOKE-CAL-1",
+    "timing_runs": 10
+  },
+  "toolchain": {
+    "cmake": "cmake version 3.27.8",
+    "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+    "python": "Python 3.9.6"
+  }
+}

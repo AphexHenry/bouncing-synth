@@ -1,0 +1,2 @@
+{"schema":"bounce-events-v1", "scenario_sha256":"6e7284abb4c7f5e8a0b639e424b4f4c5d61133033e922662a157b0c49248b5ef", "engine_events":1}
+{"t_hex":"0x0p+0","t":0,"ball_id":0,"s_hex":"0x1.3333333333333p-3","s":0.14999999999999999,"impact_speed_hex":"0x1.66606d89c0f92p-2","impact_speed":0.34997721818239669,"normal_x_hex":"-0x1.ddc1e7897cc3ep-15","normal_x":-5.6953124907631745e-05,"normal_y_hex":"0x1.fffffff2118f6p-1","normal_y":0.99999999837817088,"seq":0,"schema_version":1}

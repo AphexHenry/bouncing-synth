@@ -1,0 +1,17 @@
+{
+  "scenario_id": "SELFTEST-over-tolerance",
+  "family": "FL-HO",
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0",
+        "y": "0"
+      },
+      "seq": 0,
+      "t": "0",
+      "tier": 1
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+=== STEP 5 PRE-FLIGHT LOAD SURVEY ===
+HO-flat-settle-1,True
+HO-flat-settle-2,True
+HO-flat-settle-3,True
+HO-flat-settle-4,True
+HO-flat-periodic-1,True
+HO-flat-periodic-2,True
+HO-flat-periodic-3,True
+HO-parabola-settle-1,True
+HO-parabola-settle-2,True
+HO-parabola-settle-3,True
+HO-parabola-settle-4,True
+HO-parabola-periodic-1,True
+HO-parabola-periodic-2,True
+HO-graze-parabola-1,True
+HO-graze-parabola-2,True
+HO-graze-parabola-3,True
+HO-poly-settle-3,True
+HO-poly-settle-4,True
+HO-poly-settle-5,True
+HO-poly-settle-6,True
+HO-poly-periodic-1,True
+HO-poly-periodic-2,True
+HO-poly-quasichaotic-1,True
+HO-poly-quasichaotic-2,True
+HO-poly-quasichaotic-3,True
+HO-poly-quasichaotic-4,True
+HO-bezier-settle-1,True
+HO-bezier-settle-2,True
+HO-bezier-settle-3,True
+HO-bezier-periodic-1,True
+HO-bezier-periodic-2,True
+HO-poly-double-root-1,True
+load_ok 32 / 32
+survey_exit=0
+=== STEP 6 CALIBRATION SMOKE ===
+repeat-identity ok N=3
+events=13

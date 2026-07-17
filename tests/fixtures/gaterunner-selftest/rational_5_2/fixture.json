@@ -1,0 +1,17 @@
+{
+  "scenario_id": "SELFTEST-rational-5-2",
+  "family": "FL-HO",
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "5/2",
+        "y": "0"
+      },
+      "seq": 0,
+      "t": "5/2",
+      "tier": 1
+    }
+  ]
+}

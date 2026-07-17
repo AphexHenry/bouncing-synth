@@ -1,0 +1,227 @@
+# PREREGISTRATION — C-001 Exact collision engine (Phase-1 gate studies)
+
+```
+doc_id:   C-001-PREREG
+layer:    track
+audience: PM, Director, agents (gate context), I-003/I-004 (input contract)
+status:   ACTIVE v1.0 — registered 2026-07-12 (PACKET 36); amendments only by new packet with
+          CORRECTION entry, never by edit
+parent:   C-001-THESIS / PROJECT §3 Phase 1, §4, §5, §8, §9 / P2
+```
+
+## 0. Scope and standing
+
+This document pre-registers the confirmatory studies whose passage constitutes the C-001 side
+of the Phase-1 gate (PROJECT §3). Registered values in this file are fixed: changing any
+tolerance, horizon, nuisance set, margin, or coverage-cell assignment after a held-out run has
+occurred requires a Director-approved CORRECTION packet and voids affected results. The
+T1–T10 calibration precursors (JRN-C001-43) are development evidence only and carry no weight
+here. All studies execute exclusively through the I-004 gate runner against the I-003 locked
+held-out corpus; any held-out scenario executed outside I-004 is a Law 1 violation and
+poisons that scenario (retired from the corpus, replacement minted).
+
+Environment of record: the Director's machine as pinned by I-001 (`config/fp-determinism.cmake`
+flags; toolchain versions recorded per manifest at each gate run). Cross-platform claims are
+out of scope for v1.0 (§9 safeguard b: claims scoped to one platform explicitly) and enter
+only via a registered addendum once I-007 exists.
+
+## 1. Study P1-A — reference_agreement (Design A)
+
+- Unit of analysis: one held-out scenario (curve + initial state + params) run to horizon
+  H = min(200 events, settle per S-1).
+- References: Tier-1 (CAS-verified closed form) where available; Tier-2 (mpmath refsim,
+  `reference_converged` passed per Law 5) otherwise. Tier fixed at fixture creation.
+- PRIMARY CRITERION (the only confirmatory claim of this study): over every event of every
+  held-out scenario, max |t_engine − t_ref| ≤ 1e-9 s AND max |s_engine − s_ref| ≤ 1e-9
+  (curve-parameter units), with ball_id and seq exactly equal per event. One scenario over
+  tolerance fails the study. Threshold basis: fixed refinement (bisection to 2⁻⁴⁰ + 3 DD
+  Newton, DELIVERABLE_B §3) bounds per-root error near double-precision scale; 1e-9 grants
+  ×1000 headroom for state propagation over ≤200 events while remaining ≥4 orders below any
+  fixed-timestep competitor.
+- Reporting (L-05 analog): worst case per scenario and per corpus, full error distributions,
+  per-family and per-regime breakdown; per-event error-growth curves are exploratory.
+- Quasi-chaotic cells: reference agreement evaluated over the first 25 events only (Tier-2
+  convergence horizon cap for exponentially diverging orbits); declared in the coverage table.
+
+## 2. Study P1-B — determinism_repro (Design B)
+
+- Unit of analysis: one held-out scenario replayed under a nuisance condition.
+- Registered nuisance set (v1.0, environment of record): (i) 100 in-process repetitions;
+  (ii) 10 fresh-process invocations; (iii) 2 clean-checkout rebuilds (delete build tree,
+  reconfigure, rebuild, rerun). Block-size variance enters when block-based emission exists
+  (C-003); platform variance enters with I-007 — both by registered addendum only.
+- PRIMARY CRITERION: bit-identical CollisionEvent sequence (0 diff on every field of every
+  event) across all runs of the full nuisance set, for every held-out scenario. Exact gate,
+  no tolerance (PROJECT §8).
+- Scope statement (binding on all downstream claims): v1.0 determinism is claimed for the
+  environment of record only. No marketing, docs, or register text may state cross-platform
+  determinism before the addendum passes.
+
+## 3. Study P1-C — loop_stability (Design C)
+
+- Unit of analysis: one periodic orbit run for 10^4 periods.
+- Held-out orbit families must include at least: one non-dyadic flat-line orbit (bounce
+  period not exactly representable in binary), one parabola-bowl orbit, one piecewise-Bézier
+  orbit. The dyadic FL-1 family is calibration-only and confirmatory-inadmissible here
+  (JRN-C001-43: zero drift by construction).
+- PRIMARY CRITERION: the collision-interval sequence of every period is bit-identical to the
+  first period's, over 10^4 periods, for every held-out periodic fixture — drift exactly 0
+  (PROJECT §4 Design C target). If a family is proven analytically incapable of bit-exact
+  period repetition, that proof is itself the deliverable and the family's criterion is
+  re-registered by CORRECTION packet before any run counts.
+- Reporting: per-period first-divergence index (should be none), interval-sequence hashes.
+
+## 4. Study P1-D — realtime_budget (Design D): DEFERRED
+
+No compute budget is registered in v1.0. A budget with no measured basis is not a threshold,
+it is a guess, and both failure modes (sandbagged-easy and theatrically-tight) corrupt the
+gate. P1-D is deferred to a registered addendum that requires: I-004 operational, an I-005
+profiling harness run on the calibration set producing measured per-event and per-query
+costs on the environment of record, and Director approval of the derived budget. Until that
+addendum passes, no "real time" claim attaches to C-001 in any register, journal, or
+Director-facing summary; the THESIS claim's "in real time" clause is pending, not evidenced.
+
+## 5. Law 7 baseline study — matched-compute comparison
+
+- Contestants: C-001 exact engine vs the named baseline (PROJECT §5 Law 7) — fixed-timestep
+  semi-implicit (symplectic) Euler integrator over a polyline-sampled curve, with impulse
+  reflection at segment crossings. The baseline is agent-authored from a PM spec (L-14);
+  the spec must be good-faith competitive (registered here): polyline vertex count and dt are
+  chosen by the compute-matching rule below, not fixed a priori, and the integrator uses the
+  same restitution and settle rules.
+- Compute matching (registered methodology): budget = exact engine's wall-time per simulated
+  scenario-second, measured per scenario by I-004 on the environment of record (median of 10
+  timed runs). The baseline's dt (and polyline density, coupled dt↔N by equal per-step cost)
+  is tuned — on calibration scenarios only — to the largest accuracy configuration whose
+  wall-time per simulated scenario-second is within +10% of the budget (equal-or-more compute
+  allowed to the baseline; never less).
+- PRIMARY CRITERION: on the held-out corpus, worst-case per-event |Δt| vs reference of the
+  exact engine ≤ (baseline's worst-case per-event |Δt|) / 100 at matched-or-lower compute;
+  AND on held-out periodic fixtures, exact-engine drift = 0 where the baseline's measured
+  drift > 0. Failing either arm kills the analytic-collision bet (THESIS §6).
+- Reporting: full accuracy-vs-compute curves for both engines (exploratory), worst-case table
+  per family × regime.
+
+## 6. Split, lock, and access (Law 1 / L-04 analog)
+
+- Held-out fraction: ~40% of the scenario corpus, stratified by curve family × dynamical
+  regime; remainder is the calibration set (free use).
+- Minting: I-003-T2 generates held-out scenarios from the coverage table below — Tier-1 via
+  CAS-verified closed forms, Tier-2 via the refsim with `reference_converged` passed — and
+  locks them (split-lock marker + manifest) before any C-001 binary executes any of them.
+- Access: held-out scenarios run only via the I-004 gate runner, which logs every execution
+  to the manifest. Any other execution poisons the scenario (retire + re-mint + journal).
+- The seeded calibration fixtures FL-1 and PB-1 are calibration-set members permanently.
+
+## 7. Coverage table (L-07 analog; input contract for I-003-T2)
+
+Cells marked HO receive held-out scenarios; CAL calibration-only; — declared empty with the
+reason. Ball counts: every non-empty cell at 1 ball; multi-ball (2–4, TB-1 stress) required
+where marked +MB.
+
+| family \ regime | settle/transient | periodic | quasi-chaotic |
+|---|---|---|---|
+| flat line | CAL (FL-1) + HO +MB | HO non-dyadic (P1-C) +MB | — (flat line: no chaotic single-ball regime, R2) |
+| explicit poly deg 2 (parabola) | CAL (PB-1) + HO +MB | HO bowl orbit (P1-C) | HO (25-event cap, §1) |
+| explicit poly deg 3–6 | HO | HO | HO (25-event cap) |
+| piecewise Bézier C1 | HO +MB | HO (P1-C) | — (Phase-1 Tier-2 reference-horizon cost; declared, revisit Phase 2) |
+
+Declared empty program-wide: transcendental curve families (Director ruling R3); ball–ball
+collisions (R2); ball counts 8–16 (enter with P1-D addendum only).
+
+Mandatory grazing block (PROJECT §9 domain safeguard a) — held-out, gate-bearing in P1-A:
+at least 3 near-tangency scenarios with normal impact speed |v_n| at 0.5×, 1.0×, and 2.0×
+v_graze (spanning the G-1 admissibility boundary from both sides, including the boundary
+case whose G-1 classification is itself the oracle value), plus 1 near-double-root geometry
+(discriminant within 1e-6 of zero at contact). At least one grazing scenario on a Bézier
+segment.
+
+## 8. Multiplicity and red team (L-06, P2 §6)
+
+One primary criterion per study (§1–§3, §5); everything else labeled exploratory. Red-team
+items accompanying the Phase-1 gate call: (i) leave-one-curve-family-out — P1-A re-evaluated
+excluding the dominant family, result reported; (ii) trusted-tier-only — P1-A re-evaluated on
+Tier-1 fixtures alone; (iii) concentration check — no single family may contribute >50% of
+held-out scenarios (I-003-T2 mint constraint).
+
+## Changelog
+- v1.0 — Initial registration (PACKET 36, JRN-C001-45). P1-A/B/C registered; P1-D deferred;
+  Law 7 methodology and margin fixed; coverage table issued as I-003-T2 input contract.
+
+## Amendment v1.1 — registered 2026-07-12 (PACKET 41; Director approval = packet dispatch)
+
+Scope: two changes to §7, one addition to §1's quasi-chaotic handling. No held-out scenario
+has been executed by any engine binary at amendment time; no results voided (§0).
+
+A1. §7 cell "parabola (deg 2) × quasi-chaotic" is DECLARED EMPTY. Reason of record: the
+single-ball gravitational billiard in a parabola is integrable; measured sensitivity
+amplification over 25 events ≈ 2×10^1 (polynomial growth), versus ≈1.7×10^11 (exponential)
+on deg-6 geometry — evidence OUT_40 (JRN-I003-16). Its two fixtures move to
+"deg 3–6 × quasi-chaotic" (now ×4). "Bézier × periodic" corrected ×1 → ×2, restoring the
+Tier-2 batch to 16 and the full corpus to 32. Expected concentration: flat 7/32, parabola
+9/32, deg 3–6 11/32, Bézier 5/32 — all within the §8.iii cap.
+
+A2. Quasi-chaotic admission criterion (replaces the absolute-divergence rule of the T3
+brief): a fixture is admitted to a quasi-chaotic cell iff the measured amplification
+A = max event-time divergence / ε satisfies A ≥ 1e6, at ε = 1e-30 applied to one registered
+state component, within ≤25 events, computed in the refsim at dps ≥ 50; plus a linearity
+spot-check at ε = 1e-20 whose amplification agrees within a factor of 10. Rationale:
+amplification is ε-independent under the confirmed linear regime; the prior absolute bound
+conflated perturbation size with dynamical growth.
+
+A3. Feasibility-derivation rule (authoring discipline, binding on future registrations):
+any registered threshold involving dynamical growth must carry an explicit ε·λ^N
+feasibility bound at authoring time.
+
+## Amendment v1.2 — registered 2026-07-13 (PACKET 44; Director approval = packet dispatch)
+
+Scope: Law 7 execution parameters (§5) and gate scheduling. No held-out scenario has been
+executed by any engine binary at amendment time; nothing voided (§0).
+
+B1. Compute matching (replaces §5's +10% window): the baseline's (dt, N) is tuned on
+CALIBRATION scenarios only to the most accurate configuration whose median wall-time per
+simulated scenario-second (I-004, timing_runs=10) lies within [1.0×, 2.0×] of the exact
+engine's — the baseline always receives equal-or-more compute, never less (Director D-2:
+"dials up"). The chosen (dt, N) is frozen in a committed tune artifact before any gate run
+and recorded in every Law 7 manifest.
+
+B2. Law 7 comparison horizon (Director D-1): per scenario, comparison is over the first
+K = min(200, exact-engine event count) events. No settle criterion is defined for the
+baseline; it runs to its event budget. If the baseline emits fewer than K events, the
+scenario scores maximally against it — after the missing events are classified as physics
+(tunneling/missed contact/domain exit under its own dynamics) rather than harness defect
+(classification: C-001-T12 F3 diagnostic; a harness defect is fixed before gates, a physics
+shortfall stands).
+
+B3. Gate order (Director D-3): P1-A → P1-B → P1-C → Law 7. A FAIL on any exact-engine gate
+halts the sequence before the Law 7 run. Every gate manifest requires
+engine_git_dirty=false (standing rule, JRN-I004-8).
+
+B4. Product-model note (Director, 2026-07-13): the plugin's default is lossless bouncing
+(e=1, energy conserved — the regime P1-C certifies). Restitution remains a scenario/product
+parameter; no damping is imposed by the engine. Registered studies are unchanged: e<1
+fixtures remain valid coverage of the parameter range. Ball–ball collisions remain excluded
+(R2); multi-ball = independent balls under TB-1.
+
+## Amendment v1.3 — registered 2026-07-13 (PACKET 46; Director approval = packet dispatch)
+
+Scope: P1-A comparison window on quasi-chaotic cells. No held-out scenario has been executed
+by any engine binary at amendment time; nothing voided (§0).
+
+C1. Feasibility derivation (per v1.2 A3, applied to §1): the four quasi-chaotic fixtures'
+sensitivity certificates give per-event stretching λ = A^(1/25) ∈ [2.56, 2.92]. A binary64
+engine's per-event rounding (~1e-16 relative) amplifies to ≈ 1e-16 · λ^N; at N=25 this is
+≈ 2e-5 for λ=2.92 — the registered 1e-9 tolerance at a 25-event window is unsatisfiable by
+arithmetic for ANY double-precision engine (shadowing divergence, not implementation
+defect). Therefore: the P1-A confirmatory comparison window on quasi-chaotic cells is the
+first 12 events (bound: 1e-16 · 2.92^12 ≈ 3.9e-11 ≤ 1e-9, margin ≈ 26×). Events 13–25 are
+computed and reported as exploratory, excluded from the primary criterion. All other cells
+keep the §1 horizon min(200 events, settle).
+
+C2. Gate execution rules consolidated (restating standing rules as registered text):
+manifests must show engine_git_dirty=false, where dirty is evaluated over TRACKED files
+(untracked Director courier surface exempt per L-13); every held-out execution runs via the
+I-004 runner with a non-null gate_id and appends to ACCESS_LOG.jsonl; gate order P1-A →
+P1-B → P1-C → Law 7 with halt-on-failure (v1.2 B3). Law 7 compute-match of record:
+TUNE-LAW7.json (dt=5e-4, N=128, corpus-mean ratio 1.8987; FL-1 per-scenario 2.25× —
+baseline over-resourced, favorable to the contestant).

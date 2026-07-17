@@ -1,0 +1,56 @@
+{
+  "claims": {
+    "calibration_streaming_evidence": true,
+    "dyadic": false,
+    "float_exact": true
+  },
+  "curve": {
+    "coeffs": [
+      "0"
+    ],
+    "curve_id": "CAL-E1-FLAT-STREAM-curve",
+    "domain": [
+      "0",
+      "1000000"
+    ],
+    "family": "polynomial"
+  },
+  "family": "CAL-E1-FLAT-STREAM",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "5"
+      },
+      "radius": "0.1",
+      "restitution": "1",
+      "vel": {
+        "vx": "1/1000000",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "1/1000000",
+        "y": "0"
+      },
+      "seq": 0,
+      "t": "1",
+      "tier": 1
+    }
+  ],
+  "scenario_id": "CAL-E1-FLAT-STREAM",
+  "schema_version": "1",
+  "verification": {
+    "method": "exact-rational",
+    "residual_max": "0"
+  }
+}

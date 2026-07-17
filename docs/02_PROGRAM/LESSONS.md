@@ -59,3 +59,137 @@ zips, OS metadata) is open, so tolerated-pattern enumeration cannot be made tota
 enumeration fix (L-11's inbox/PACKET_*.md) fails on the next artifact class (docs.zip,
 OUT_10). Surface scoping replaces enumeration. Origin: I-001-T1-R1 FAILED honestly on an
 untracked Director courier zip after two prior defects of the same class (JRN-I001-11).
+
+L-14: The PM authors judges, never contestants. Specs, interface declarations, fixtures, oracle
+values, pre-registered gate thresholds, and acceptance-test files may be PM-authored;
+implementation code under test — and above all any Law 7 named baseline — is agent-authored
+from the spec. A packet whose FILES section carries implementation translation units converts
+review into the PM checking its own output and voids the P6 §2.2 / L-10 premise that the PM has
+no repo access; pre-registered digests of agent deliverables are the tell. Corollary: the PM
+does not build or execute the repository — P6 §7.4 "pre-verifying acceptance outputs" means
+deriving expected oracle values from specifications, never running the codebase. Enforcement:
+any packet carrying src/ implementation content, and any journal entry showing PM-executed
+build/test output, is a P6 incident. Origin: C-001-T1–T10 (packets 25–34), where .cpp/.hpp
+implementation rode packet FILES sections with digests pre-registered and test counts pre-built;
+surfaced at Director review of OUT_34; second occurrence of the PM-authoring class after the
+I-002 fixture-generator correction → P6 §4.6 amendment proposed per P6 §6.3 (JRN-C001-42).
+
+L-15: Review proportionality for evidence defects. A miss on a substantive acceptance
+criterion (a registered number, bound, or behavior) is always REJECT. A miss on evidence
+completeness where the underlying datum appears byte-verbatim elsewhere in the same OUT
+(e.g., digests present in a command paste but absent from the FILE DIGESTS section) is
+ACCEPT with a mandatory remediation step at the top of the next dispatched task; the
+remediation re-derives the missing evidence and asserts it against the OUT's existing
+copies — any mismatch is a BLOCK. Evidence absent from the OUT entirely is REJECT. Rationale:
+re-running a substantively perfect task to reformat evidence is process worship, but leaving
+the ledger incomplete silently rots L-10; the remediation step closes the ledger at the cost
+of one command, not one cycle. Origin: OUT_39 (I-003-T2-R1), FILE DIGESTS carrying 2 of 16
+fixture entries while all 16 sha256s appeared verbatim in the step-4 generator paste.
+
+L-15 v2 (refines L-15; origin OUT_41): between L-15's remediation branch and its REJECT
+branch sits a third case — a substantive bound whose aggregate satisfaction appears as
+byte-verbatim, machine-emitted tool output in the OUT (with exit=0 gating, and the checking
+tool demonstrably fail-loud), while the per-item values are absent from the OUT but
+recoverable from committed artifacts. Ruling: ACCEPT with mandatory remediation that
+re-derives the per-item table from the committed artifacts and asserts the aggregate against
+the OUT's verbatim claim; any mismatch is a BLOCK. Standing tooling rule: check tools print
+per-item tables by default; a summary line never substitutes for the table in evidence.
+Absent BOTH the verbatim machine assertion and recoverable per-item artifacts, the REJECT
+branch stands unchanged.
+
+L-16: The OUT is the review surface. Every acceptance criterion's artifact appears
+byte-verbatim inside the OUT itself; a pointer to a repo file (TR or otherwise) is
+inadmissible as evidence, because model-B review independence (P6 §2.2, L-14) rests on the
+PM having no repo access. Truncated digests are not digests — every sha256 appears in full.
+The TR is pasted verbatim into the OUT's REPORT section AND listed in FILE DIGESTS.
+PM-side corollary (owned contributing factor, packets 39–44): OUT-REQUIREMENTS are restated
+in full in every packet — never by reference to a prior serial; requirement-by-reference
+decays across fresh agent instances. Review ladder for the record: substantive criterion
+miss → REJECT (OUT_38); partial completeness with the aggregate byte-verbatim in the OUT →
+ACCEPT + remediation (OUT_39, OUT_41, L-15/v2); wholesale evidence absence or repo-pointer
+evidence → REJECT (OUT_44). Origin: OUT_44.
+
+L-17: A gate dispatch's pre-flight must exercise the full verdict pipeline — execution AND
+checking — end-to-end on non-held-out data that mirrors every registered data shape of the
+held-out corpus (reference numeric formats, empty/zero-event shapes, every curve family the
+checkers must read). Engine-side smoke alone is insufficient: the judge is part of the gate
+infrastructure, and a judge that has never read the corpus's data shapes fails at first
+contact exactly like an engine that hasn't. Enforcement: every gate packet's pre-flight
+criteria include a committed checker shape self-test (fail-loud, with at least one
+deliberate over-tolerance vector) run before the first held-out contact. Origin: three
+same-class halts — OUT_46 (loader vs held-out fixture shapes, JRN-C001-63), OUT_48
+(zero-event write shape, JRN-C001-71), OUT_50 (checker vs rational reference fields,
+JRN-C001-79); the third occurrence triggered this entry per P6 §6.3, with a P6 §4 amendment
+proposal riding the open-decision-2 bundle.
+
+L-13 v2 (refines L-13; origin OUT_51/JRN-C001-83): workspace-cleanliness criteria assert
+only the untracked DELTA a dispatch introduces — entries within the agent-writable surface
+that first appear after the dispatch's CLAIM commit must be limited to files the task
+creates pre-commit. The absolute untracked state is pasted byte-verbatim for the record but
+never asserted: inter-dispatch residue (a prior dispatch's post-status scratch, evidence
+directories, caches) makes absolute assertions over the surface unattainable by the current
+agent, exactly as courier artifacts did outside it (L-13). Pre-existing untracked entries
+within the surface are identified as inherited with a stated disposition (commit or delete)
+executed in this or the next packet — never silently tolerated, so residue cannot
+accumulate. Origin: OUT_51, where inherited docs/.../reports/gate_r2_evidence/ (created by
+the R2 dispatch after its own status paste) rendered T15's criterion 7 unsatisfiable;
+fourth instance of the workspace-state authoring class (L-09 → L-11 → L-13 → this).
+
+L-18: An acceptance criterion may bind a numeric expectation only when the number is
+derived from the semantics of the run that criterion governs, with the derivation stated
+in the criterion or brief. Numbers imported from a different measurement context — a
+reference comparison window, a prior task's horizon, an expected failure signature on
+parameters not yet chosen — are guesses wearing thresholds' clothes: when they fire they
+block sound work, and when they don't they certify nothing. Where no derivation exists,
+the criterion asserts internal consistency and honest reporting of the measured value, and
+routes any cross-context comparison through the instrument registered for it (checker,
+test suite). Enforcement: at authoring, every numeric expectation carries a one-line
+derivation; at review, a numeric criterion without one is a PM authoring defect. Origin:
+PACKET 54 c3 ("E1 zero events" — expected failure signature on fresh parameters,
+JRN-C001-95) and PACKET 55 c6 ("events=12" — reference-window count bound to a
+settle-semantics run, JRN-I008-4); second occurrence per P6 §6.3, with the companion P6 §4
+amendment proposal riding open decision 2.
+
+L-19: Every binding clause of the spec a task delivers against must be operationalized as
+at least one acceptance criterion at dispatch, or explicitly waived in the packet with a
+reason. A clause without a criterion will be optimized away — twice now the letter of the
+criteria was met while the clause died (S11 confinement, JRN-I008-18; S11 scene
+definitions, JRN-I008-21). At authoring, the PM walks the spec clause-by-clause and asks
+"which criterion would fail if this clause were violated?"; a clause with no answer gets a
+criterion or a written waiver. At review, a discovered clause-without-criterion is a PM
+authoring defect; conformance is re-established by amendment and repair, never by silent
+reinterpretation. Companion P6 §4 amendment proposal rides open decision 2. Origin:
+JRN-I008-18, JRN-I008-21; second occurrence per P6 §6.3.
+
+L-20: An OUT is emitted only from a fully committed tree. Every datum an acceptance
+criterion demands appears INLINE in the OUT (L-16), anchored to a commit that the
+BRANCH/COMMITS list names; digests of uncommitted files, "see TR" pointers, and
+"(uncommitted)" placeholder lines are inadmissible, and the L-12 terminator may follow
+only real commits. An agent that reaches OUT-writing time with an uncommitted tree
+commits first — the commit is cheap; the unreviewable OUT costs a full cycle. Origin:
+OUT_62 (JRN-I008-21 ground 1) and OUT_66 (JRN-C001-107); second occurrence per P6 §6.3;
+companion P5/P6 amendment proposal rides open decision 2.
+
+L-21 (Director direction D-6 — process hygiene): every agent tracks the processes it
+spawns and leaves the machine clean. Concretely: (1) when launching any background or
+long-running process (test binaries, timed runs, watchers, servers, perf windows), record
+its PID at launch; (2) give legitimately running work time to finish — prefer graceful
+termination (SIGTERM, wait, verify) over immediate kill, and never interrupt a process
+that is still doing work the task needs; (3) before writing the final OUT, terminate
+every recorded PID that is still alive and no longer needed, then verify; (4) NEVER
+terminate processes the task did not spawn — no name-pattern kills (pkill by name can hit
+the Director's or another agent's processes); scope strictly to recorded PIDs. Every OUT
+from PACKET 67 onward carries a PROCESS HYGIENE artifact: either the recorded-PID
+inventory with its post-termination verification paste, or the single line "no background
+processes spawned; all foreground commands exited" when true. Origin: Director
+observation of ~a dozen orphaned tasks at ~90% CPU after agent sessions (D-6,
+JRN-C001-107).
+
+L-22: Any hand-derived number that feeds an acceptance criterion (energy rims, bounds,
+expected counts, tolerances) is accompanied in the same paste by a machine evaluation of
+the same expression — a one-liner in the pinned venv (or bc) with its output. Twice now a
+hand computation in criterion-feeding evidence was wrong (OUT_63's rim transcription
+900/9,900, JRN-C001-101; OUT_68's A2 rim 304.77 vs the true 3690.3, JRN-I008-29) — both
+survived on margin, which is luck, not method. The machine line costs seconds and makes
+the number reproducible; a hand value without one is an evidence-completeness defect at
+review. Second occurrence per P6 §6.3; companion P6 §4 note rides open decision 2.

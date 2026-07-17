@@ -1,0 +1,13 @@
+{
+  "engine": "baseline",
+  "engine_params": {
+    "dt": 0.0001,
+    "segments": 64
+  },
+  "gate_id": null,
+  "horizon": "to_settle",
+  "notes": "Calibration baseline smoke — FL-1 and PB-1 with dt=1e-4, N=64.",
+  "scenario_set": "calibration",
+  "study_id": "SMOKE-CAL-1",
+  "timing_runs": 10
+}

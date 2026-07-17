@@ -1,0 +1,6 @@
+python3: events 1 == 1 -> True
+python3: t 1.009241120474832 == selftest_event[0].t 1.009241120474832 -> True
+python3: events 2 == 2 -> True
+python3: t 1.43434063242665 == selftest_event[1].t 1.43434063242665 -> True
+python3: events 3 == 3 -> True
+python3: t 3.316679933354969 == selftest_event[2].t 3.316679933354969 -> True

@@ -1,0 +1,29 @@
+{
+  "engine": "exact",
+  "gate_id": "P1-C",
+  "horizon": 80000,
+  "per_scenario_max_events": {
+    "HO-bezier-periodic-1": 10000,
+    "HO-bezier-periodic-2": 10000,
+    "HO-flat-periodic-1": 60000,
+    "HO-flat-periodic-2": 40000,
+    "HO-flat-periodic-3": 80000,
+    "HO-parabola-periodic-1": 60000,
+    "HO-parabola-periodic-2": 60000,
+    "HO-poly-periodic-1": 80000,
+    "HO-poly-periodic-2": 80000
+  },
+  "scenario_set": [
+    "HO-bezier-periodic-1",
+    "HO-bezier-periodic-2",
+    "HO-flat-periodic-1",
+    "HO-flat-periodic-2",
+    "HO-flat-periodic-3",
+    "HO-parabola-periodic-1",
+    "HO-parabola-periodic-2",
+    "HO-poly-periodic-1",
+    "HO-poly-periodic-2"
+  ],
+  "study_id": "P1-C",
+  "timing_runs": 1
+}

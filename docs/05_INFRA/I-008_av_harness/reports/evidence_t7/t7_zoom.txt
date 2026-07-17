@@ -1,0 +1,6 @@
+bounce-view build 9e8920b (task/I-008-T7+dirty)
+restitution: override=1 (scenario values ignored; use --scenario-restitution to respect file)
+s15-proof: zoom drive on current scene (bounded)
+camera: level=0 scale=4.4625372498935709
+camera: level=-1 scale=3.5700297999148569
+s15-proof: zoom drive done camera_lines=2 steps=900 t_end=30

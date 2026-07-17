@@ -1,0 +1,80 @@
+{
+  "curve": {
+    "coeffs": [
+      "0",
+      "0",
+      "1/2"
+    ],
+    "curve_id": "HO-graze-parabola-3-curve",
+    "domain": [
+      "0",
+      "100"
+    ],
+    "family": "polynomial"
+  },
+  "family": "PB-HO",
+  "initial_state": [
+    {
+      "ball_id": 0,
+      "pos": {
+        "x": "0",
+        "y": "1.8181818181818183228710821155244650863178442052185e-19"
+      },
+      "radius": "0.1",
+      "restitution": "1/2",
+      "vel": {
+        "vx": "1.0",
+        "vy": "0"
+      }
+    }
+  ],
+  "physics": {
+    "gravity": "10"
+  },
+  "provenance": {
+    "generator_git_commit": "dc03d7f291f541f845a9df224df866fd46d63fff",
+    "grazing_construction": {
+      "achieved_ratio": "2.0",
+      "curve_coeff": "1/2",
+      "g1_classification": "admissible",
+      "ratio_err": "0.0",
+      "target_ratio": "2.0"
+    },
+    "mpmath_version": "1.3.0",
+    "tier": 1,
+    "v_graze": {
+      "value_hex": "0x1.12e0be826d695p-30",
+      "value_mpf": "0.000000001000000000000000062281591457779856418897068692786",
+      "version": "G-1/S-1"
+    }
+  },
+  "provenance_tier": 1,
+  "reference_events": [
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0.00000000018181818182429392600097042200295426426950217522104",
+        "y": "1.6528925620946003074575284584426171918366604226814e-2"
+      },
+      "seq": 0,
+      "t": "0.00000000018181818182429392600097042200295426426950217522104",
+      "tier": 1
+    },
+    {
+      "ball_id": 0,
+      "contact": {
+        "x": "0.00000000036363636419873361132995369881638179192664973841885",
+        "y": "6.6115702683837015848361091462062729035032166725722e-2"
+      },
+      "seq": 1,
+      "t": "0.00000000036363636419873361142912725284547119252558896552015",
+      "tier": 1
+    }
+  ],
+  "scenario_id": "HO-graze-parabola-3",
+  "schema_version": "1",
+  "verification": {
+    "method": "refsim-cas-tier1",
+    "residual_max": "0"
+  }
+}

@@ -1,0 +1,8 @@
+vector                                   status detail
+rational_5_2                               PASS worst_|dt|=0.000000e+00 worst_|ds|=0.000000e+00
+decimal_scientific                         PASS worst_|dt|=3.828499e-17 worst_|ds|=3.828499e-17
+zero_event                                 PASS count-only empty reference and engine
+within_tolerance                           PASS worst_|dt|=1.000000e-10 worst_|ds|=0.000000e+00
+over_tolerance                 expected-fail ok worst_|dt|=2.000000e-09 worst_|ds|=0.000000e+00
+rational_hexfloat_mixed                    PASS worst_|dt|=0.000000e+00 worst_|ds|=0.000000e+00
+checker-shape-selftest: PASS

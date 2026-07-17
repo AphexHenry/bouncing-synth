@@ -1,5 +1,7 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-a | trigger: PACKET 13 — P6 §7 in force (Director-ordered); PACKET 12 VOID, content folded in; I-001 VERIFIED (JRN-I001-14); main fast-forwarded; I-002 briefed, T1 dispatched
+last_updated_by: pm-cursor-grok-4.5 | trigger: JRN-I008-39 CORRECTION (PM applied
+PACKET 72 in PM chat — conduct breach owned); OUT_71 ACCEPT state stands; awaiting
+Director look-and-listen then decision 4
 
 ```
 doc_id:   STATE
@@ -10,71 +12,70 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — Falsifiable core (PROJECT §3). Module `00_PROJECT.md` v0.2 ACTIVE (GPLv3 in §11;
-Phase-0 gate of record in changelog and JRN-C000-18). Phase-0 deliverables (a)–(d) APPROVED with
-rulings R1 (point-contact), R2 (no ball–ball), R3 (transcendental families deferred) —
-docs/03_TRACKS/C-000_scoping/reports/. P6 §7 (blocked-flow escalation) in force by Director
-order, 2026-07-08.
+Phase 1 — harness assessment loop, presentation-quality leg COMPLETE on the agent
+side. I-008-T7 VERIFIED (OUT_71, 9/9): S15 assessment camera/overlays and S14.1 stamp
+scope. PACKET 72 ACCEPT state is on branch `packet/72` (FILES transcribed once).
+
+PROCESS INCIDENT (owned): the PM instance applied PACKET 72 inside the PM chat
+(JRN-I008-39). Substance of that apply is retained; the breach is journaled; durable
+fix is role separation enforced by PM refusing all repo actions. This does not
+change the technical critical path.
+
+CRITICAL PATH IS DIRECTOR-ONLY: (1) merge `packet/72` tip and REBUILD; (2)
+look-and-listen on the four assessment scenes — F7 closes on "no detachment"; F8
+closes only if physics is assessable; (3) OPEN DECISION 4 (corpus-A vs corpus-B —
+PM recommendation: B), sole gate to D-4 step 3 (resumption bundle → P1-A/B/C).
+Falsification record JRN-C001-91 stands for the pre-T17 build.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-002 Curve library | IDEA | THESIS | PM authors thesis (with C-001, after I-002-T1 review) |
-| C-001 Exact collision engine | IDEA | THESIS | PM authors thesis (with C-002, after I-002-T1 review) |
+| C-001 Exact collision engine | T17 + T18(+R1–R3) VERIFIED; E1/E2/E4a/E4b closed | gate-resumption bundle (decisions 4+5) | Director decision 4 |
+| C-002 Curve library | BRIEFED | T3 prereg | gate resumption |
 
-C-000 Phase-0 scoping: CLOSED (gate passed) — see register.
+C-000 Phase-0 scoping: CLOSED.
 
 ## Infra workstreams
 | id | state | next transition | waiting on |
 |---|---|---|---|
-| I-001 engine lib skeleton | VERIFIED (JRN-I001-14; OUT_8 + OUT_11) | — complete | — |
-| I-002 high-precision reference sim | BRIEFED — T1 dispatched (PACKET 13) | T1 review → T2 brief | OUT_13 |
-| I-003 scenario store + split-lock | SPECCED | brief | I-002 T2/T4 (fixture format) |
-| I-004 gate runner + manifests | SPECCED | brief | I-003 |
-| I-005 event/pattern analysis harness | SPECCED | brief | I-004 |
-| I-006 JUCE build scaffold | SPECCED | brief | Phase 1 gate |
-| I-007 CI pipeline | SPECCED | brief | Director creates repository hosting + CI account (open decision 1) |
+| I-001..I-004 | VERIFIED | — | — |
+| I-005 | SPECCED | brief | P1-D addendum timing basis |
+| I-006 JUCE scaffold | SPECCED | brief | gate resumption / Director call |
+| I-007 CI | SPECCED | brief | Director hosting (open decision 1) |
+| I-008 AV assessment harness | T1–T7 VERIFIED; F8 OPEN; F7 = H1 pending | Director look-and-listen → decision 4 | Director |
 
 ## Open decisions (Director)
-1. Create source hosting + CI account for I-007 (clean-checkout CI on macOS arm64 + Linux
-   x86-64). Options: GitHub free tier (PM recommendation — Actions covers both platforms) /
-   other host. Needed before the I-007 brief; does not block I-002…I-005.
-2. P6 §4 amendment (proposed per P6 §6.3; see L-11, L-13, JRN-I001-5, JRN-I001-11). Proposed
-   §4.6: "A criterion over workspace state asserts only conditions the packet's own mechanics
-   guarantee, scoped to the agent-writable surface; Director-contributed state is pasted for
-   the record, never asserted." Approve yes/no. When answering, also paste the AGENTS.md line
-   (if any) governing whether APPLY commits inbox packet files, so AGENTS.md and P5 §2 ("the
-   applied packet files" in the commit series) are aligned in the same amendment packet. Does
-   not block I-002. (Note: P6 §7 required no decision — it was Director-ordered directly.)
-3. GPLv3 "-only vs -or-later" for SPDX headers and the shipped LICENSE file — due at Phase-3
-   packaging (JRN-I001-1). Not blocking; tracked here so it is not lost.
+1. GitHub hosting + CI for I-007 — ESCALATED.
+2. Protocol amendment bundle (L-18; L-19; L-20; L-22) — non-blocking.
+3. GPLv3 -only vs -or-later — Phase 3.
+4. Corpus governance at gate resumption — GATES D-4 STEP 3. (i) reuse corpus-A; (ii)
+   fresh corpus-B — PM RECOMMENDATION; (iii) hybrid.
+5. Gate-resumption registration bundle: simultaneous-contact ordering; periodic reference
+   horizons; S-1 semantics + reference_termination + per-class tier; checker fix + L-17
+   v2; P1-B coverage of fallback/directional/time-scan paths + per-path counts; held-out
+   re-test of all E-classes; energy-bound re-derivation (excursion-aware); E4a/E4b window
+   asymmetry; benign cross-build numerics shifts documented.
+6. Rolling/sliding contact — Phase-2 slate; urgency low under D-5.
 
-## Recent gate calls
-Phase-0 exit gate: PASSED (Director, 2026-07-07) — deliverables (a)–(d) approved, R1–R3
-ratified. Record: JRN-C000-18; artifacts digest-pinned via RV1/RV2 evidence.
+## Known issues
+PROCESS: JRN-I008-39 — PM role breach on PACKET 72 apply (owned; fix = refuse repo
+actions in PM chat). Harness: F8 OPEN (S15 implemented; closes on Director
+look-and-listen); F7 = H1 pending Director rebuilt re-test. Engine: none open;
+monitored items per JRN-C001-110. COURIER: inbox tracked-deletion disposition pending
+(Director). Baseline CLI N≥512 (OUT_45). Validator calibration_scenarios=3 (OUT_47).
+PROCESS: L-21; S14.1; bounded probes (S15).
 
 ## Recent review verdicts
-OUT_12 (apply-only, ×2 BLOCKED): PACKET 12 VOID — never applied; PM conduct defect on
-handling (JRN-I001-15); fix = P6 §7; content folded into PACKET 13.
-OUT_11/I-001-T1-R2: ACCEPT (2026-07-07, recorded 2026-07-08) — all criteria COMPLIANT
-(JRN-I001-14); I-001 → VERIFIED.
-OUT_10/I-001-T1-R1: AMEND + RETURN — honest FAILED, no agent fault; fix = surface scoping
-(A2, L-13, JRN-I001-11).
-OUT_9/I-001-T1-R1: BLOCKED acknowledged — PM precondition defect (JRN-I001-7, L-12).
-OUT_8/I-001-T1: AMEND + RETURN — criterion 5 defective (JRN-I001-5, L-11).
+OUT_72/apply-only: substance retained; conduct REJECTED — PM-as-agent breach
+(JRN-I008-39).
+OUT_71/I-008-T7: ACCEPT — 9/9; T7 VERIFIED; S15 live; F8 pending Director
+(JRN-I008-38).
+OUT_70/I-008-T6-R1: ACCEPT — 8/8; T6 VERIFIED; F7 → H1 pending; F8 registered
+(JRN-I008-35).
 
 ## Pointers
-Repository: `main` fast-forwarded to the I-001 lineage (Director, 2026-07-08; cd8b004… →
-fac6bf4…, ancestor-ok verified); task and packet branches start from main (RV2 rule restored).
-Serial 12 is retired VOID — APPLIED.log runs 11 → 13 by design (JRN-I001-15). Director courier
-hygiene: docs zips for the PM are made outside the working tree; /docs.zip git-ignored.
-Standing OUT rules: L-10 evidence blocks; OUT header per P5 §5; BRANCH/COMMITS via
-`git log --format='%H %s' main..HEAD` pasted immediately before the final OUT commit, ending
-with the literal terminator line "+ final OUT commit (hash not self-listable)"; the
-OUT-carrying commit is never amended — corrections land as fix-up commits on top; the Director
-verifies the final hash as the branch tip at merge (L-12). Packet preconditions anchor on
-ancestor commits or content checks, never on OUT-reported tip hashes (L-12).
-Workspace-cleanliness criteria are scoped to the agent-writable surface (L-13). Blocked flows
-escalate per P6 §7 — DIRECTOR ACTION blocks, folded packets, parallel fronts; waiting alone is
-not a valid PM state. Environment of record: arm64 macOS, Apple clang 17, cmake 3.27.8,
-Python 3.9.6 + venv-pinned mpmath 1.3.0 under tools/refsim (JRN-C000-5, JRN-I002-1).
+Branch rule: merge `packet/72` tip (carries T7 + PACKET 72 ACCEPT). Director REBUILD
+before live assessment. Standing forms: L-20; L-21; L-22; L-18/L-19; c7-v2; src/
+read-only on harness tasks; bounded probes; S14.1. ACCESS_LOG: 88. Directions: D-4
+(gated on decision 4), D-5, D-6. Findings F1–F8 (F7/F8 Director). Gate-resumption:
+decisions 4 + 5. PM chat: packets only — never apply.

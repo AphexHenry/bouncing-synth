@@ -1,0 +1,8 @@
+{
+  "gate_id": null,
+  "horizon": "to_settle",
+  "notes": "Calibration smoke study — FL-1 and PB-1, twice for determinism cross-check.",
+  "scenario_set": "calibration",
+  "study_id": "SMOKE-CAL-1",
+  "timing_runs": 10
+}

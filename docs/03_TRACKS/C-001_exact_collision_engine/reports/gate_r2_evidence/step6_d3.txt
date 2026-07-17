@@ -1,0 +1,4 @@
+=== STEP 6: D3 repeat calibration smoke ===
+repeat-identity ok N=3
+events=13
+repeat exit=0

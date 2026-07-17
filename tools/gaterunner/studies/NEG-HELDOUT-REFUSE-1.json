@@ -1,0 +1,8 @@
+{
+  "gate_id": null,
+  "horizon": "to_settle",
+  "notes": "Negative test — held-out id without gate authorization must be refused.",
+  "scenario_set": ["HO-flat-settle-1"],
+  "study_id": "NEG-HELDOUT-REFUSE-1",
+  "timing_runs": 1
+}
