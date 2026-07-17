@@ -14,7 +14,7 @@ parent:   PROJECT §13
 | I-002 | High-precision reference simulator (Python/mpmath) + fixture generator | VERIFIED | all Design-A/C gates | docs/05_INFRA/I-002_refsim/ |
 | I-003 | Scenario/fixture store with split-lock machinery | VERIFIED — corpus complete (32 locked) | Law 1 enforcement | docs/05_INFRA/I-003_scenario_store/ |
 | I-004 | Gate runner + manifest writer | VERIFIED — COMPLETE for Phase 1; standing rule: gate manifests require engine_git_dirty=false | every gate call | docs/05_INFRA/I-004_gaterunner/ |
-| I-005 | Event/pattern analysis harness | SPECCED | P1-D addendum basis | — |
+| I-005 | Event/pattern analysis harness | SPECCED | P1-D addendum timing basis | — |
 | I-006 | JUCE build scaffold (VST3 target, pluginval in CI) | SPECCED | C-003, C-004, C-005 | — |
 | I-007 | CI pipeline | SPECCED | open decision 1 (escalated) | — |
-| I-008 | AV assessment harness `bounce-view` (C++/SDL2; D-5 default-lossless; AV-2 voice; S13 runtime Load; S14 build stamp; Law-1 guard; S7/S9 language rules; L-21 hygiene) | T1–T6 VERIFIED (OUT_55–70); F7 = H1 pending Director rebuilt re-test; F8 OPEN — T7 IN FLIGHT (PACKET 71: S15 stable camera, grid/axes, pause/step) | Director look-and-listen after T7; blocks nothing gate-bearing | docs/05_INFRA/I-008_av_harness/ |
+| I-008 | AV assessment harness `bounce-view` (C++/SDL2; D-5 default-lossless; AV-2 voice; S13 runtime Load; S14/S14.1 build stamp; Law-1 guard; S7/S9; L-21; S15 assessment camera) | T1–T7 VERIFIED (OUT_55–71); F7 = H1 pending Director rebuilt re-test; F8 OPEN pending Director look-and-listen | Director look-and-listen; blocks nothing gate-bearing | docs/05_INFRA/I-008_av_harness/ |
