@@ -8,6 +8,7 @@
 
 #include <array>
 #include <cstddef>
+#include <vector>
 
 namespace bounce::core::engine {
 
@@ -46,10 +47,12 @@ struct ActiveBall {
   double x_min = 0.0;
   double abs_time = 0.0;
   bool settled = false;
+  int depart_segment = -1;
+  double depart_s = 0.0;
 };
 
 struct MultiBallSimResult {
-  std::array<events::CollisionEvent, kMaxSimEvents> events{};
+  std::vector<events::CollisionEvent> events;
   int count = 0;
 };
 

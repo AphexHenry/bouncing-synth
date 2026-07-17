@@ -228,9 +228,7 @@ MultiBallSimResult simulate_baseline_polyline(const Polyline& poly, double domai
           break;
         }
       }
-      if (out.count < static_cast<int>(kMaxSimEvents)) {
-        out.events[static_cast<std::size_t>(out.count)] = event;
-      }
+      out.events.push_back(event);
       ++out.count;
 
       const ReflectedVelocity reflected =

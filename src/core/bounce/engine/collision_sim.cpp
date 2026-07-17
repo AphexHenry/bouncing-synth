@@ -136,6 +136,9 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
       if (ball.settled || ball.init.vx == 0.0) {
         continue;
       }
+      if (ball.init.y0 <= 1e-15 && ball.init.vy < 0.0) {
+        ball.init.vy = -ball.restitution * ball.init.vy;
+      }
       const BallCollisionStep step =
           step_ball_next_collision(curve_y, ball.init, ball.x_min, x_max);
       if (!step.found) {
@@ -178,9 +181,7 @@ MultiBallSimResult simulate_multi_ball_collisions(const curve::CompiledPolynomia
         break;
       }
     }
-    if (out.count < static_cast<int>(kMaxSimEvents)) {
-      out.events[static_cast<std::size_t>(out.count)] = event;
-    }
+    out.events.push_back(event);
     ++out.count;
     const ReflectedVelocity reflected = reflect_velocity(curve_y, chosen_step.x, ball.init.vx,
                                                          vy_contact, ball.restitution);
@@ -251,9 +252,12 @@ MultiBallSimResult simulate_multi_ball_collisions_bezier(
       if (ball.settled || ball.init.vx == 0.0) {
         continue;
       }
+      if (ball.init.y0 <= 1e-15 && ball.init.vy < 0.0) {
+        ball.init.vy = -ball.restitution * ball.init.vy;
+      }
       const double x_bound = ball.init.vx > 0.0 ? x_max : domain_min;
-      const BallCollisionStep step =
-          step_ball_next_collision_bezier(curve, ball.init, ball.x_min, x_bound);
+      const BallCollisionStep step = step_ball_next_collision_bezier(
+          curve, ball.init, ball.x_min, x_bound, ball.depart_segment, ball.depart_s);
       if (!step.found) {
         ball.settled = true;
         continue;
@@ -297,9 +301,7 @@ MultiBallSimResult simulate_multi_ball_collisions_bezier(
         break;
       }
     }
-    if (out.count < static_cast<int>(kMaxSimEvents)) {
-      out.events[static_cast<std::size_t>(out.count)] = event;
-    }
+    out.events.push_back(event);
     ++out.count;
     const ReflectedVelocity reflected = reflect_velocity_bezier(
         segment, chosen_step.segment_s, ball.init.vx, vy_contact, ball.restitution);
@@ -312,6 +314,8 @@ MultiBallSimResult simulate_multi_ball_collisions_bezier(
       ball.init.vy = reflected.vy;
       ball.abs_time = chosen_t_abs;
       ball.x_min = next_x_min(chosen_step.x, ball.init.vx);
+      ball.depart_segment = chosen_step.segment_index;
+      ball.depart_s = chosen_step.segment_s;
     }
     ++emitted;
   }

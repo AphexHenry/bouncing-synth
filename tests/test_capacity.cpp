@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "bounce/engine/collision_sim.hpp"
+#include "bounce/engine/vca.hpp"
+#include "bounce/curve/polynomial.hpp"
 #include "bounce/scenario/calibration_loader.hpp"
 
 #include <doctest/doctest.h>
+#include <cmath>
+#include <limits>
 
-TEST_CASE("capacity lift: >64 events reached with monotone seq") {
+namespace {
+
+bounce::core::scenario::CalibrationScenario make_capacity_scenario() {
   bounce::core::scenario::CalibrationScenario scenario{};
   scenario.coeff_count = 1;
   scenario.coeffs[0] = 0.0;
@@ -20,7 +26,13 @@ TEST_CASE("capacity lift: >64 events reached with monotone seq") {
   scenario.balls[0].restitution = 0.999;
   scenario.ref_event_count = 1;
   scenario.reference_events[0].t = 1.0;
+  return scenario;
+}
 
+} // namespace
+
+TEST_CASE("capacity lift: >64 events reached with monotone seq") {
+  const auto scenario = make_capacity_scenario();
   constexpr int kRequestedHorizon = 100;
   static_assert(kRequestedHorizon > 64);
   const auto result =

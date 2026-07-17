@@ -77,6 +77,45 @@ double strict_departure_x_min(double x_dep, double vx, double x_max) {
   return x_dep;
 }
 
+double ballistic_ground_time_upper(const BallisticInit& init) {
+  if (init.g <= 0.0) {
+    return 0.1;
+  }
+  if (init.y0 <= 1e-15) {
+    const double vy_eff = std::abs(init.vy);
+    if (vy_eff > 0.0) {
+      return std::max(0.1, 2.0 * vy_eff / init.g);
+    }
+    return 0.1;
+  }
+  const double disc = init.vy * init.vy + 2.0 * init.g * init.y0;
+  if (disc <= 0.0) {
+    return std::max(0.1, std::abs(init.vy) / init.g);
+  }
+  return std::max(0.1, (init.vy + std::sqrt(disc)) / init.g);
+}
+
+double x_reachable_upper(const BallisticInit& init, double x_max) {
+  const double t = ballistic_ground_time_upper(init);
+  if (init.vx > 0.0) {
+    return std::min(x_max, init.x0 + init.vx * t);
+  }
+  if (init.vx < 0.0) {
+    return std::max(-x_max, init.x0 + init.vx * t);
+  }
+  return init.x0;
+}
+
+int time_scan_segments(double t_lo, double scan_hi, double t_flight) {
+  const double span = scan_hi - t_lo;
+  if (span <= 0.0) {
+    return 32;
+  }
+  const double resolution = std::max(t_flight / static_cast<double>(std::max(32, kBisectBits)),
+                                     std::numeric_limits<double>::epsilon());
+  return std::min(4096, std::max(32, static_cast<int>(std::ceil(span / resolution))));
+}
+
 DoubleDouble eval_dd(const CompiledPolynomial& p, const DoubleDouble& x) {
   DoubleDouble acc = dd_from_double(p.coeffs[static_cast<std::size_t>(p.degree)]);
   for (int k = p.degree - 1; k >= 0; --k) {
@@ -90,23 +129,31 @@ DoubleDouble dd_neg(const DoubleDouble& a) {
 }
 
 bool has_root_in_interval(const CompiledPolynomial& q, double lo, double hi) {
-  const double pl = eval(q, lo);
-  const double pr = eval(q, hi);
-  if (pl == 0.0 || pr == 0.0) {
+  double a = lo;
+  double b = hi;
+  double fa = eval(q, a);
+  double fb = eval(q, b);
+  if (fa == 0.0 || fb == 0.0) {
     return true;
   }
-  if (pl * pr > 0.0) {
+  if (fa * fb > 0.0) {
     return false;
   }
-  if (hi - lo <= 1e-15) {
-    return true;
+  while (b - a > 1e-15) {
+    const double mid = 0.5 * (a + b);
+    const double fm = eval(q, mid);
+    if (fm == 0.0) {
+      return true;
+    }
+    if (fa * fm <= 0.0) {
+      b = mid;
+      fb = fm;
+    } else {
+      a = mid;
+      fa = fm;
+    }
   }
-  const double mid = 0.5 * (lo + hi);
-  const double pm = eval(q, mid);
-  if (pm == 0.0) {
-    return true;
-  }
-  return has_root_in_interval(q, lo, mid) || has_root_in_interval(q, mid, hi);
+  return true;
 }
 
 } // namespace
@@ -376,10 +423,10 @@ BallCollisionStep step_ball_next_collision_time(const CompiledPolynomial& curve_
     diff = deflate_linear_root(diff, 0.0);
     t_lo = t_depart;
   }
-  constexpr double kTimeHorizonMax = 1000.0;
-  constexpr double kTimeScanStep = 0.02;
-  const double char_time = std::max(std::abs(init.vy / init.g), 0.1);
-  double scan_window = std::max(4.0 * char_time, 0.5);
+  constexpr double kTimeHorizonPad = 1.0;
+  const double t_flight = ballistic_ground_time_upper(init);
+  const double kTimeHorizonMax = std::max(t_flight * 2.0, t_flight + kTimeHorizonPad);
+  double scan_window = t_flight;
   const double initial_scan_window = scan_window;
   for (int attempt = 0; attempt < 8; ++attempt) {
     if (t_lo >= kTimeHorizonMax) {
@@ -389,8 +436,7 @@ BallCollisionStep step_ball_next_collision_time(const CompiledPolynomial& curve_
     double scan_hi = t_lo;
     while (scan_hi < kTimeHorizonMax) {
       scan_hi = std::min(kTimeHorizonMax, t_lo + scan_window);
-      const int nseg = std::min(
-          4096, std::max(32, static_cast<int>(std::ceil((scan_hi - t_lo) / kTimeScanStep))));
+      const int nseg = time_scan_segments(t_lo, scan_hi, t_flight);
       bracket = vca_isolate_smallest_root(diff, t_lo, scan_hi, nseg);
       if (bracket.found || scan_hi >= kTimeHorizonMax) {
         break;
@@ -454,12 +500,13 @@ BallCollisionStep step_ball_next_collision_x(const CompiledPolynomial& curve_y,
   const double depart_x = strict_departure_x_min(init.x0, init.vx, x_max);
   double search_lo = 0.0;
   double search_hi = 0.0;
+  const double x_phys = x_reachable_upper(init, x_max);
   if (init.vx > 0.0) {
     search_lo = std::max(x_min, depart_x);
-    search_hi = x_max;
+    search_hi = x_max > 1e5 ? std::min(x_max, std::max(x_phys, search_lo)) : x_max;
   } else {
-    search_lo = -x_max;
     search_hi = std::min(x_min, depart_x);
+    search_lo = x_max > 1e5 ? std::max(-x_max, std::min(x_phys, search_hi)) : -x_max;
   }
   for (int attempt = 0; attempt < 8; ++attempt) {
     if (search_hi <= search_lo) {
@@ -491,15 +538,27 @@ BallCollisionStep step_ball_next_collision_x(const CompiledPolynomial& curve_y,
       out.found = false;
       return out;
     }
+    out.y = curve_y_at_x(curve_y, out.x);
+    const double vy_contact = init.vy - init.g * out.t;
+    out.impact_speed = normal_impact_speed(curve_y, out.x, init.vx, vy_contact);
+    out.accepted = out.impact_speed >= kVGraze;
+    if (!out.accepted) {
+      if (eval(diff, out.x) == 0.0) {
+        diff = deflate_linear_root(diff, out.x);
+      }
+      if (init.vx > 0.0) {
+        search_lo = strict_departure_x_min(out.x, init.vx, x_max);
+      } else {
+        search_hi = strict_departure_x_min(out.x, init.vx, x_max);
+      }
+      out = BallCollisionStep{};
+      continue;
+    }
     break;
   }
   if (!out.found) {
     return out;
   }
-  out.y = curve_y_at_x(curve_y, out.x);
-  const double vy_contact = init.vy - init.g * out.t;
-  out.impact_speed = normal_impact_speed(curve_y, out.x, init.vx, vy_contact);
-  out.accepted = out.impact_speed >= kVGraze;
   if (out.root_path == CollisionRootPath::None) {
     out.root_path = CollisionRootPath::XPrimary;
   }
@@ -535,6 +594,22 @@ using bounce::core::curve::normal;
 using bounce::core::curve::Vec2;
 
 constexpr double kBezierDomainEps = 1e-12;
+
+bool bezier_y_at_x(const CompiledBezierSegment& segment, double x_target, double& y_out,
+                   double& s_out);
+
+double strict_departure_s_min(double s_dep) {
+  return std::nextafter(s_dep, 1.0);
+}
+
+bool contact_s_on_segment(const CompiledBezierSegment& segment, const BallisticInit& init,
+                          double& s_out) {
+  double y_at_s = 0.0;
+  if (!bezier_y_at_x(segment, init.x0, y_at_s, s_out)) {
+    return false;
+  }
+  return std::abs(y_at_s - init.y0) <= kBezierDomainEps;
+}
 
 std::vector<double> bezier_axis_poly(const CompiledBezierSegment& segment, bool y_axis) {
   if (segment.kind == BezierKind::Quadratic) {
@@ -666,6 +741,23 @@ std::vector<double> poly_roots_in_interval(const CompiledPolynomial& q, double l
   return roots;
 }
 
+CompiledPolynomial deflate_bezier_departure_s_aliases(const CompiledBezierSegment& segment,
+                                                      CompiledPolynomial diff, double x0) {
+  auto x_poly_vec = bezier_axis_poly(segment, false);
+  if (!x_poly_vec.empty()) {
+    x_poly_vec[0] -= x0;
+  }
+  const auto x_diff = to_compiled_poly(poly_trim(x_poly_vec));
+  const auto x_roots = poly_roots_in_interval(x_diff, 0.0, 1.0);
+  for (double s_root : x_roots) {
+    const double d = eval(diff, s_root);
+    if (d == 0.0 || std::abs(d) <= 1e-14) {
+      diff = deflate_linear_root(diff, s_root);
+    }
+  }
+  return diff;
+}
+
 bool collision_less(double t_a, int seg_a, double t_b, int seg_b) {
   if (t_a != t_b) {
     return t_a < t_b;
@@ -675,11 +767,14 @@ bool collision_less(double t_a, int seg_a, double t_b, int seg_b) {
 
 struct BezierSegmentCollisionDiff {
   CompiledPolynomial work_diff{};
-  double s_min = 0.0;
+  double s_lo = 0.0;
+  double s_hi = 1.0;
 };
 
 BezierSegmentCollisionDiff bezier_segment_collision_diff(const CompiledBezierSegment& segment,
-                                                       const BallisticInit& init) {
+                                                       const BallisticInit& init,
+                                                       int depart_segment_index,
+                                                       int segment_index, double depart_s) {
   BezierSegmentCollisionDiff out{};
   const BallisticParabola arc = ballistic_parabola_px(init);
   const auto x_poly_vec = bezier_axis_poly(segment, false);
@@ -691,53 +786,147 @@ BezierSegmentCollisionDiff bezier_segment_collision_diff(const CompiledBezierSeg
   const auto composed = poly_compose(arc_coeffs, x_poly_vec);
   const auto diff_coeffs = poly_sub(y_poly, composed);
   out.work_diff = to_compiled_poly(diff_coeffs);
-  const double depart_s = std::nextafter(0.0, 1.0);
-  if (eval(out.work_diff, 0.0) == 0.0 || std::abs(eval(out.work_diff, 0.0)) <= 1e-14) {
-    out.work_diff = deflate_linear_root(out.work_diff, 0.0);
-    out.s_min = depart_s;
+  out.s_lo = 0.0;
+  out.s_hi = 1.0;
+  auto apply_depart = [&](double s_depart) {
+    const double diff_at = eval(out.work_diff, s_depart);
+    if (diff_at == 0.0 || std::abs(diff_at) <= 1e-14) {
+      out.work_diff = deflate_linear_root(out.work_diff, s_depart);
+    }
+    const Vec2 p0 = eval(segment, 0.0);
+    const Vec2 p1 = eval(segment, 1.0);
+    const bool x_increases = p1.x >= p0.x;
+    if (init.vx > 0.0) {
+      if (x_increases) {
+        out.s_lo = std::max(out.s_lo, strict_departure_s_min(s_depart));
+      } else {
+        out.s_hi = std::min(out.s_hi, std::nextafter(s_depart, 0.0));
+      }
+    } else if (init.vx < 0.0) {
+      if (x_increases) {
+        out.s_hi = std::min(out.s_hi, std::nextafter(s_depart, 0.0));
+      } else {
+        out.s_lo = std::max(out.s_lo, strict_departure_s_min(s_depart));
+      }
+    }
+  };
+  if (depart_segment_index == segment_index && depart_s >= 0.0 && depart_s <= 1.0) {
+    apply_depart(depart_s);
+  } else {
+    double s_depart = 0.0;
+    if (contact_s_on_segment(segment, init, s_depart)) {
+      apply_depart(s_depart);
+    } else {
+      const double diff_at_zero = eval(out.work_diff, 0.0);
+      if (diff_at_zero == 0.0 || std::abs(diff_at_zero) <= 1e-14) {
+        apply_depart(0.0);
+      }
+    }
   }
+  out.work_diff = deflate_bezier_departure_s_aliases(segment, out.work_diff, init.x0);
   return out;
 }
 
 BallCollisionStep step_ball_next_collision_segment(const CompiledBezierSegment& segment,
                                                    int segment_index, const BallisticInit& init,
-                                                   double x_min, double x_max) {
+                                                   double x_min, double x_max,
+                                                   int depart_segment_index, double depart_s) {
   BallCollisionStep out{};
   if (init.vx == 0.0) {
     return out;
   }
   const double x_lo = init.vx > 0.0 ? x_min : x_max;
   const double x_hi = init.vx > 0.0 ? x_max : x_min;
-  const auto seg_diff = bezier_segment_collision_diff(segment, init);
-  const auto roots = poly_roots_in_interval(seg_diff.work_diff, seg_diff.s_min, 1.0);
-  for (double s_root : roots) {
-    const Vec2 pos = eval(segment, s_root);
-    if (pos.x + kBezierDomainEps < x_lo || pos.x - kBezierDomainEps > x_hi) {
+  const double depart_x = strict_departure_x_min(init.x0, init.vx, x_hi);
+  const double x_refine_tol =
+      std::ldexp(std::max({std::abs(x_max), std::abs(x_min), std::abs(init.x0), 1.0}),
+                 -kBisectBits);
+  const double t_min = x_refine_tol / std::abs(init.vx);
+  auto seg_diff =
+      bezier_segment_collision_diff(segment, init, depart_segment_index, segment_index, depart_s);
+
+  auto advance_s_bound = [&](double s_root) {
+    const Vec2 p0 = eval(segment, 0.0);
+    const Vec2 p1 = eval(segment, 1.0);
+    const bool x_increases = p1.x >= p0.x;
+    if (init.vx > 0.0) {
+      if (x_increases) {
+        seg_diff.s_lo = std::max(seg_diff.s_lo, strict_departure_s_min(s_root));
+      } else {
+        seg_diff.s_hi = std::min(seg_diff.s_hi, std::nextafter(s_root, 0.0));
+      }
+    } else if (init.vx < 0.0) {
+      if (x_increases) {
+        seg_diff.s_hi = std::min(seg_diff.s_hi, std::nextafter(s_root, 0.0));
+      } else {
+        seg_diff.s_lo = std::max(seg_diff.s_lo, strict_departure_s_min(s_root));
+      }
+    }
+  };
+
+  for (int attempt = 0; attempt < 16; ++attempt) {
+    if (seg_diff.s_hi <= seg_diff.s_lo) {
+      return out;
+    }
+    const auto roots =
+        poly_roots_in_interval(seg_diff.work_diff, seg_diff.s_lo, seg_diff.s_hi);
+    BallCollisionStep best{};
+    double ghost_s = -1.0;
+    for (double s_root : roots) {
+      const Vec2 pos = eval(segment, s_root);
+      if (pos.x + kBezierDomainEps < x_lo || pos.x - kBezierDomainEps > x_hi) {
+        continue;
+      }
+      if (init.vx > 0.0 && pos.x < x_min - kBezierDomainEps) {
+        continue;
+      }
+      if (init.vx < 0.0 && pos.x > x_min + kBezierDomainEps) {
+        continue;
+      }
+      const double t = (pos.x - init.x0) / init.vx;
+      const bool depart_rehit =
+          t <= t_min || (init.vx > 0.0 ? pos.x <= depart_x : pos.x >= depart_x);
+      if (depart_rehit) {
+        ghost_s = s_root;
+        continue;
+      }
+      const double vy_contact = init.vy - init.g * t;
+      const double impact = bezier_normal_impact_speed(segment, s_root, init.vx, vy_contact);
+      BallCollisionStep candidate{};
+      candidate.found = true;
+      candidate.segment_index = segment_index;
+      candidate.segment_s = s_root;
+      candidate.x = pos.x;
+      candidate.y = pos.y;
+      candidate.t = t;
+      candidate.impact_speed = impact;
+      candidate.accepted = impact >= kVGraze;
+      candidate.root_path = CollisionRootPath::BezierSParam;
+      if (!best.found || collision_less(candidate.t, candidate.segment_index, best.t,
+                                        best.segment_index)) {
+        best = candidate;
+      }
+    }
+    if (!best.found) {
+      if (ghost_s >= 0.0) {
+        if (eval(seg_diff.work_diff, ghost_s) == 0.0 ||
+            std::abs(eval(seg_diff.work_diff, ghost_s)) <= 1e-14) {
+          seg_diff.work_diff = deflate_linear_root(seg_diff.work_diff, ghost_s);
+        }
+        advance_s_bound(ghost_s);
+        continue;
+      }
+      return out;
+    }
+    if (!best.accepted) {
+      if (eval(seg_diff.work_diff, best.segment_s) == 0.0 ||
+          std::abs(eval(seg_diff.work_diff, best.segment_s)) <= 1e-14) {
+        seg_diff.work_diff = deflate_linear_root(seg_diff.work_diff, best.segment_s);
+      }
+      advance_s_bound(best.segment_s);
       continue;
     }
-    const double t = (pos.x - init.x0) / init.vx;
-    if (t <= 0.0) {
-      continue;
-    }
-    const double depart_x = strict_departure_x_min(init.x0, init.vx, x_hi);
-    if ((init.vx > 0.0 && pos.x <= depart_x) || (init.vx < 0.0 && pos.x >= depart_x)) {
-      continue;
-    }
-    const double vy_contact = init.vy - init.g * t;
-    const double impact = bezier_normal_impact_speed(segment, s_root, init.vx, vy_contact);
-    BallCollisionStep candidate{};
-    candidate.found = true;
-    candidate.segment_index = segment_index;
-    candidate.segment_s = s_root;
-    candidate.x = pos.x;
-    candidate.y = pos.y;
-    candidate.t = t;
-    candidate.impact_speed = impact;
-    candidate.accepted = impact >= kVGraze;
-    candidate.root_path = CollisionRootPath::BezierSParam;
-    if (!out.found || collision_less(candidate.t, candidate.segment_index, out.t, out.segment_index)) {
-      out = candidate;
-    }
+    return best;
   }
   return out;
 }
@@ -846,23 +1035,40 @@ bool bezier_s_for_x(const CompiledBezierSegment& segment, double x_target, doubl
   return bezier_y_at_x(segment, x_target, y, s_out);
 }
 
+bool bezier_y_at_world_x(const CompiledPiecewiseBezier& curve, double x, double& y_out) {
+  for (const auto& segment : curve.segments) {
+    double s = 0.0;
+    if (bezier_y_at_x(segment, x, y_out, s)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 BallCollisionStep step_ball_next_collision_bezier_time(const CompiledPiecewiseBezier& curve,
                                                        const BallisticInit& init, double x_min,
                                                        double x_max) {
-  (void)x_min;
   BallCollisionStep out{};
   if (init.vx == 0.0) {
     return out;
   }
-  const double t_depart = std::nextafter(0.0, std::numeric_limits<double>::infinity());
-  double t_lo = t_depart;
-  constexpr double kTimeHorizonMax = 1000.0;
-  constexpr double kTimeScanStep = 0.02;
-  const double char_time = std::max(std::abs(init.vy / init.g), 0.1);
-  double scan_window = std::max(4.0 * char_time, 0.5);
+  const double bound_lo = std::min(x_min, x_max);
+  const double bound_hi = std::max(x_min, x_max);
+  const double x_refine_tol =
+      std::ldexp(std::max({std::abs(bound_hi), std::abs(bound_lo), std::abs(init.x0), 1.0}),
+                 -kBisectBits);
+  const double t_min_sched = x_refine_tol / std::abs(init.vx);
+  double t_lo = std::max(std::nextafter(0.0, std::numeric_limits<double>::infinity()), t_min_sched);
+  constexpr double kTimeHorizonPad = 1.0;
+  const double t_flight = ballistic_ground_time_upper(init);
+  // Valley bounce periods can exceed a single ground-flight estimate; keep a padded horizon.
+  const double kTimeHorizonMax =
+      std::max({t_flight * 4.0, t_flight + kTimeHorizonPad, 50.0});
+  double scan_window = std::max(t_flight, 1.0);
   const double initial_scan_window = scan_window;
+  const double depart_x = strict_departure_x_min(init.x0, init.vx, bound_hi);
   const auto height_diff = [&](double t) { return bezier_ball_height_diff(curve, init, t); };
-  for (int attempt = 0; attempt < 8; ++attempt) {
+  for (int attempt = 0; attempt < 16; ++attempt) {
     if (t_lo >= kTimeHorizonMax) {
       return out;
     }
@@ -870,21 +1076,19 @@ BallCollisionStep step_ball_next_collision_bezier_time(const CompiledPiecewiseBe
     RootBracket bracket{};
     while (scan_hi < kTimeHorizonMax) {
       scan_hi = std::min(kTimeHorizonMax, t_lo + scan_window);
-      const int nseg = std::min(
-          4096, std::max(32, static_cast<int>(std::ceil((scan_hi - t_lo) / kTimeScanStep))));
+      const int nseg = time_scan_segments(t_lo, scan_hi, t_flight);
       const double step = (scan_hi - t_lo) / static_cast<double>(nseg);
       double prev_t = t_lo;
       double prev_v = height_diff(prev_t);
+      // Skip an exact residual at the open departure bound without treating it as a hit.
+      if (prev_v == 0.0) {
+        prev_t = std::nextafter(prev_t, std::numeric_limits<double>::infinity());
+        prev_v = height_diff(prev_t);
+      }
       bracket = RootBracket{};
       for (int i = 1; i <= nseg; ++i) {
         const double t = t_lo + step * static_cast<double>(i);
         const double v = height_diff(t);
-        if (prev_v == 0.0) {
-          bracket.found = true;
-          bracket.lo = prev_t;
-          bracket.hi = prev_t;
-          break;
-        }
         if (v == 0.0) {
           bracket.found = true;
           bracket.lo = t;
@@ -910,11 +1114,15 @@ BallCollisionStep step_ball_next_collision_bezier_time(const CompiledPiecewiseBe
     }
     const double t_hit = refine_scalar_root(height_diff, bracket.lo, bracket.hi);
     if (t_hit <= t_lo) {
-      t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
+      t_lo = std::nextafter(std::max(t_hit, t_lo), std::numeric_limits<double>::infinity());
       continue;
     }
     const double x_hit = init.x0 + init.vx * t_hit;
-    if (x_hit > x_max + 1e-12 || x_hit < -x_max - 1e-12) {
+    if (init.vx > 0.0 ? x_hit <= depart_x : x_hit >= depart_x) {
+      t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
+      continue;
+    }
+    if (x_hit < bound_lo - kBezierDomainEps || x_hit > bound_hi + kBezierDomainEps) {
       t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
       continue;
     }
@@ -945,6 +1153,11 @@ BallCollisionStep step_ball_next_collision_bezier_time(const CompiledPiecewiseBe
         bezier_normal_impact_speed(curve.segments[static_cast<std::size_t>(seg_idx)], s_hit,
                                    init.vx, vy_contact);
     out.accepted = out.impact_speed >= kVGraze;
+    if (!out.accepted) {
+      t_lo = std::nextafter(t_hit, std::numeric_limits<double>::infinity());
+      out = BallCollisionStep{};
+      continue;
+    }
     return out;
   }
   return out;
@@ -952,24 +1165,31 @@ BallCollisionStep step_ball_next_collision_bezier_time(const CompiledPiecewiseBe
 
 BallCollisionStep step_ball_next_collision_bezier(const CompiledPiecewiseBezier& curve,
                                                   const BallisticInit& init, double x_min,
-                                                  double x_max) {
-  BallCollisionStep best{};
+                                                  double x_max, int depart_segment,
+                                                  double depart_s) {
+  (void)depart_segment;
+  (void)depart_s;
+  // Time-primary: s-param path still available via segment stepper for diagnostics,
+  // but the live search uses the registered time scan (refsim-equivalent) so departure
+  // exclusion is exact in t with the refinement-schedule floor.
+  BallCollisionStep time_best =
+      step_ball_next_collision_bezier_time(curve, init, x_min, x_max);
+  BallCollisionStep s_best{};
   for (std::size_t i = 0; i < curve.segments.size(); ++i) {
-    const BallCollisionStep step =
-        step_ball_next_collision_segment(curve.segments[i], static_cast<int>(i), init, x_min, x_max);
+    const BallCollisionStep step = step_ball_next_collision_segment(
+        curve.segments[i], static_cast<int>(i), init, x_min, x_max, depart_segment, depart_s);
     if (!step.found) {
       continue;
     }
-    if (!best.found || collision_less(step.t, step.segment_index, best.t, best.segment_index)) {
-      best = step;
+    if (!s_best.found ||
+        collision_less(step.t, step.segment_index, s_best.t, s_best.segment_index)) {
+      s_best = step;
     }
   }
-  if (!best.found) {
-    best = step_ball_next_collision_bezier_time(curve, init, x_min, x_max);
-  } else if (best.root_path == CollisionRootPath::None) {
-    best.root_path = CollisionRootPath::BezierSParam;
+  if (time_best.found) {
+    return time_best;
   }
-  return best;
+  return s_best;
 }
 
 } // namespace bounce::core::engine

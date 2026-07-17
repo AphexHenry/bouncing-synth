@@ -67,10 +67,13 @@ curve::CompiledPolynomial deflate_linear_root(const curve::CompiledPolynomial& q
 
 BallCollisionStep step_ball_next_collision_bezier(const curve::CompiledPiecewiseBezier& curve,
                                                   const BallisticInit& init, double x_min,
-                                                  double x_max);
+                                                  double x_max, int depart_segment = -1,
+                                                  double depart_s = 0.0);
 
 BallCollisionStep step_ball_next_collision_bezier_time(const curve::CompiledPiecewiseBezier& curve,
                                                        const BallisticInit& init, double x_min,
                                                        double x_max);
+
+bool bezier_y_at_world_x(const curve::CompiledPiecewiseBezier& curve, double x, double& y_out);
 
 } // namespace bounce::core::engine

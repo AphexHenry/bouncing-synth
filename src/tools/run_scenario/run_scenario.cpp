@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace {
 
@@ -15,29 +16,29 @@ void print_usage() {
                "[--max-events N] [--repeat N]\n";
 }
 
-struct StreamCtx {
-  bounce::core::io::EventStreamWriter* writer = nullptr;
+struct CollectCtx {
+  std::vector<bounce::core::events::CollisionEvent>* events = nullptr;
 };
 
-bool on_event_sink(void* user_data, const bounce::core::events::CollisionEvent& event) {
-  auto* ctx = static_cast<StreamCtx*>(user_data);
-  return bounce::core::io::emit_event_stream(*ctx->writer, event);
+bool on_event_collect(void* user_data, const bounce::core::events::CollisionEvent& event) {
+  auto* ctx = static_cast<CollectCtx*>(user_data);
+  ctx->events->push_back(event);
+  return true;
 }
 
-bool report_event_mismatch(const bounce::core::engine::MultiBallSimResult& baseline,
-                           const bounce::core::engine::MultiBallSimResult& candidate,
+bool report_event_mismatch(const std::vector<bounce::core::events::CollisionEvent>& baseline,
+                           const std::vector<bounce::core::events::CollisionEvent>& candidate,
                            int run_index) {
-  if (baseline.count != candidate.count) {
-    std::cerr << "repeat-failed: run=" << run_index << " event_count baseline=" << baseline.count
-              << " candidate=" << candidate.count << '\n';
+  if (baseline.size() != candidate.size()) {
+    std::cerr << "repeat-failed: run=" << run_index << " event_count baseline=" << baseline.size()
+              << " candidate=" << candidate.size() << '\n';
     return false;
   }
-  for (int i = 0; i < baseline.count; ++i) {
-    const auto& a = baseline.events[static_cast<std::size_t>(i)];
-    const auto& b = candidate.events[static_cast<std::size_t>(i)];
-    if (!bounce::core::io::events_equal(a, b)) {
+  for (std::size_t i = 0; i < baseline.size(); ++i) {
+    if (!bounce::core::io::events_equal(baseline[i], candidate[i])) {
       std::cerr << "repeat-failed: run=" << run_index << " first_divergence_event=" << i
-                << " seq baseline=" << a.seq << " candidate=" << b.seq << '\n';
+                << " seq baseline=" << baseline[i].seq << " candidate=" << candidate[i].seq
+                << '\n';
       return false;
     }
   }
@@ -96,18 +97,27 @@ int run_scenario_cli(int argc, char** argv) {
     return 1;
   }
 
-  bounce::core::engine::MultiBallSimResult baseline{};
+  std::vector<bounce::core::events::CollisionEvent> run_events;
+  std::vector<bounce::core::events::CollisionEvent> baseline_events;
+  CollectCtx collect_ctx{&run_events};
+  bounce::core::engine::EventEmitSink collect_sink{};
+  collect_sink.user_data = &collect_ctx;
+  collect_sink.on_event = on_event_collect;
+
   for (int run = 0; run < repeat_count; ++run) {
+    run_events.clear();
     const auto result =
-        bounce::core::scenario::run_calibration_scenario(scenario, max_events, nullptr);
-    if (run == 0) {
-      baseline = result;
-      continue;
+        bounce::core::scenario::run_calibration_scenario(scenario, max_events, &collect_sink);
+    if (static_cast<int>(run_events.size()) != result.count ||
+        static_cast<int>(result.events.size()) != result.count) {
+      std::cerr << "event storage mismatch: sink=" << run_events.size()
+                << " vector=" << result.events.size() << " count=" << result.count << '\n';
+      return 1;
     }
-    if (!bounce::core::scenario::events_equal(baseline, result)) {
-      if (!report_event_mismatch(baseline, result, run)) {
-        return 1;
-      }
+    if (run == 0) {
+      baseline_events = run_events;
+    } else if (!report_event_mismatch(baseline_events, run_events, run)) {
+      return 1;
     }
   }
 
@@ -118,14 +128,8 @@ int run_scenario_cli(int argc, char** argv) {
     return 1;
   }
 
-  StreamCtx ctx{&writer};
-  bounce::core::engine::EventEmitSink sink{};
-  sink.user_data = &ctx;
-  sink.on_event = on_event_sink;
-
-  for (int i = 0; i < baseline.count; ++i) {
-    if (!bounce::core::io::emit_event_stream(
-            writer, baseline.events[static_cast<std::size_t>(i)])) {
+  for (const auto& event : baseline_events) {
+    if (!bounce::core::io::emit_event_stream(writer, event)) {
       std::cerr << "failed to emit event stream\n";
       return 1;
     }
@@ -136,7 +140,7 @@ int run_scenario_cli(int argc, char** argv) {
     return 1;
   }
 
-  if (baseline.count != writer.count) {
+  if (static_cast<int>(baseline_events.size()) != writer.count) {
     std::cerr << "event count mismatch\n";
     return 1;
   }
