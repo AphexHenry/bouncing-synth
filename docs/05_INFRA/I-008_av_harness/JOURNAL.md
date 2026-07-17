@@ -1,6 +1,62 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-30 · CLAIM
+actor: gpt-5.5-agent · task: I-008-T6 · manifest: n/a
+
+WHAT: CLAIM I-008-T6 — deep display-truth checks for F7 at events near 100/500/1000 on
+CF-E4a and CF-E3, S14 git-injected build stamp, S13 runtime load (drag-and-drop +
+in-app picker), L-15 JRN-C001-110 integrity remediation, regression, isolation, TR, and
+OUT_69.
+Branch base (stacked from task/I-008-T5-R2 tip): `cb595dfee8e8af0877ae4e0e6afcd7a8ae9750dc`.
+NUMBERS: ACCESS_LOG before pending step 3.
+LEARNED: nothing.
+NEXT: step 3 environment paste, L-15 remediation, implementation, evidence collection.
+
+---
+### JRN-I008-29 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_68_I-008-T5-R2 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | env + 88 + full status + base proof | COMPLIANT — base dd6e8c9 proven |
+| 2 | F6 root cause + fix + contact frames d ≤ r + frames | COMPLIANT — mechanism (bezier replay used ballistic endpoints instead of snapping to eval_bezier_at_contact_x) is coherent; d=0 at both proven contacts; COVERAGE NOTE: both contacts are EARLY (seq 0, seq 7) — the late-run regime is untested and is exactly where the Director's F7 sighting lives |
+| 3 | scenes cap-reached ×4 + energy arithmetic | COMPLIANT — 2000/2000/2000/2000; mean intervals 1.26/0.78/0.24/0.46 s; A2 RIM MISCOMPUTED: y_wall(35)=35⁴/400−35²/20=3690.3, pasted 304.77 — error is CONSERVATIVE (understates the wall; E0=6.82 clears either), conclusion intact; second occurrence of the hand-arithmetic class (first: R1's 900/9,900) → L-22 issued |
+| 4 | identity + distinctness + per-ball | COMPLIANT — curve blocks satisfy family rules (A2 a₄=1/400>0, a₂=−1/20<0; A3 genuine piecewise-bezier; A4 3 balls, 724/661/615); DISTINCTNESS ODDITY: diff counts 34/67/39 are too small for full 2000-line logs (A4 sharing A1's ball-0 explains one, not all) — distinctness independently established by the pasted per-scene values, four distinct t_last, and pairwise-distinct frame sha256s; artifact provenance unexplained, noted |
+| 5 | frames + camera re-verification | COMPLIANT — A1's sha equals the T5-era frame (same scene file + frame time on a changed engine rendering the same instant: consistent); CF-E2b/CF-E3 in_viewport + curve_pixels > 0 |
+| 6 | determinism 0 | COMPLIANT |
+| 7 | suite 78 + isolation 0 | COMPLIANT |
+| 8 | 88 + hygiene + affirmations | COMPLIANT — second clean L-21 artifact |
+| 9 | TR + status + L-13 | COMPLIANT — status delivered long-form rather than porcelain (form deviation, content complete) |
+| 10 | digests + BRANCH/COMMITS + L-12 | COMPLIANT |
+OUT-REQUIREMENTS defect: the verbatim copy of JRN-C001-110 is TRUNCATED after the table
+header — L-15 branch (datum byte-verbatim in PACKET 68): remediation ordered, JRN-C001-111.
+
+Verdict: ACCEPT — I-008-T5-R2 VERIFIED. A NOTE ON A1's t_last: 2525.3546265434511 versus
+the pre-E4 engine's 2525.3546265434329 on the identical scene — the last digits moved
+with the DD-reflection precision upgrade, exactly as expected; recorded as a benign
+cross-build numerics shift (P1-B is within-build; no claim disturbed).
+
+F7 REGISTERED (Director, live): balls detach from the curve "after a while" with audio
+still rhythmically correct, observed on a t18 calibration fixture. Hypotheses, in order:
+(H1) STALE BUILD — the Director's binary may predate T5-R2 (branch unmerged at test
+time); rebuild + re-test requested. (H2) REPLAY ACCUMULATION — the F6 fix snaps arc
+ORIGINS at contacts, but if per-arc display velocities are reconstructed imperfectly, the
+drawn trajectory diverges within long arcs and worsens over a session; the F6 proof at
+early contacts would not catch it. T6 settles this mechanically: contact-frame d ≤ r
+checks at the contacts nearest events 100, 500, and 1000 on BOTH families (CF-E4a
+polynomial, CF-E3 bezier) — if H2 is real it reproduces there; if all pass and the
+Director's rebuilt binary is clean, F7 closes as H1. T6 also adds the S14 build stamp so
+"which build am I watching" is never ambiguous again, and the Director-requested S13
+Load feature.
+NUMBERS: 10/10 criteria; 1 L-15 remediation; F7 open with 2 hypotheses; scenes
+2000×4; suite 78/78.
+LEARNED: proving a fix at the earliest contacts proves it where the defect was easiest to
+avoid — depth coverage belongs in the criterion, not the follow-up.
+NEXT: OUT_69 review → Director re-assessment on the rebuilt binary → decision 4.
+
+---
 ### JRN-I008-28 · DONE
 actor: composer-agent · task: I-008-T5-R2 · manifest: n/a
 

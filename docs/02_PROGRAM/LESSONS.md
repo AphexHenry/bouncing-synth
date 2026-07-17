@@ -184,3 +184,12 @@ inventory with its post-termination verification paste, or the single line "no b
 processes spawned; all foreground commands exited" when true. Origin: Director
 observation of ~a dozen orphaned tasks at ~90% CPU after agent sessions (D-6,
 JRN-C001-107).
+
+L-22: Any hand-derived number that feeds an acceptance criterion (energy rims, bounds,
+expected counts, tolerances) is accompanied in the same paste by a machine evaluation of
+the same expression — a one-liner in the pinned venv (or bc) with its output. Twice now a
+hand computation in criterion-feeding evidence was wrong (OUT_63's rim transcription
+900/9,900, JRN-C001-101; OUT_68's A2 rim 304.77 vs the true 3690.3, JRN-I008-29) — both
+survived on margin, which is luck, not method. The machine line costs seconds and makes
+the number reproducible; a hand value without one is an evidence-completeness defect at
+review. Second occurrence per P6 §6.3; companion P6 §4 note rides open decision 2.

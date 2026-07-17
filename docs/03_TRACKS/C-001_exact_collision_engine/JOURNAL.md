@@ -1,3 +1,20 @@
+### JRN-C001-111 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: L-15 remediation order — OUT_68's verbatim copy of JRN-C001-110 (the OUT_67 review
+entry) is truncated after the criterion-table header. The authoritative text is
+byte-verbatim in PACKET 68. I-008-T6 step 4 verifies the APPLIED file: paste the full
+JRN-C001-110 entry as read from docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md
+(from `### JRN-C001-110` through its terminating `---`), plus the file's line count. If
+the applied entry is itself truncated or differs from PACKET 68's text: STOP, BLOCKED
+(brain-file damage; repair = re-apply the entry from the packet text, Director holds the
+original). If intact: the truncation was an OUT-paste defect only; closed.
+NUMBERS: 1 entry to verify; JOURNAL digest of record from OUT_68: 120499 bytes /
+8540c85216305d1a24e88f01279255b9313f6b0ffa251320fae912979bfd5c97.
+LEARNED: nothing pending the check.
+NEXT: closed at OUT_69 review.
+
+---
 ### JRN-C001-110 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

@@ -165,3 +165,24 @@ run's own paste): global mean inter-event interval t_last/events ≤ 2.0 s (keep
 musically alive); for the polyphony scene, every ball_id count ≥ 200 within the
 2000-event run. The four scenes (A1 bowl-parabola, A2 twowell-poly4, A3 bezier-landscape,
 A4 trio-parabola) are REAUTHORED to these targets; names and files are reused in place.
+
+## Amendments (PACKET 69) — build stamp + Load feature + deep display-truth checks
+
+S13 — LOAD WITHOUT RESTART (Director request): the interactive app can load a new
+scenario JSON at runtime, two ways: (a) DRAG-AND-DROP a .json file onto the window
+(SDL_DROPFILE); (b) an IN-APP PICKER (key `l`) listing .json files from
+`tools/bounce-view/scenarios/` and `data/scenarios/calibration/` (recursive), navigable
+by keyboard, Enter to load, Esc to cancel. Loading tears down the current playback, runs
+the SAME path intake as startup — the S6 Law-1 guard applies to every loaded path,
+including dropped ones — and reprints the effective-restitution line and the S14 stamp.
+Malformed or refused files leave the current scene running with an on-stdout error.
+
+S14 — BUILD STAMP: on startup and after every load, the app prints one line
+`bounce-view build <short-commit> (<branch>[+dirty])` to stdout and places the short
+commit in the window title. Derivation of the values: injected at configure/build time
+from git; never hand-written.
+
+S12.1 — DEEP CONTACT CHECKS (extends S12): the frame_check contact proof is valid at any
+event depth; `--frame-times` accepts contact times taken from arbitrary event indices,
+and the self-check lines are unchanged. (No new machinery — this clause names the depth
+coverage the criteria will bind.)
