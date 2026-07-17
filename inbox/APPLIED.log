@@ -66,3 +66,4 @@ serial 67 applied by composer-agent · files: docs/03_TRACKS/C-001_exact_collisi
 serial 68 applied by composer-agent · files: docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md, docs/05_INFRA/I-008_av_harness/JOURNAL.md, docs/00_STATE.md
 serial 69 applied by gpt-5.5-agent · files: docs/05_INFRA/I-008_av_harness/JOURNAL.md, docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md, docs/02_PROGRAM/LESSONS.md, docs/05_INFRA/I-008_av_harness/BRIEF.md, docs/00_STATE.md
 serial 70 applied by cursor-grok-4.5-agent · files: docs/05_INFRA/I-008_av_harness/JOURNAL.md, docs/03_TRACKS/C-001_exact_collision_engine/JOURNAL.md, docs/00_STATE.md
+serial 71 applied by cursor-grok-4.5-agent · files: docs/05_INFRA/I-008_av_harness/JOURNAL.md, docs/05_INFRA/I-008_av_harness/BRIEF.md, docs/02_PROGRAM/INFRASTRUCTURE_REGISTER.md, docs/00_STATE.md

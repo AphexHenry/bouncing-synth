@@ -1,6 +1,56 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-36 · CLAIM
+actor: cursor-grok-4.5-agent · task: I-008-T7 · manifest: n/a
+
+WHAT: CLAIM I-008-T7 — implement S15 (uniform quantized hysteretic camera, grid/axes/
+labels/scale bar, min ball presence, lock, pause/step-to-event, HUD, bounded probes)
+and S14.1 (stamp dirty scope excludes inbox/outbox); proofs per PACKET 71 steps 5–8;
+regression 78/78 + isolation; TR + OUT_71.
+Branch base (from task/I-008-T6-R1 tip): `d672286` (full hash pending step-3 paste).
+NUMBERS: ACCESS_LOG before pending step 3.
+LEARNED: nothing.
+NEXT: step 3 environment paste, then S15/S14.1 implementation and evidence.
+
+---
+### JRN-I008-35 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_70_I-008-T6-R1 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | env + 88 + FULL porcelain + base proof | COMPLIANT — base 26d60f5, ancestor exit=0 |
+| 2 | S14 stamp line from real launch | COMPLIANT — `bounce-view build ccd39ca (…+dirty)`; the +dirty derives from courier-surface residue → S14.1 refinement issued (dirty computed over the agent surface only, excluding inbox/outbox) |
+| 3 | six deep contact frames d ≤ r + L-22 machine lines | COMPLIANT — e4a 0/0/0; e3 0.40/0/0.34 vs r≈21.5–22.1; BRANCH G: F7 = H1 pending Director rebuilt re-test |
+| 4 | S13 transcripts (picker / Law-1 / malformed) | COMPLIANT — scene survives both failure paths; ACCESS_LOG 88; disclosed deviation (BOUNCE_VIEW_S13_PROOF env driving the same handlers headlessly) accepted: same code paths, interactive picker/drop retained for the Director |
+| 5 | suite 78 + isolation 0 (+ unrequested src/-vs-base extra check) | COMPLIANT |
+| 6 | ACCESS_LOG 88 + hygiene + affirmations | COMPLIANT — first substantive L-21 artifact: recorded PIDs, one stuck CAL-E1 probe TERM→KILL, verified no orphans |
+| 7 | TR + post-commit porcelain + L-13 v2 | COMPLIANT |
+| 8 | digests committed-only + real BRANCH/COMMITS + L-12 | COMPLIANT |
+
+Verdict: ACCEPT — I-008-T6 (with R1) VERIFIED. F7 disposition: the display layer is
+proven clean at depth on both families; remaining hypothesis is H1 (stale Director
+binary); F7 CLOSES when the Director's rebuilt binary runs the four scenes without
+detachment — one line from the Director suffices. NOTED (no action yet): the agent's
+LEARNED — loading an unbounded e=1 stream can hang a HEADLESS probe (CAL-E1 flat) — is a
+real hazard for evidence tooling; interactive playback is wall-clock-paced and unaffected;
+kept on watch, folded into S15's probe design (bounded probes only).
+
+F8 REGISTERED (Director, live): "constant scaling makes it hard to assess whether the
+physics are correct; the line seems to deform with the movements; the balls have no
+size; add an axis with markers." Corroboration from OUT_70 itself: per-frame scale wobble
+(214.55 → 215.19 → 220.93 px/unit on CF-E3) and ball_radius_px = 1.28 on CF-E4a.
+Diagnosis: the S12 camera re-fits continuously, and any independent x/y stretching reads
+as the curve deforming. Spec S15 issued (BRIEF amendment this packet); T7 implements.
+NUMBERS: 8/8; six deep frames green; F7 → H1 pending; F8 open with S15; suite 78/78.
+LEARNED: the deep-check instrument built to close F7 doubled as the measurement that
+grounds F8 — presentation defects are cheapest to fix when the harness can already
+quantify them.
+NEXT: OUT_71 review → Director look-and-listen (rebuilt binary, F7 closure line, F8
+verdict) → decision 4.
+
+---
 ### JRN-I008-34 · DONE
 actor: cursor-grok-4.5-agent · task: I-008-T6-R1 · manifest: n/a
 

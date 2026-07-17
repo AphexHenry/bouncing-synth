@@ -186,3 +186,40 @@ S12.1 — DEEP CONTACT CHECKS (extends S12): the frame_check contact proof is va
 event depth; `--frame-times` accepts contact times taken from arbitrary event indices,
 and the self-check lines are unchanged. (No new machinery — this clause names the depth
 coverage the criteria will bind.)
+
+## Amendments (PACKET 71) — stable camera, grid/axes, assessment controls
+
+S14.1 — STAMP DIRTY SCOPE (amends S14): the `+dirty` flag is computed over the agent
+surface only (tracked modifications outside inbox/ and outbox/); courier residue never
+dirties the stamp.
+
+S15 — ASSESSMENT-GRADE CAMERA AND OVERLAYS (supersedes S12's continuous fit; the S12
+frame_check self-checks remain and gain fields):
+- UNIFORM SCALE: one px-per-world-unit factor for both axes at all times —
+  aspect-preserving, letterboxed as needed. The curve may zoom; it must never distort.
+  frame_check gains `scale_x=<v> scale_y=<v>` (equal by construction, both printed).
+- QUANTIZED HYSTERETIC ZOOM: zoom levels are discrete, scale = s_base · 1.25^k with
+  integer k, printed to stdout on every change as `camera: level=<k> scale=<v>`; a level
+  change occurs only when the framing target leaves a comfort band (hysteresis — no
+  oscillation between adjacent levels on a periodic bounce); pan is smoothed
+  independently of zoom.
+- GRID + AXES + LABELS: world-space gridlines at a step chosen by the 1-2-5 mantissa
+  rule from the current scale (guaranteeing between 4 and 12 visible lines per axis at
+  any zoom — the rule's bound, statable a priori); x and y axes emphasized where in
+  view; numeric labels at ticks rendered with a built-in minimal bitmap glyph set
+  (digits, minus, dot, e — no font dependency); a screen-space scale bar with its world
+  length labeled. frame_check gains `grid_step=<world units> grid_lines_v=<n>
+  grid_lines_h=<n>`.
+- MINIMUM BALL PRESENCE: a ball whose physical radius maps below 3 px is drawn as a
+  3 px core plus a marker ring, visually distinct from a to-scale ball. frame_check
+  gains `ball_draw_px=<v>` (≥ 3 always).
+- CAMERA LOCK: key `c` toggles auto/locked; locked freezes level and pan; the HUD shows
+  the mode.
+- PAUSE + STEP-TO-EVENT: `space` pauses; `.` while paused advances simulated time
+  exactly to the next collision event (one event per press), with the HUD updating
+  event count and sim time. Stepping is presentation-side time control over the same
+  engine stream — no physics computed in the harness (S1).
+- HUD: one unobtrusive line — sim time, event count, effective restitution, camera mode
+  + level, build stamp short-commit.
+- BOUNDED PROBES: every headless evidence probe in this and future tasks runs with an
+  explicit event or time cap (the CAL-E1 hang class is designed out of the tooling).
