@@ -51,6 +51,9 @@ struct FrameCheckResult {
   int ball_px_y = 0;
   bool in_viewport = false;
   int curve_pixels = 0;
+  double ball_on_curve_px_dist = 0.0;
+  double ball_radius_px = 0.0;
+  double scale = 0.0;
 };
 
 void reset_playback_view(PlaybackView& view);

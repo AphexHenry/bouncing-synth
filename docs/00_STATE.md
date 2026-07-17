@@ -1,7 +1,6 @@
 # STATE — Bounce
-last_updated_by: pm-fable5-a | trigger: OUT_66 RETURN_FOR_REPAIR — substantively strong,
-evidentially empty (uncommitted tree + pointer-stub artifacts → L-20); D-6 process
-hygiene → L-21; C-001-T18-R3 dispatched (commit, re-emit, E4b fix)
+last_updated_by: pm-fable5-a | trigger: OUT_67 ACCEPT — E4 campaign CLOSED, C-001-T18
+(+R1–R3) VERIFIED; I-008-T5-R2 dispatched (scenes v3 + F6); decision 4 gates D-4 step 3
 
 ```
 doc_id:   STATE
@@ -12,32 +11,27 @@ parent:   PROJECT
 ```
 
 ## Program status
-Phase 1 — ENGINE TRACK, E4 campaign, fourth leg. By summary (ADMISSIBLE ONLY AFTER R3's
-committed re-emission): the API audit resolved BRANCH V — array-backed long-run invariant
-evidence was VOID and has been redone on repaired std::vector storage with a >300-event
-round-trip test, while the energy-attribution path was independently sound (drift numbers
-stand); the capacity regression is fixed with a physics-derived time scan (suite 0.14 s);
-scaling measured at N=500/1000/2000: 3.55e-10 / 9.16e-10 / 9.32e-10 (all ≤ held 1e-9;
-profile neither clean linear nor √N — interpretation deferred to the resumption bundle);
-the CLI overrun is fixed; and the E4b MECHANISM IS FOUND: an undeflated departure root in
-the bezier s-path yields a spurious near-zero-t re-contact (t≈3e-16) and the stream dies
-at 7/2000 — the same departure-root disease T17 cured in x-domain, now in s-domain, with
-a known cure. OUT_66 itself was inadmissible: emitted from an uncommitted tree with
-pointer-stub courier artifacts — second occurrence → L-20 (OUTs only from committed
-trees, all evidence inline). R3 commits, re-emits everything inline, lands the E4b fix,
-and takes the suite to 78/78.
+Phase 1 — E4 CAMPAIGN CLOSED (OUT_67, 12/12): the engine sustains 2000-event confined
+lossless streams on both problem families (W-well quartic, bezier valley); energy
+conserved at the held 1e-9 bound (9.32e-10); E4b reference window at 1.54e-13; event
+storage vector-backed with round-trip proof; capacity scan flight-time-derived (suite
+78/78 in 0.6 s); departure-root deflation now covers x- and s-domains with every root
+path ending in the registered refinement schedule. C-001-T18+R1–R3 VERIFIED. Monitored
+for resumption: E4a-vs-E4b window asymmetry (5.9e-10 vs 1.5e-13); scaling excursion at
+event 1678; per-path count drift across builds (P1-B coverage item).
 
-DIRECTOR DIRECTION D-6 RECORDED → L-21 (process hygiene): agents track spawned PIDs,
-terminate their own leftovers before the final OUT (graceful, with time to finish), never
-touch processes they did not spawn; every OUT now carries a PROCESS HYGIENE artifact.
-
-SEQUENCE: OUT_67 (T18-R3) → E4 closure → I-008-T5-R2 (scenes v3 + D2 + F6 + Director
-re-assessment) → gate resumption (decisions 4+5).
+NOW IN FLIGHT: I-008-T5-R2 (PACKET 68) — the harness backlog on the capable engine: F6
+display fix (bezier replay world-mapping; paste-provable contact-frame check), scene
+library v3 (genuine W-well and bezier-valley scenes, cap-reached 2000, identity +
+distinctness criteria per L-19), frames, camera re-verification, determinism, 78/78
+regression. Then: DIRECTOR RE-ASSESSMENT (look-and-listen on the real scenes) and
+DECISION 4 — still the sole gate to D-4 step 3 (resumption bundle → P1-B/P1-C).
+Falsification record JRN-C001-91 stands for the pre-T17 build.
 
 ## Active tracks
 | track id | state | next transition | waiting on |
 |---|---|---|---|
-| C-001 Exact collision engine | E4 campaign: E4a repaired (energy at held bound, storage audited); E4b mechanism found, fix pending; ALL R2 evidence pending committed re-emission — T18-R3 IN FLIGHT | OUT_67 → gate-resumption bundle | OUT_67 |
+| C-001 Exact collision engine | T17 + T18(+R1–R3) VERIFIED; defect classes E1/E2/E4a/E4b closed with standing coverage; E3 inferentially fixed | gate-resumption bundle (decisions 4+5) → P1-A rerun, P1-B, P1-C | Director decision 4 |
 | C-002 Curve library | BRIEFED | T3 prereg | gate resumption |
 
 C-000 Phase-0 scoping: CLOSED.
@@ -49,48 +43,47 @@ C-000 Phase-0 scoping: CLOSED.
 | I-005 | SPECCED | brief | P1-D addendum timing basis |
 | I-006 JUCE scaffold | SPECCED | brief | gate resumption / Director call |
 | I-007 CI | SPECCED | brief | Director hosting (open decision 1) |
-| I-008 AV assessment harness | T1–T4 VERIFIED; T5-R2 QUEUED (scenes v3 + D2 + F6 + re-assessment) behind E4 closure | after OUT_67 | C-001-T18-R3 |
+| I-008 AV assessment harness | T1–T4 VERIFIED; T5-R2 IN FLIGHT (scenes v3 + F6 + frames + re-assessment runway) | OUT_68 → Director re-assessment | OUT_68 |
 
 ## Open decisions (Director)
 1. GitHub hosting + CI for I-007 — ESCALATED.
-2. Protocol amendment bundle (L-18 derivation; L-19 clause-to-criterion; NEW — L-20
-   committed-tree OUT emission P5/P6 amendment) — non-blocking.
+2. Protocol amendment bundle (L-18 derivation; L-19 clause-to-criterion; L-20
+   committed-tree emission) — non-blocking.
 3. GPLv3 -only vs -or-later — Phase 3.
 4. Corpus governance at gate resumption — GATES D-4 STEP 3. (i) reuse corpus-A; (ii)
-   fresh corpus-B — PM RECOMMENDATION; (iii) hybrid.
+   fresh corpus-B — PM RECOMMENDATION (strengthened: E4 pattern-overlap with 13 R-a rows;
+   corpus-B would also carry E4-class long-chain scenarios + the reference_termination
+   schema); (iii) hybrid.
 5. Gate-resumption registration bundle: simultaneous-contact ordering; periodic reference
    horizons; S-1 semantics + reference_termination + per-class tier; checker fix + L-17
-   v2; P1-B coverage of T17 fallback/directional + T18 time-scan paths; held-out re-test
-   of E-classes incl. both original E3 scenarios; energy-bound re-derivation from the
-   registered scaling model + committed R2/R3 data (profile anomaly noted); gate-runner
-   event-storage exposure check; E4 coverage in any corpus-B mint.
+   v2; P1-B coverage of T17 fallback/directional + T18 time-scan paths + per-path event
+   counts; held-out re-test of all E-classes incl. both original E3 scenarios;
+   energy-bound re-derivation modeling excursions (event-1678 datum); E4a/E4b window
+   asymmetry characterization; gate-runner storage exposure check (resolved in core;
+   confirm runner).
 6. Rolling/sliding contact — Phase-2 slate; urgency low under D-5.
 
 ## Known issues
-Engine: E4b OPEN (mechanism found: bezier s-path departure root undeflated; fix in R3);
-R2 evidence (audit, storage repair, capacity, scaling, CLI fix) pending committed inline
-re-emission; energy bound 1e-9 held (9.32e-10 at N=2000; scaling profile anomaly noted);
-E4a window deltas 5.9e-10 (monitored); E1/E2 fixed (T17); E3 held-out re-test at
-resumption. PROCESS: orphaned agent terminal tasks at ~90% CPU (D-6) — L-21 standing rule
-+ per-OUT hygiene artifact from PACKET 67; current orphans cleaned by Director manually.
-Harness: F6 bezier display divergence (deferred, T5-R2); scenes v3 + D2 deferred.
-COURIER: inbox tracked-deletion disposition pending. Baseline CLI N≥512 (OUT_45).
-Validator calibration_scenarios=3 (OUT_47). Resolved: zero-event write; checker rational
-parse; contact-loop E1/E2; __pycache__; F1–F5 (F5 pending scenes v3); circular reference
-purged; MultiBallSimResult 256-array OOB (per R2 summary, admissible after R3).
+Engine: none open — E1/E2/E4a/E4b closed with standing coverage; E3 held-out re-test at
+resumption; monitored items per JRN-C001-110 (window asymmetry; scaling excursion;
+path-mix drift). Harness: F6 display divergence UNDER FIX (T5-R2); scene library v3 in
+flight. COURIER: inbox tracked-deletion disposition pending (Director). Baseline CLI
+N≥512 (OUT_45). Validator calibration_scenarios=3 (OUT_47). PROCESS: L-21 in force;
+first artifact clean. Resolved this campaign: E4a/E4b; 256-array storage UB; capacity
+hang; CLI overrun; circular reference; energy-drift precision regression.
 
 ## Recent review verdicts
-OUT_66/C-001-T18-R2: RETURN_FOR_REPAIR — inadmissible emission (uncommitted tree,
-pointer-stub artifacts); substance credited by summary; L-20 + L-21 issued
-(JRN-C001-107).
-OUT_65/C-001-T18-R1: RETURN_FOR_REPAIR — evidence provisional pending API audit
-(JRN-C001-104).
-OUT_64/C-001-T18: RETURN_FOR_REPAIR — E4 engine-side confirmed (JRN-C001-101).
+OUT_67/C-001-T18-R3: ACCEPT — 12/12; E4 closed; C-001-T18+R1–R3 VERIFIED (JRN-C001-110).
+OUT_66/C-001-T18-R2: RETURN_FOR_REPAIR — inadmissible emission; repaired in R3; L-20 +
+L-21 issued (JRN-C001-107).
+OUT_65/C-001-T18-R1: RETURN_FOR_REPAIR — API audit ordered (JRN-C001-104).
 
 ## Pointers
-Branch rule: task/C-001-T18 continues (R3 in place). Standing forms: OUTs from committed
-trees only, all evidence inline (L-20/L-16/L-10); PROCESS HYGIENE artifact in every OUT
-(L-21); isolation from the CLAIM-stated base with git proof; numeric derivations (L-18);
-clause-to-criterion (L-19). ACCESS_LOG: 88. Directions of record: D-4 (step 3 gated on
-decision 4), D-5, D-6 (process hygiene). Held bound: e=1 energy drift ≤ 1e-9 / 2000
-events. Findings: F1–F6. Gate-resumption bundle: decisions 4 + 5.
+Branch rule: task/I-008-T5-R2 from task/C-001-T18 tip (stacked — the scenes need the
+fixed engine). Merge to main: batched at Director's convenience (chain now long; verify
+final OUT commit as tip per L-12). Standing forms: L-20 committed-tree OUTs, all evidence
+inline; L-21 hygiene artifact; isolation from CLAIM-stated base with git proof; L-18
+derivations; L-19 clause-to-criterion; confinement = cap-reached. ACCESS_LOG: 88.
+Directions: D-4 (step 3 gated on decision 4), D-5, D-6. Held bound: e=1 energy drift
+≤ 1e-9 / 2000 events. Findings F1–F6 (F6 under fix). Gate-resumption bundle: decisions
+4 + 5.

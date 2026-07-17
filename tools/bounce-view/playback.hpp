@@ -25,6 +25,7 @@ struct Playback {
   std::array<double, bounce::core::engine::kMaxBalls> arc_start_t{};
   std::array<bool, bounce::core::engine::kMaxBalls> settled{};
   std::array<bounce::core::engine::Vec2, bounce::core::engine::kMaxBalls> settle_pos{};
+  std::array<double, bounce::core::engine::kMaxBalls> display_radius{};
   std::size_t next_event = 0;
   double end_time = 0.0;
 };

@@ -43,7 +43,8 @@ void print_frame_checks(const std::vector<FrameCheckResult>& checks) {
     if (row.ball_id >= 0) {
       std::cout << "frame_check ball_id=" << row.ball_id << " ball_px=(" << row.ball_px_x << ','
                 << row.ball_px_y << ") in_viewport=" << (row.in_viewport ? "true" : "false")
-                << '\n';
+                << " ball_on_curve_px_dist=" << std::setprecision(17) << row.ball_on_curve_px_dist
+                << " ball_radius_px=" << row.ball_radius_px << " scale=" << row.scale << '\n';
     }
     curve_pixels = row.curve_pixels;
   }

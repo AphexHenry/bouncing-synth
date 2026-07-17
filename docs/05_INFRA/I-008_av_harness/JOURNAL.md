@@ -1,6 +1,54 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-28 · DONE
+actor: composer-agent · task: I-008-T5-R2 · manifest: n/a
+
+WHAT: I-008-T5-R2 DONE — F6 bezier display contact snap via eval_bezier_at_contact_x +
+ball_on_curve_px_dist frame_check; scene library v3 (A1 parabola bowl; A2 fresh W-well
+a₄=1/400 a₂=−1/20; A3 fresh bezier valley domain [0,12]; A4 trio) all cap-reach 2000 at
+e=1; frames_t5 refreshed; CF-E2b/CF-E3 camera proofs in_viewport + curve_pixels>0; F6
+contact frames d≤r for contacting balls; determinism diff 0; suite 78 SUCCESS exit=0 ctest
+100%; c7-v2 isolation 0; ACCESS_LOG 88/88.
+NUMBERS: A1 t_last=2525.35/2000=1.26 s; A2 1550.50/0.78 s; A3 482.95/0.24 s; A4
+914.22/0.46 s per-ball 724/661/615; F6 d=0 at both contact frames; distinctness 34/67/39.
+LEARNED: polynomial replay's curve-snap pattern applies to bezier when event.s is world x.
+NEXT: OUT_68 review → Director re-assessment → decision 4.
+
+---
+### JRN-I008-27 · CLAIM
+actor: composer-agent · task: I-008-T5-R2 · manifest: n/a
+
+WHAT: CLAIM I-008-T5-R2 — F6 bezier display contact-frame fix + scene library v3 (genuine
+W-well and bezier-valley families, cap-reached 2000) + frames + camera re-verification +
+determinism + 78/78 regression + c7-v2 isolation.
+Branch base (stacked from C-001-T18 tip): `dd6e8c9ea4e17630746ca4f175b23c17f0060295` —
+proof: `git log --oneline -1 dd6e8c9` → dd6e8c9 OUT 67 C-001-T18-R3 DONE.
+NUMBERS: ACCESS_LOG before=88.
+LEARNED: nothing.
+NEXT: F6 fix, scenes v3, evidence collection.
+
+---
+### JRN-I008-26 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: I-008-T5-R2 authored (PACKET 68) — the deferred harness backlog, now unblocked by
+E4 closure: (1) F6 fix — bezier display replay maps the contact parameter to world
+coordinates incorrectly (balls fall through the drawn curve while blips continue); fix
+with a paste-provable contact-frame self-check (drawn-ball-to-curve pixel distance at
+contact ≤ ball radius in px, scale printed in the same paste). (2) Scene library v3 —
+genuine families on the engine that can now sustain them: A1 parabola bowl, A2 W-well
+(CF-E4a family, fresh tuple), A3 bezier valley (CF-E4b family, fresh tuple), A4 trio;
+cap-reached 2000 per scene, identity pastes per family (L-19), distinctness diffs,
+per-ball ≥200 on A4. (3) Frames + CF-E2b/CF-E3 camera re-verification on this build.
+(4) Determinism smoke; regression 78/78; c7-v2 isolation (src/ frozen again for harness
+work); L-21 hygiene. The OUT_63-era D2 diagnostic is superseded: CF-E4b IS the bezier
+confinement proof, engine-side, closed.
+NUMBERS: 4 scenes; cap 2000; F6 pixel criterion derived from render scale; suite 78.
+LEARNED: nothing.
+NEXT: OUT_68 review → Director look-and-listen → decision 4 → resumption bundle.
+
+---
 ### JRN-I008-25 · NOTE
 actor: pm-fable5-a · task: n/a · manifest: n/a
 

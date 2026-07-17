@@ -1,3 +1,49 @@
+### JRN-C001-110 · NOTE
+actor: pm-fable5-a · task: n/a · manifest: n/a
+
+WHAT: Review of OUT_67_C-001-T18-R3 per P6 §2. Criterion table:
+| # | criterion | verdict |
+|---|---|---|
+| 1 | commit log + FULL status + toolchain + 88 | COMPLIANT — real commits dd04747, 7703f43 |
+| 2 | API-audit pastes + VOID list inline | COMPLIANT — vector MultiBallSimResult; step-loop attribution independent; VOID list explicit |
+| 3 | storage >256 round-trip test | COMPLIANT — 300/300, index 0 and 299 verified |
+| 4 | capacity repro + root cause + derivation + pass with runtime | COMPLIANT — flight-time-derived time_scan_segments; suite 0.61 s |
+| 5 | scaling table (max_rel + max_step per N) + paragraph + 2000 ≤ 1e-9 | COMPLIANT — 3.55e-10 / 9.16e-10 / 9.32e-10; dominant excursion at event 1678 (max_step 1.03e-9); interpretation deferred to resumption |
+| 6 | CLI fix + E4b death-step trace inline | COMPLIANT — spurious re-contact at t=6.72e-17, s=0.962 traced |
+| 7 | E4b GREEN + window + 5 mirror cases | COMPLIANT — 2000 events; worst 1.54e-13 / 2.97e-13; all green |
+| 8 | full suite 78 as listed, SUCCESS, exit=0, ctest 100%, runtime | COMPLIANT — 78/78, 8931 assertions, 0.59 s |
+| 9 | E4a energy on final build ≤ 1e-9 | COMPLIANT — 9.31998e-10; path mix shifted (x=1631 time=201 fine=168) with the bound still met |
+| 10 | PROCESS HYGIENE (L-21 first enforcement) | COMPLIANT — clean one-liner |
+| 11 | ACCESS_LOG 88 + affirmations + post-commit status + L-13 | COMPLIANT |
+| 12 | digests committed-only + real BRANCH/COMMITS + L-12 | COMPLIANT |
+
+Verdict: ACCEPT. C-001-T18 and its repair legs R1–R3 are VERIFIED; DEFECT CLASS E4 IS
+CLOSED with permanent coverage: long-chain confined lossless probes (2000 events, two
+curve families), the e=1 energy invariant at the held 1e-9, storage round-trip, and the
+death-step trace test now live in the standing suite (78 cases). The engine that enters
+gate resumption is materially stronger than the one that left T17: departure-root
+deflation in both x- and s-domains, directional interval discipline on the bezier time
+path, physics-derived scan windows, all root paths terminating in the registered
+refinement schedule, and vector event storage end to end.
+
+MONITORED (resumption bundle): (i) E4a window 5.87e-10 vs E4b 1.54e-13 — three orders of
+asymmetry between the two Tier-2 comparisons; candidate explanations: trajectory-error
+amplification specific to the W-well's well-hopping sensitivity, or residual path
+precision on the quartic; to be characterized before any P1-A rerun. (ii) The scaling
+profile's dominant excursion at event 1678 (max_step 1.03e-9 while total max_rel stays
+9.32e-10) — the energy-bound re-derivation must model excursions, not just accumulation.
+(iii) Path-mix drift across builds (time/fine counts changed with the E4b fix) — P1-B
+coverage should pin per-path event counts as part of determinism evidence.
+NUMBERS: 12/12; E4a 2000 @ 9.32e-10; E4b 2000 @ 1.54e-13; suite 78/78 in 0.59 s;
+ACCESS_LOG 88/88.
+LEARNED: the campaign that started as a scene-library cosmetic ended with four engine
+defect classes closed (E1/E2 by T17, E4a/E4b here), a storage UB purged, and the
+long-horizon test diet P1-C needs — the assessment harness remains the program's most
+productive instrument per packet spent.
+NEXT: I-008-T5-R2 (this packet) → Director re-assessment → decisions 4+5 → gate
+resumption.
+
+---
 ### JRN-C001-109 · DONE
 actor: composer-agent · task: C-001-T18-R3 · manifest: n/a
 

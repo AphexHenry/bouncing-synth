@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 namespace bounce_view {
@@ -71,12 +72,12 @@ void apply_event_to_view(PlaybackView& view, const bounce::core::events::Collisi
   if (reflected.normal_speed_out < bounce::core::engine::kVSettle) {
     view.settled[static_cast<std::size_t>(idx)] = true;
     view.settle_pos[static_cast<std::size_t>(idx)] =
-        bounce::core::engine::position_at_time(state, dt);
+        eval_bezier_at_contact_x(pb.scenario.piecewise_bezier, event.s);
     return;
   }
-  const auto contact_pos = bounce::core::engine::position_at_time(state, dt);
-  state.x0 = contact_pos.x;
-  state.y0 = contact_pos.y;
+  const auto curve_pos = eval_bezier_at_contact_x(pb.scenario.piecewise_bezier, event.s);
+  state.x0 = curve_pos.x;
+  state.y0 = curve_pos.y;
   state.vx = reflected.vx;
   state.vy = reflected.vy;
   view.arc_start_t[static_cast<std::size_t>(idx)] = event.t;
@@ -169,6 +170,35 @@ void sample_bezier_curve(const bounce::core::curve::CompiledPiecewiseBezier& cur
       out.push_back(to_screen(pos.x, pos.y, vp, window_w, window_h));
     }
   }
+}
+
+double point_segment_distance_px(int px, int py, int x0, int y0, int x1, int y1) {
+  const double dx = static_cast<double>(x1 - x0);
+  const double dy = static_cast<double>(y1 - y0);
+  if (dx == 0.0 && dy == 0.0) {
+    return std::hypot(static_cast<double>(px - x0), static_cast<double>(py - y0));
+  }
+  const double t = std::clamp(((px - x0) * dx + (py - y0) * dy) / (dx * dx + dy * dy), 0.0, 1.0);
+  const double cx = static_cast<double>(x0) + t * dx;
+  const double cy = static_cast<double>(y0) + t * dy;
+  return std::hypot(static_cast<double>(px) - cx, static_cast<double>(py) - cy);
+}
+
+double min_curve_pixel_distance(int px, int py, const std::vector<SDL_Point>& curve_points) {
+  if (curve_points.empty()) {
+    return 0.0;
+  }
+  double best = std::numeric_limits<double>::infinity();
+  int prev_x = -1;
+  int prev_y = -1;
+  for (const auto& p : curve_points) {
+    if (prev_x >= 0) {
+      best = std::min(best, point_segment_distance_px(px, py, prev_x, prev_y, p.x, p.y));
+    }
+    prev_x = p.x;
+    prev_y = p.y;
+  }
+  return best;
 }
 
 } // namespace
@@ -365,6 +395,12 @@ void draw_scene(SDL_Renderer* renderer, const SceneCache& cache, const PlaybackV
 std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
                                                    const PlaybackView& view, double t,
                                                    int window_w, int window_h) {
+  const double px_per_unit_x =
+      static_cast<double>(window_w - 1) / std::max(1e-12, cache.viewport.x_max - cache.viewport.x_min);
+  const double px_per_unit_y =
+      static_cast<double>(window_h - 1) / std::max(1e-12, cache.viewport.y_max - cache.viewport.y_min);
+  const double scale = 0.5 * (px_per_unit_x + px_per_unit_y);
+
   std::vector<FrameCheckResult> results;
   for (int b = 0; b < view.pb.scenario.ball_count; ++b) {
     const auto state = ball_state_in_view(view, b, t);
@@ -377,6 +413,12 @@ std::vector<FrameCheckResult> compute_frame_checks(const SceneCache& cache,
     row.ball_px_x = p.x;
     row.ball_px_y = p.y;
     row.in_viewport = p.x >= 0 && p.x < window_w && p.y >= 0 && p.y < window_h;
+    row.scale = scale;
+    const double radius_world =
+        b < static_cast<int>(view.pb.display_radius.size()) ? view.pb.display_radius[static_cast<std::size_t>(b)]
+                                                            : 0.1;
+    row.ball_radius_px = radius_world * scale;
+    row.ball_on_curve_px_dist = min_curve_pixel_distance(p.x, p.y, cache.curve_screen_points);
     results.push_back(row);
   }
 

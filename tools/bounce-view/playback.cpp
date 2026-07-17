@@ -1,13 +1,59 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "playback.hpp"
 
+#include "bezier_display_geometry.hpp"
+
 #include <cmath>
+#include <cstdlib>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 namespace bounce_view {
 
 namespace {
+
+void load_display_radii(const char* scenario_path, Playback& out) {
+  for (auto& r : out.display_radius) {
+    r = 0.1;
+  }
+  std::ifstream in(scenario_path);
+  if (!in) {
+    return;
+  }
+  std::ostringstream buffer;
+  buffer << in.rdbuf();
+  const std::string json = buffer.str();
+  int ball_index = 0;
+  std::size_t search_from = 0;
+  while (ball_index < bounce::core::engine::kMaxBalls) {
+    const std::size_t radius_pos = json.find("\"radius\"", search_from);
+    if (radius_pos == std::string::npos) {
+      break;
+    }
+    const std::size_t colon = json.find(':', radius_pos);
+    if (colon == std::string::npos) {
+      break;
+    }
+    std::size_t start = colon + 1;
+    while (start < json.size() && (json[start] == ' ' || json[start] == '\t')) {
+      ++start;
+    }
+    std::size_t end = start;
+    while (end < json.size() && json[end] != ',' && json[end] != '}' && json[end] != '\n') {
+      ++end;
+    }
+    const std::string token = json.substr(start, end - start);
+    char* parse_end = nullptr;
+    const double value = std::strtod(token.c_str(), &parse_end);
+    if (parse_end != token.c_str()) {
+      out.display_radius[static_cast<std::size_t>(ball_index)] = value;
+      ++ball_index;
+    }
+    search_from = end;
+  }
+}
 
 void apply_event(Playback& pb, const bounce::core::events::CollisionEvent& event) {
   if (pb.scenario.curve_family == bounce::core::scenario::ScenarioCurveFamily::Polynomial) {
@@ -53,12 +99,14 @@ void apply_event(Playback& pb, const bounce::core::events::CollisionEvent& event
   reflected.normal_speed_out = std::abs(vn);
   if (reflected.normal_speed_out < bounce::core::engine::kVSettle) {
     pb.settled[static_cast<std::size_t>(idx)] = true;
-    pb.settle_pos[static_cast<std::size_t>(idx)] = bounce::core::engine::position_at_time(state, dt);
+    const auto curve_pos =
+        eval_bezier_at_contact_x(pb.scenario.piecewise_bezier, event.s);
+    pb.settle_pos[static_cast<std::size_t>(idx)] = curve_pos;
     return;
   }
-  const auto contact_pos = bounce::core::engine::position_at_time(state, dt);
-  state.x0 = contact_pos.x;
-  state.y0 = contact_pos.y;
+  const auto curve_pos = eval_bezier_at_contact_x(pb.scenario.piecewise_bezier, event.s);
+  state.x0 = curve_pos.x;
+  state.y0 = curve_pos.y;
   state.vx = reflected.vx;
   state.vy = reflected.vy;
   pb.arc_start_t[static_cast<std::size_t>(idx)] = event.t;
@@ -101,6 +149,7 @@ bool load_and_simulate(const char* scenario_path, Playback& out, int max_events,
   }
   out.end_time = out.events.empty() ? 0.0 : out.events.back().t;
   reset_playback(out);
+  load_display_radii(scenario_path, out);
   return true;
 }
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 #include "bezier_display_geometry.hpp"
 
+#include "bounce/engine/ballistic.hpp"
+
 #include <algorithm>
 #include <cmath>
 
@@ -64,6 +66,19 @@ BezierDisplayPoint locate_bezier_display_point(
     out.found = true;
   }
   return out;
+}
+
+bounce::core::engine::Vec2 eval_bezier_at_contact_x(
+    const bounce::core::curve::CompiledPiecewiseBezier& curve, double contact_x) {
+  const auto anchor = locate_bezier_display_point(curve, contact_x);
+  if (anchor.found && anchor.segment_index < curve.segments.size()) {
+    const auto pos = bounce::core::curve::eval(curve.segments[anchor.segment_index], anchor.segment_s);
+    bounce::core::engine::Vec2 out{};
+    out.x = pos.x;
+    out.y = pos.y;
+    return out;
+  }
+  return {};
 }
 
 } // namespace bounce_view
