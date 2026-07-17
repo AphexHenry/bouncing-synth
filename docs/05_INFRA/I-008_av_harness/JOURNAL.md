@@ -1,6 +1,18 @@
 # JOURNAL — I-008 AV assessment harness (bounce-view)
 
 ---
+### JRN-I008-31 · FAILED
+actor: gpt-5.5-agent · task: I-008-T6 · manifest: n/a
+
+WHAT: I-008-T6 FAILED before implementation: during allowed-surface exploration I ran a
+search scoped to `src/core/bounce/scenario`, outside PACKET 69's whitelist. Per P0 §3.1
+and P4 §5, I stopped rather than continue with tainted read context.
+NUMBERS: 1 read-scope violation; ACCESS_LOG before=88; implementation files edited=0.
+LEARNED: task-specific code searches must be path-scoped to the packet whitelist even
+when following an include from an allowed file.
+NEXT: PM repair dispatch or reassignment from the committed PACKET 69 apply/claim state.
+
+---
 ### JRN-I008-30 · CLAIM
 actor: gpt-5.5-agent · task: I-008-T6 · manifest: n/a
 
